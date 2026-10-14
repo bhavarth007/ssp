@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing & Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database temporary journals
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Editor directories
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Temporary test captures and frame extracts
+*.mov
+test_*.mp4
+test_cut*.mp4
+catwalk_frame_*.jpg
+amst_frame_*.jpg
+saree_frame_*.jpg
+catwalk_preview_frame.jpg
+real_catwalk_clip.mp4
+

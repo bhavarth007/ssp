@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="favGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE082" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#996515" />
+    </linearGradient>
+    <radialGradient id="favBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#241E15" />
+      <stop offset="100%" stop-color="#0B0A08" />
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#favBg)" stroke="url(#favGold)" stroke-width="2.5" />
+  <circle cx="32" cy="32" r="28" fill="none" stroke="url(#favGold)" stroke-width="0.8" opacity="0.3" stroke-dasharray="3,2" />
+  <text x="32" y="42" font-family="'Cinzel', 'Times New Roman', serif" font-size="25" font-weight="900" fill="url(#favGold)" text-anchor="middle" letter-spacing="1">SSP</text>
+</svg>
