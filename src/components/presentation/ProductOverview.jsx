@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Share2
 } from 'lucide-react';
+import { getAssetUrl } from '../../utils/assetHelper';
 
 export default function ProductOverview({
   product,
@@ -52,7 +53,7 @@ export default function ProductOverview({
             <div className="relative w-full h-full">
               <video
                 ref={videoRef}
-                src={product.demo_video_url || '/assets/videos/saree-crimson-runway-walk.mp4'}
+                src={product.demo_video_url || getAssetUrl('/assets/videos/saree-crimson-runway-walk.mp4')}
                 loop
                 muted={isMuted}
                 playsInline
@@ -106,10 +107,10 @@ export default function ProductOverview({
               <img
                 src={
                   activeMediaTab === 'pallu'
-                    ? product.pallu_image || '/assets/products/saree-crimson-meenakari-real.jpg'
+                    ? product.pallu_image || getAssetUrl('/assets/products/saree-crimson-meenakari-real.jpg')
                     : activeMediaTab === 'closeup'
-                    ? product.close_up_image || '/assets/products/saree-stack-5colors.jpg'
-                    : product.hero_image || '/assets/products/model-crimson-runway.jpg'
+                    ? product.close_up_image || getAssetUrl('/assets/products/saree-stack-5colors.jpg')
+                    : product.hero_image || getAssetUrl('/assets/products/model-crimson-runway.jpg')
                 }
                 alt={product.name}
                 className="w-full h-full object-cover"

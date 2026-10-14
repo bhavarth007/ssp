@@ -38,6 +38,10 @@ if (fs.existsSync(publicDir)) {
 const distDir = path.join(__dirname, '..', 'dist');
 if (fs.existsSync(distDir)) {
   app.use(express.static(distDir));
+  app.use('/ssp', express.static(distDir));
+}
+if (fs.existsSync(publicDir)) {
+  app.use('/ssp', express.static(publicDir));
 }
 
 // Multer upload config

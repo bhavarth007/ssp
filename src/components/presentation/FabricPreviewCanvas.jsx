@@ -17,6 +17,7 @@ import {
   Package,
   Scissors
 } from 'lucide-react';
+import { getAssetUrl } from '../../utils/assetHelper';
 
 export default function FabricPreviewCanvas({
   selectedProduct,
@@ -49,50 +50,50 @@ export default function FabricPreviewCanvas({
   // 1. Select the base high-res photograph of the runway model closest to the color family
   const getBaseModelImage = () => {
     if (colorName.includes('blue') || colorName.includes('peacock blue') || colorName.includes('indigo') || colorName.includes('navy')) {
-      return '/assets/products/model-indigo-runway.jpg';
+      return getAssetUrl('/assets/products/model-indigo-runway.jpg');
     }
     if (colorName.includes('pink') || colorName.includes('rani') || colorName.includes('magenta') || colorName.includes('rose')) {
-      return '/assets/products/model-rani-pink-runway.jpg';
+      return getAssetUrl('/assets/products/model-rani-pink-runway.jpg');
     }
     if (colorName.includes('gold') || colorName.includes('mustard') || colorName.includes('yellow') || colorName.includes('orange')) {
-      return '/assets/products/model-mustard-gold-runway.jpg';
+      return getAssetUrl('/assets/products/model-mustard-gold-runway.jpg');
     }
     if (colorName.includes('green') || colorName.includes('emerald') || colorName.includes('teal') || colorName.includes('forest')) {
-      return '/assets/products/model-teal-green-runway.jpg';
+      return getAssetUrl('/assets/products/model-teal-green-runway.jpg');
     }
-    return '/assets/products/model-crimson-runway.jpg';
+    return getAssetUrl('/assets/products/model-crimson-runway.jpg');
   };
 
   // 2. Select the matching 4K catwalk walking motion video
   const getRunwayVideo = () => {
     if (colorName.includes('blue') || colorName.includes('peacock blue') || colorName.includes('indigo') || colorName.includes('navy')) {
-      return '/assets/videos/saree-indigo-runway-walk.mp4';
+      return getAssetUrl('/assets/videos/saree-indigo-runway-walk.mp4');
     }
     if (colorName.includes('pink') || colorName.includes('rani') || colorName.includes('magenta') || colorName.includes('rose')) {
-      return '/assets/videos/saree-rani-runway-walk.mp4';
+      return getAssetUrl('/assets/videos/saree-rani-runway-walk.mp4');
     }
     if (colorName.includes('gold') || colorName.includes('mustard') || colorName.includes('yellow') || colorName.includes('orange')) {
-      return '/assets/videos/saree-mustard-runway-walk.mp4';
+      return getAssetUrl('/assets/videos/saree-mustard-runway-walk.mp4');
     }
     if (colorName.includes('green') || colorName.includes('emerald') || colorName.includes('teal') || colorName.includes('forest')) {
-      return '/assets/videos/saree-teal-runway-walk.mp4';
+      return getAssetUrl('/assets/videos/saree-teal-runway-walk.mp4');
     }
-    return '/assets/videos/saree-crimson-runway-walk.mp4';
+    return getAssetUrl('/assets/videos/saree-crimson-runway-walk.mp4');
   };
 
   // 3. Flatlay & Macro Closeups
   const getFlatlayImage = () => {
-    if (selectedProduct?.product_code === 'SP-MEENA-01') return '/assets/products/saree-crimson-meenakari-real.jpg';
-    return '/assets/products/saree-stack-5colors.jpg';
+    if (selectedProduct?.product_code === 'SP-MEENA-01') return getAssetUrl('/assets/products/saree-crimson-meenakari-real.jpg');
+    return getAssetUrl('/assets/products/saree-stack-5colors.jpg');
   };
 
   const getMacroImage = () => {
-    if (selectedProduct?.product_code === 'SP-MEENA-01') return '/assets/products/crimson-medallion-detail.jpg';
-    if (selectedProduct?.product_code === 'SP-INDIGO-02') return '/assets/products/indigo-fabric-detail.jpg';
-    if (selectedProduct?.product_code === 'SP-RANI-03') return '/assets/products/rani-fabric-detail.jpg';
-    if (selectedProduct?.product_code === 'SP-GOLD-04') return '/assets/products/mustard-fabric-detail.jpg';
-    if (selectedProduct?.product_code === 'SP-TEAL-05') return '/assets/products/teal-fabric-detail.jpg';
-    return selectedProduct?.close_up_image || '/assets/products/crimson-medallion-detail.jpg';
+    if (selectedProduct?.product_code === 'SP-MEENA-01') return getAssetUrl('/assets/products/crimson-medallion-detail.jpg');
+    if (selectedProduct?.product_code === 'SP-INDIGO-02') return getAssetUrl('/assets/products/indigo-fabric-detail.jpg');
+    if (selectedProduct?.product_code === 'SP-RANI-03') return getAssetUrl('/assets/products/rani-fabric-detail.jpg');
+    if (selectedProduct?.product_code === 'SP-GOLD-04') return getAssetUrl('/assets/products/mustard-fabric-detail.jpg');
+    if (selectedProduct?.product_code === 'SP-TEAL-05') return getAssetUrl('/assets/products/teal-fabric-detail.jpg');
+    return getAssetUrl(selectedProduct?.close_up_image || '/assets/products/crimson-medallion-detail.jpg');
   };
 
   // 4. Metallic Zari Color Palette & Specular Gradients

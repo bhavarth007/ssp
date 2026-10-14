@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Sahjanand Polyweaves Pvt. Ltd.</title>
+    <script type="text/javascript">
+      // GitHub Pages SPA router redirect
+      var l = window.location;
+      var path = l.pathname;
+      var search = l.search;
+      var hash = l.hash;
+
+      // Ensure base target is /ssp/
+      var target = '/ssp/';
+      if (path.includes('admin')) {
+        target = '/ssp/?view=admin';
+      } else {
+        target = '/ssp/' + search + hash;
+      }
+      l.replace(target);
+    </script>
+  </head>
+  <body style="background-color: #0c0c0e; color: #d4af37; font-family: serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+    <p>Loading Sahjanand Polyweaves Showroom...</p>
+  </body>
+</html>

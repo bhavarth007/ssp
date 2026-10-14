@@ -7,14 +7,53 @@ import {
   EMBEDDED_PROCESSES,
   EMBEDDED_PRODUCTS
 } from '../data/embeddedData.js';
+import { getAssetUrl } from './assetHelper.js';
 
 const API_BASE = '/api';
+const STORAGE_VERSION = 'v2026_model_saree_catwalk_v4';
+
+export function normalizeProduct(p) {
+  if (!p) return p;
+  return {
+    ...p,
+    hero_image: getAssetUrl(p.hero_image),
+    border_image: getAssetUrl(p.border_image),
+    pallu_image: getAssetUrl(p.pallu_image),
+    close_up_image: getAssetUrl(p.close_up_image),
+    demo_video_url: getAssetUrl(p.demo_video_url)
+  };
+}
+
+export function normalizeDesign(d) {
+  if (!d) return d;
+  return {
+    ...d,
+    thumbnail: getAssetUrl(d.thumbnail)
+  };
+}
 
 // Helper for localStorage persistence of custom data (for static GitHub Pages support)
 function getLocalCustom(key, defaultData) {
   try {
+    const version = localStorage.getItem('ssp_storage_version');
+    if (version !== STORAGE_VERSION) {
+      localStorage.setItem('ssp_storage_version', STORAGE_VERSION);
+      // Reset stale cached data to ensure latest high-res model records load
+      localStorage.removeItem('ssp_products');
+      localStorage.removeItem('ssp_designs');
+      localStorage.removeItem('ssp_colours');
+      localStorage.removeItem('ssp_zari');
+      localStorage.removeItem('ssp_threads');
+      localStorage.removeItem('ssp_processes');
+      return defaultData;
+    }
     const val = localStorage.getItem(`ssp_${key}`);
-    return val ? JSON.parse(val) : defaultData;
+    if (!val) return defaultData;
+    const parsed = JSON.parse(val);
+    if (!parsed || (Array.isArray(parsed) && parsed.length === 0)) {
+      return defaultData;
+    }
+    return parsed;
   } catch (e) {
     return defaultData;
   }
@@ -250,8 +289,14 @@ export const getSettings = () => fetchApi('/settings');
 export const updateSettings = (data) => fetchApi('/settings', { method: 'PUT', body: JSON.stringify(data) });
 
 // 2. Products
-export const getProducts = (status) => fetchApi(`/products${status ? `?status=${status}` : ''}`);
-export const getProduct = (idOrCode) => fetchApi(`/products/${encodeURIComponent(idOrCode)}`);
+export const getProducts = async (status) => {
+  const data = await fetchApi(`/products${status ? `?status=${status}` : ''}`);
+  return Array.isArray(data) ? data.map(normalizeProduct) : data;
+};
+export const getProduct = async (idOrCode) => {
+  const data = await fetchApi(`/products/${encodeURIComponent(idOrCode)}`);
+  return data ? normalizeProduct(data) : data;
+};
 export const createProduct = (data) => fetchApi('/products', { method: 'POST', body: JSON.stringify(data) });
 export const updateProduct = (id, data) => fetchApi(`/products/${id}`, { method: 'PUT', body: JSON.stringify(data) });
 export const deleteProduct = (id) => fetchApi(`/products/${id}`, { method: 'DELETE' });
@@ -267,7 +312,10 @@ export const createZari = (data) => fetchApi('/zari', { method: 'POST', body: JS
 export const updateZari = (id, data) => fetchApi(`/zari/${id}`, { method: 'PUT', body: JSON.stringify(data) });
 export const deleteZari = (id) => fetchApi(`/zari/${id}`, { method: 'DELETE' });
 
-export const getDesigns = () => fetchApi('/designs');
+export const getDesigns = async () => {
+  const data = await fetchApi('/designs');
+  return Array.isArray(data) ? data.map(normalizeDesign) : data;
+};
 export const createDesign = (data) => fetchApi('/designs', { method: 'POST', body: JSON.stringify(data) });
 export const updateDesign = (id, data) => fetchApi(`/designs/${id}`, { method: 'PUT', body: JSON.stringify(data) });
 export const deleteDesign = (id) => fetchApi(`/designs/${id}`, { method: 'DELETE' });

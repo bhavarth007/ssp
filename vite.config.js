@@ -2,8 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
-export default defineConfig({
-  base: './',
+export default defineConfig(({ mode }) => ({
+  base: mode === 'development' ? '/' : '/ssp/',
   plugins: [react(), tailwindcss()],
   server: {
     port: 3000,
@@ -22,4 +22,4 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true
   }
-});
+}));

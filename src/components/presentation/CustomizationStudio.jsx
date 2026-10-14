@@ -10,6 +10,7 @@ import {
   Flame,
   Package
 } from 'lucide-react';
+import { getAssetUrl } from '../../utils/assetHelper';
 
 export default function CustomizationStudio({
   selectedProduct,
@@ -193,7 +194,7 @@ export default function CustomizationStudio({
                     }`}
                   >
                     <div className="w-12 h-12 rounded-xl bg-zinc-800/80 border border-white/10 flex items-center justify-center p-2 shrink-0">
-                      <img src={d.thumbnail || '/assets/patterns/kalka.svg'} alt={d.name} className="w-full h-full object-contain filter invert opacity-80" />
+                      <img src={getAssetUrl(d.thumbnail || '/assets/patterns/kalka.svg')} alt={d.name} className="w-full h-full object-contain filter invert opacity-80" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-semibold text-white truncate">{d.name}</p>

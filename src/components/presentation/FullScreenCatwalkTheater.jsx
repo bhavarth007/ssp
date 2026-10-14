@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Maximize2
 } from 'lucide-react';
+import { getAssetUrl } from '../../utils/assetHelper';
 
 export default function FullScreenCatwalkTheater({
   product,
@@ -25,14 +26,14 @@ export default function FullScreenCatwalkTheater({
   if (!product) return null;
 
   // Resolve matching video URL
-  const videoUrl = product.demo_video_url || (() => {
+  const videoUrl = getAssetUrl(product.demo_video_url || (() => {
     const code = (product.product_code || '').toLowerCase();
     if (code.includes('indigo') || code.includes('blue')) return '/assets/videos/saree-indigo-runway-walk.mp4';
     if (code.includes('rani') || code.includes('pink')) return '/assets/videos/saree-rani-runway-walk.mp4';
     if (code.includes('gold') || code.includes('mustard')) return '/assets/videos/saree-mustard-runway-walk.mp4';
     if (code.includes('teal') || code.includes('green')) return '/assets/videos/saree-teal-runway-walk.mp4';
     return '/assets/videos/saree-crimson-runway-walk.mp4';
-  })();
+  })());
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
@@ -77,7 +78,7 @@ export default function FullScreenCatwalkTheater({
         {/* Brand Crest */}
         <div className="flex items-center space-x-3">
           <img 
-            src="/assets/ssp-logo.svg" 
+            src={getAssetUrl('/assets/ssp-logo.svg')} 
             alt="SSP Logo" 
             className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-amber-500/20 border border-amber-500/30"
           />

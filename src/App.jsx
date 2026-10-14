@@ -18,12 +18,17 @@ import {
 
 export default function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(() => {
-    return window.location.pathname.toLowerCase().includes('/admin');
+    const path = window.location.pathname.toLowerCase();
+    const search = new URLSearchParams(window.location.search);
+    const hash = window.location.hash.toLowerCase();
+    return path.includes('/admin') || search.get('view') === 'admin' || hash.includes('admin');
   });
 
   const [currentView, setCurrentView] = useState(() => {
     const path = window.location.pathname.toLowerCase();
-    if (path.includes('/admin')) return 'admin';
+    const search = new URLSearchParams(window.location.search);
+    const hash = window.location.hash.toLowerCase();
+    if (path.includes('/admin') || search.get('view') === 'admin' || hash.includes('admin')) return 'admin';
     return 'presentation';
   });
 
@@ -137,18 +142,34 @@ export default function App() {
     }
   };
 
-  // Enterprise Dynamic Document Title & URL synchronization
+  // Enterprise Dynamic Document Title & URL synchronization (Preserving repository base path)
   useEffect(() => {
+    const url = new URL(window.location.href);
+    let urlChanged = false;
+
     if (currentView === 'admin') {
       document.title = 'Enterprise Management Portal | Sahjanand Polyweaves Pvt. Ltd.';
-    } else if (selectedProduct) {
-      document.title = `${selectedProduct.product_code} — ${selectedProduct.name} | Sahjanand Polyweaves`;
-      // Cleanly sync URL state without page reload
-      const currentUrlParams = new URLSearchParams(window.location.search);
-      if (currentUrlParams.get('sku') !== selectedProduct.product_code) {
-        const newUrl = `/presentation?sku=${encodeURIComponent(selectedProduct.product_code)}`;
-        window.history.replaceState(null, '', newUrl);
+      if (url.searchParams.get('view') !== 'admin') {
+        url.searchParams.set('view', 'admin');
+        url.searchParams.delete('sku');
+        urlChanged = true;
       }
+    } else {
+      if (url.searchParams.get('view') === 'admin') {
+        url.searchParams.delete('view');
+        urlChanged = true;
+      }
+      if (selectedProduct) {
+        document.title = `${selectedProduct.product_code} — ${selectedProduct.name} | Sahjanand Polyweaves`;
+        if (url.searchParams.get('sku') !== selectedProduct.product_code) {
+          url.searchParams.set('sku', selectedProduct.product_code);
+          urlChanged = true;
+        }
+      }
+    }
+
+    if (urlChanged) {
+      window.history.replaceState(null, '', url.pathname + url.search + url.hash);
     }
   }, [selectedProduct, currentView]);
 

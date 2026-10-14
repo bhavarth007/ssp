@@ -10,6 +10,7 @@ import {
   Building2,
   Lock
 } from 'lucide-react';
+import { getAssetUrl } from '../utils/assetHelper';
 
 export default function Navbar({ 
   currentView, 
@@ -19,6 +20,18 @@ export default function Navbar({
   setTheme,
   isAdminRoute = false
 }) {
+  const handleNav = (targetView) => {
+    setCurrentView(targetView);
+    const url = new URL(window.location.href);
+    if (targetView === 'admin') {
+      url.searchParams.set('view', 'admin');
+      url.searchParams.delete('sku');
+    } else {
+      url.searchParams.delete('view');
+    }
+    window.history.pushState(null, '', url.pathname + url.search + url.hash);
+  };
+
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0e0e12]/85 border-b border-white/10 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -26,18 +39,10 @@ export default function Navbar({
         {/* Brand identity */}
         <div 
           className="flex items-center space-x-3 cursor-pointer" 
-          onClick={() => {
-            if (isAdminRoute) {
-              setCurrentView('admin');
-              window.history.pushState(null, '', '/admin');
-            } else {
-              setCurrentView('presentation');
-              window.history.pushState(null, '', '/presentation');
-            }
-          }}
+          onClick={() => handleNav(isAdminRoute ? 'admin' : 'presentation')}
         >
           <img 
-            src="/assets/ssp-logo.svg" 
+            src={getAssetUrl('/assets/ssp-logo.svg')} 
             alt="SSP Sahjanand Polyweaves Logo" 
             className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-amber-500/20 border border-amber-500/30 shrink-0" 
           />
@@ -60,10 +65,7 @@ export default function Navbar({
         {isAdminRoute ? (
           <div className="flex items-center p-1 rounded-xl bg-zinc-900/90 border border-white/10 shadow-inner">
             <button
-              onClick={() => {
-                setCurrentView('presentation');
-                window.history.pushState(null, '', '/presentation');
-              }}
+              onClick={() => handleNav('presentation')}
               className={`flex items-center space-x-2 px-3 sm:px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 currentView === 'presentation'
                   ? 'gold-gradient-bg text-zinc-950 shadow-md font-semibold'
@@ -75,10 +77,7 @@ export default function Navbar({
             </button>
 
             <button
-              onClick={() => {
-                setCurrentView('admin');
-                window.history.pushState(null, '', '/admin');
-              }}
+              onClick={() => handleNav('admin')}
               className={`flex items-center space-x-2 px-3 sm:px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 currentView === 'admin'
                   ? 'bg-zinc-800 text-white shadow-md border border-white/20 font-semibold'

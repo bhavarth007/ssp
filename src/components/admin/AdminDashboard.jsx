@@ -58,6 +58,7 @@ import {
   synthesizeCatwalkVideo
 } from '../../utils/api';
 import { generateOrderPdf } from '../../utils/pdfGenerator';
+import { getAssetUrl } from '../../utils/assetHelper';
 import { shareToWhatsApp } from '../../utils/whatsapp';
 
 export default function AdminDashboard({
@@ -1330,7 +1331,7 @@ export default function AdminDashboard({
                 {
                   title: 'Crimson Meenakari Saree',
                   code: 'SP-MEENA-01',
-                  img: '/assets/products/model-crimson-runway.jpg',
+                  img: getAssetUrl('/assets/products/model-crimson-runway.jpg'),
                   fabric: 'Royal Georgette Silk',
                   zari: 'Gold & Pink Meenakari',
                   productIndex: 0
@@ -1338,7 +1339,7 @@ export default function AdminDashboard({
                 {
                   title: 'Indigo Elephant Brocade',
                   code: 'SP-INDIGO-02',
-                  img: '/assets/products/model-indigo-runway.jpg',
+                  img: getAssetUrl('/assets/products/model-indigo-runway.jpg'),
                   fabric: 'Brocade Satin Poly-Silk',
                   zari: 'Tested Gold Elephant Medallions',
                   productIndex: 1
@@ -1346,7 +1347,7 @@ export default function AdminDashboard({
                 {
                   title: 'Rani Pink Scalloped Saree',
                   code: 'SP-RANI-03',
-                  img: '/assets/products/model-rani-pink-runway.jpg',
+                  img: getAssetUrl('/assets/products/model-rani-pink-runway.jpg'),
                   fabric: 'Lustrous Poly-Silk',
                   zari: 'Dual-Tone Resham & Zari Boota',
                   productIndex: 2
@@ -1354,7 +1355,7 @@ export default function AdminDashboard({
                 {
                   title: 'Mustard Gold Peacock Saree',
                   code: 'SP-GOLD-04',
-                  img: '/assets/products/model-mustard-gold-runway.jpg',
+                  img: getAssetUrl('/assets/products/model-mustard-gold-runway.jpg'),
                   fabric: 'Heavy Jacquard Satin',
                   zari: 'Antique Gold Mayil Peacock',
                   productIndex: 3
@@ -1362,7 +1363,7 @@ export default function AdminDashboard({
                 {
                   title: 'Teal Green Antique Zari',
                   code: 'SP-TEAL-05',
-                  img: '/assets/products/model-teal-green-runway.jpg',
+                  img: getAssetUrl('/assets/products/model-teal-green-runway.jpg'),
                   fabric: 'High-Twist Poly-Silk',
                   zari: 'Antique Matte Gold & Silver',
                   productIndex: 4
@@ -1397,7 +1398,11 @@ export default function AdminDashboard({
                         if (prod && onSelectProductForPresentation) {
                           onSelectProductForPresentation(prod);
                         } else {
-                          window.location.href = `/presentation?code=${m.code}`;
+                          const url = new URL(window.location.href);
+                          url.searchParams.delete('view');
+                          url.searchParams.set('sku', m.code);
+                          window.history.pushState(null, '', url.pathname + url.search + url.hash);
+                          window.location.reload();
                         }
                       }}
                       className="w-full py-1.5 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-[11px] shadow hover:scale-102 active:scale-95 transition"
@@ -1424,7 +1429,7 @@ export default function AdminDashboard({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="rounded-2xl overflow-hidden border border-white/10 relative group">
                 <img 
-                  src="/assets/products/saree-crimson-meenakari-real.jpg" 
+                  src={getAssetUrl('/assets/products/saree-crimson-meenakari-real.jpg')} 
                   alt="4K Crimson Meenakari Saree" 
                   className="w-full h-56 object-cover" 
                 />
@@ -1436,7 +1441,7 @@ export default function AdminDashboard({
 
               <div className="rounded-2xl overflow-hidden border border-white/10 relative group">
                 <img 
-                  src="/assets/products/saree-stack-5colors.jpg" 
+                  src={getAssetUrl('/assets/products/saree-stack-5colors.jpg')} 
                   alt="4K 5-Saree Silk Collection" 
                   className="w-full h-56 object-cover" 
                 />
