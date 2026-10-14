@@ -134,12 +134,16 @@ export default function FullScreenCatwalkTheater({
         {/* Soft Luxury Runway Vignette */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/30" />
 
-        {/* Center Live Badge */}
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 pointer-events-none">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-950/80 border border-amber-500/40 text-[11px] font-semibold text-amber-300 backdrop-blur-md shadow-xl">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-            LIVE RUNWAY SHOWCASE • FULLSCREEN PRESENTATION
-          </span>
+        {/* Saree Identification Label */}
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 pointer-events-none z-20 max-w-[90vw]">
+          <div className="px-5 py-2 rounded-2xl bg-black/85 backdrop-blur-md border border-amber-500/40 text-center shadow-2xl space-y-0.5">
+            <span className="text-[10px] sm:text-[11px] uppercase tracking-widest text-amber-400 font-bold block">
+              {product.product_code} • {product.collection || 'Sahjanand Exclusive Series'}
+            </span>
+            <span className="text-sm sm:text-base font-serif font-bold text-white tracking-wide block truncate">
+              {product.name}
+            </span>
+          </div>
         </div>
       </div>
 

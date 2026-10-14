@@ -379,7 +379,10 @@ export default function AdminDashboard({
   const handleViewQr = async (product) => {
     setSelectedQrProduct(product);
     try {
-      const res = await getQrDataUrl(product.qr_identifier || product.product_code, 400);
+      const isGhPages = window.location.pathname.startsWith('/ssp') || window.location.hostname.includes('github.io');
+      const baseOrigin = window.location.origin + (isGhPages ? '/ssp/' : '/');
+      const directUrl = `${baseOrigin}?sku=${encodeURIComponent(product.product_code)}`;
+      const res = await getQrDataUrl(directUrl, 400);
       setQrPreviewUrl(res.qrDataUrl);
     } catch (err) {
       alert('Failed to generate QR');

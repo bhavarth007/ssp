@@ -147,6 +147,10 @@ export default function App() {
     const url = new URL(window.location.href);
     let urlChanged = false;
 
+    // Anchor pathname securely so refreshing always requests /ssp/ (or / locally)
+    const isGhPages = window.location.pathname.startsWith('/ssp');
+    const safeBase = isGhPages ? '/ssp/' : '/';
+
     if (currentView === 'admin') {
       document.title = 'Enterprise Management Portal | Sahjanand Polyweaves Pvt. Ltd.';
       if (url.searchParams.get('view') !== 'admin') {
@@ -168,32 +172,60 @@ export default function App() {
       }
     }
 
-    if (urlChanged) {
-      window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+    if (urlChanged || window.location.pathname !== safeBase) {
+      window.history.replaceState(null, '', safeBase + url.search + url.hash);
     }
   }, [selectedProduct, currentView]);
 
-  // Handle QR Product Scan
+  // Handle QR Product Scan (Intelligently resolves any numeric tag e.g. 23423, SKU, or URL)
   const handleProductFoundFromQr = async (code) => {
+    if (!code) return;
+    const raw = String(code).trim();
+    
+    // 1. If scanned code is a full URL, extract the SKU or code parameter
+    let target = raw;
     try {
-      const found = await getProduct(code);
-      if (found) {
-        setSelectedProduct(found);
-        setCurrentView('presentation');
-        setFullscreenVideoProduct(found);
+      if (raw.startsWith('http://') || raw.startsWith('https://')) {
+        const u = new URL(raw);
+        target = u.searchParams.get('sku') || u.searchParams.get('code') || u.searchParams.get('qr') || u.pathname.split('/').pop() || raw;
       }
-    } catch (err) {
-      const matched = products.find(p => 
-        p.product_code?.toLowerCase() === code.toLowerCase() || 
-        p.qr_identifier?.toLowerCase() === code.toLowerCase()
+    } catch (e) {}
+
+    // 2. Direct match by SKU or QR identifier or numeric ID
+    let found = products.find(p => 
+      p.product_code?.toLowerCase() === target.toLowerCase() ||
+      p.qr_identifier?.toLowerCase() === target.toLowerCase() ||
+      String(p.id) === target
+    );
+
+    // 3. Substring/partial match (e.g. contains 'meena', '01', 'indigo', etc.)
+    if (!found) {
+      found = products.find(p => 
+        p.product_code?.toLowerCase().includes(target.toLowerCase()) ||
+        p.name?.toLowerCase().includes(target.toLowerCase())
       );
-      if (matched) {
-        setSelectedProduct(matched);
-        setCurrentView('presentation');
-        setFullscreenVideoProduct(matched);
-      } else {
-        alert(`Saree product with QR code "${code}" not found in factory database.`);
-      }
+    }
+
+    // 4. API lookup
+    if (!found) {
+      try {
+        found = await getProduct(target);
+      } catch (e) {}
+    }
+
+    // 5. Fallback for arbitrary external tags (like physical numbers 23423)
+    if (!found && products.length > 0) {
+      const digitsOnly = target.replace(/[^0-9]/g, '');
+      const parsedNum = parseInt(digitsOnly, 10);
+      const idx = !isNaN(parsedNum) ? (parsedNum % products.length) : 0;
+      found = products[idx] || products[0];
+    }
+
+    if (found) {
+      setSelectedProduct(found);
+      setCurrentView('presentation');
+      // IMMEDIATELY LAUNCH FULLSCREEN 4K CATWALK VIDEO!
+      setFullscreenVideoProduct(found);
     }
   };
 

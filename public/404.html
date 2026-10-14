@@ -4,19 +4,31 @@
     <meta charset="utf-8">
     <title>Sahjanand Polyweaves Pvt. Ltd.</title>
     <script type="text/javascript">
-      // GitHub Pages SPA router redirect
+      // GitHub Pages SPA redirect engine
       var l = window.location;
       var path = l.pathname;
       var search = l.search;
       var hash = l.hash;
 
-      // Ensure base target is /ssp/
       var target = '/ssp/';
+      var params = new URLSearchParams(search);
+
       if (path.includes('admin')) {
-        target = '/ssp/?view=admin';
-      } else {
-        target = '/ssp/' + search + hash;
+        params.set('view', 'admin');
       }
+
+      // Check if SKU is in path (e.g. /ssp/product/SP-MEENA-01 or /ssp/presentation/SP-MEENA-01)
+      var segments = path.split('/').filter(Boolean);
+      var lastSegment = segments[segments.length - 1];
+      if (lastSegment && lastSegment !== 'ssp' && lastSegment !== 'presentation' && lastSegment !== 'admin') {
+        if (!params.has('sku')) {
+          params.set('sku', decodeURIComponent(lastSegment));
+        }
+      }
+
+      var q = params.toString();
+      target += (q ? '?' + q : '') + hash;
+
       l.replace(target);
     </script>
   </head>
