@@ -41,14 +41,19 @@ import {
   uploadMedia,
   createColour,
   updateColour,
+  deleteColour,
   createZari,
   updateZari,
+  deleteZari,
   createDesign,
   updateDesign,
+  deleteDesign,
   createThread,
   updateThread,
+  deleteThread,
   createProcess,
   updateProcess,
+  deleteProcess,
   getQrDataUrl,
   synthesizeCatwalkVideo
 } from '../../utils/api';
@@ -111,10 +116,16 @@ export default function AdminDashboard({
   const handleSaveProduct = async (e) => {
     e.preventDefault();
     try {
-      if (editingProduct.id) {
-        await updateProduct(editingProduct.id, editingProduct);
+      const sanitized = {
+        ...editingProduct,
+        base_price: parseFloat(editingProduct.base_price) || 0,
+        moq: Math.max(1, parseInt(editingProduct.moq, 10) || 1),
+        lead_time_days: Math.max(1, parseInt(editingProduct.lead_time_days, 10) || 1),
+      };
+      if (sanitized.id) {
+        await updateProduct(sanitized.id, sanitized);
       } else {
-        await createProduct(editingProduct);
+        await createProduct(sanitized);
       }
       setIsProductModalOpen(false);
       setEditingProduct(null);
@@ -142,7 +153,7 @@ export default function AdminDashboard({
       const res = await uploadMedia(file);
       setEditingProduct({
         ...editingProduct,
-        [field]: res.url
+        [field]: res.url || res.file_url
       });
     } catch (err) {
       alert(`Upload failed: ${err.message}`);
@@ -157,42 +168,50 @@ export default function AdminDashboard({
   const handleSaveCostItem = async (e) => {
     e.preventDefault();
     try {
+      const sanitized = { ...editingCostItem };
       if (costingModalType === 'colour') {
-        if (editingCostItem.id) {
-          await updateColour(editingCostItem.id, editingCostItem);
-        } else {
-          await createColour(editingCostItem);
-        }
+        sanitized.surcharge_per_saree = parseFloat(sanitized.surcharge_per_saree) || 0;
+        if (sanitized.id) await updateColour(sanitized.id, sanitized);
+        else await createColour(sanitized);
       } else if (costingModalType === 'zari') {
-        if (editingCostItem.id) {
-          await updateZari(editingCostItem.id, editingCostItem);
-        } else {
-          await createZari(editingCostItem);
-        }
+        sanitized.consumption_grams = parseFloat(sanitized.consumption_grams) || 180;
+        sanitized.additional_cost = parseFloat(sanitized.additional_cost) || 0;
+        if (sanitized.id) await updateZari(sanitized.id, sanitized);
+        else await createZari(sanitized);
       } else if (costingModalType === 'design') {
-        if (editingCostItem.id) {
-          await updateDesign(editingCostItem.id, editingCostItem);
-        } else {
-          await createDesign(editingCostItem);
-        }
+        sanitized.design_charge = parseFloat(sanitized.design_charge) || 0;
+        if (sanitized.id) await updateDesign(sanitized.id, sanitized);
+        else await createDesign(sanitized);
       } else if (costingModalType === 'thread') {
-        if (editingCostItem.id) {
-          await updateThread(editingCostItem.id, editingCostItem);
-        } else {
-          await createThread(editingCostItem);
-        }
+        sanitized.consumption_meters = parseFloat(sanitized.consumption_meters) || 400;
+        sanitized.additional_cost = parseFloat(sanitized.additional_cost) || 0;
+        if (sanitized.id) await updateThread(sanitized.id, sanitized);
+        else await createThread(sanitized);
       } else if (costingModalType === 'process') {
-        if (editingCostItem.id) {
-          await updateProcess(editingCostItem.id, editingCostItem);
-        } else {
-          await createProcess(editingCostItem);
-        }
+        sanitized.rate = parseFloat(sanitized.rate) || 0;
+        sanitized.is_mandatory = sanitized.is_mandatory ? 1 : 0;
+        if (sanitized.id) await updateProcess(sanitized.id, sanitized);
+        else await createProcess(sanitized);
       }
       setCostingModalType(null);
       setEditingCostItem(null);
       onRefreshData();
     } catch (err) {
       alert(`Error saving cost parameter: ${err.message}`);
+    }
+  };
+
+  const handleDeleteCostItem = async (type, id) => {
+    if (!window.confirm(`Are you sure you want to remove this ${type} option?`)) return;
+    try {
+      if (type === 'colour') await deleteColour(id);
+      else if (type === 'zari') await deleteZari(id);
+      else if (type === 'design') await deleteDesign(id);
+      else if (type === 'thread') await deleteThread(id);
+      else if (type === 'process') await deleteProcess(id);
+      onRefreshData();
+    } catch (err) {
+      alert(`Delete failed: ${err.message}`);
     }
   };
 
@@ -344,7 +363,11 @@ export default function AdminDashboard({
   const handleSaveSettings = async (e) => {
     e.preventDefault();
     try {
-      await updateSettings(companyForm);
+      const sanitized = {
+        ...companyForm,
+        default_gst_rate: parseFloat(companyForm.default_gst_rate) || 5.0
+      };
+      await updateSettings(sanitized);
       alert('Company settings and tax configuration updated successfully!');
       onRefreshData();
     } catch (err) {
@@ -636,15 +659,25 @@ export default function AdminDashboard({
                       <p className="text-[11px] text-amber-300 font-medium">+{formatInr(c.surcharge_per_saree)}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      setCostingModalType('colour');
-                      setEditingCostItem(c);
-                    }}
-                    className="p-1 rounded-lg text-zinc-400 hover:text-white"
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => {
+                        setCostingModalType('colour');
+                        setEditingCostItem(c);
+                      }}
+                      className="p-1 rounded-lg text-zinc-400 hover:text-white"
+                      title="Edit Colour Rate"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCostItem('colour', c.id)}
+                      className="p-1 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      title="Remove Colour"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -680,7 +713,7 @@ export default function AdminDashboard({
                   <p className="text-[11px] text-zinc-400">
                     Tone: {z.finish_tone} • Spec: {z.thickness_count} • {z.consumption_grams}g per saree
                   </p>
-                  <div className="flex justify-end pt-1">
+                  <div className="flex justify-end items-center gap-3 pt-1">
                     <button
                       onClick={() => {
                         setCostingModalType('zari');
@@ -689,6 +722,12 @@ export default function AdminDashboard({
                       className="text-[11px] text-amber-400 hover:underline flex items-center gap-1"
                     >
                       <Edit className="w-3 h-3" /> Edit Cost
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCostItem('zari', z.id)}
+                      className="text-[11px] text-red-400 hover:underline flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3 h-3" /> Remove
                     </button>
                   </div>
                 </div>
@@ -727,15 +766,25 @@ export default function AdminDashboard({
                     <p className="text-[11px] text-zinc-400">{d.motif_type}</p>
                     <p className="text-xs font-bold text-amber-300 mt-0.5">+{formatInr(d.design_charge)}</p>
                   </div>
-                  <button
-                    onClick={() => {
-                      setCostingModalType('design');
-                      setEditingCostItem(d);
-                    }}
-                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white"
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => {
+                        setCostingModalType('design');
+                        setEditingCostItem(d);
+                      }}
+                      className="p-1.5 rounded-lg text-zinc-400 hover:text-white"
+                      title="Edit Design Card"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCostItem('design', d.id)}
+                      className="p-1.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      title="Remove Design Card"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -780,15 +829,27 @@ export default function AdminDashboard({
                     <p className="text-[11px] text-zinc-400 mt-1">{p.description}</p>
                     <p className="text-xs font-bold text-emerald-400 mt-1">{formatInr(p.rate)} per saree</p>
                   </div>
-                  <button
-                    onClick={() => {
-                      setCostingModalType('process');
-                      setEditingCostItem(p);
-                    }}
-                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white"
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => {
+                        setCostingModalType('process');
+                        setEditingCostItem(p);
+                      }}
+                      className="p-1.5 rounded-lg text-zinc-400 hover:text-white"
+                      title="Edit Operation"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
+                    {!p.is_mandatory && (
+                      <button
+                        onClick={() => handleDeleteCostItem('process', p.id)}
+                        className="p-1.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                        title="Remove Operation"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1090,8 +1151,9 @@ export default function AdminDashboard({
               <label className="text-xs font-semibold text-zinc-300 block mb-1">Default GST Rate (%)</label>
               <input
                 type="number"
-                value={companyForm.default_gst_rate || 5}
-                onChange={(e) => setCompanyForm({ ...companyForm, default_gst_rate: parseFloat(e.target.value) || 5 })}
+                step="any"
+                value={companyForm.default_gst_rate !== undefined ? companyForm.default_gst_rate : ''}
+                onChange={(e) => setCompanyForm({ ...companyForm, default_gst_rate: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white"
               />
             </div>
@@ -1476,9 +1538,10 @@ export default function AdminDashboard({
                   <label className="text-xs text-zinc-300 block mb-1">Base Price (INR ₹) *</label>
                   <input
                     type="number"
+                    step="any"
                     required
-                    value={editingProduct.base_price || 0}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, base_price: parseFloat(e.target.value) || 0 })}
+                    value={editingProduct.base_price !== undefined ? editingProduct.base_price : ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, base_price: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white"
                   />
                 </div>
@@ -1486,8 +1549,9 @@ export default function AdminDashboard({
                   <label className="text-xs text-zinc-300 block mb-1">MOQ (Sarees)</label>
                   <input
                     type="number"
-                    value={editingProduct.moq || 10}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, moq: parseInt(e.target.value, 10) || 10 })}
+                    min="1"
+                    value={editingProduct.moq !== undefined ? editingProduct.moq : ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, moq: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white"
                   />
                 </div>
@@ -1495,8 +1559,9 @@ export default function AdminDashboard({
                   <label className="text-xs text-zinc-300 block mb-1">Lead Time (Days)</label>
                   <input
                     type="number"
-                    value={editingProduct.lead_time_days || 10}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, lead_time_days: parseInt(e.target.value, 10) || 10 })}
+                    min="1"
+                    value={editingProduct.lead_time_days !== undefined ? editingProduct.lead_time_days : ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, lead_time_days: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white"
                   />
                 </div>
@@ -1616,8 +1681,9 @@ export default function AdminDashboard({
                     <label className="text-xs text-zinc-300 block mb-1">Dye Surcharge Per Saree (INR ₹)</label>
                     <input
                       type="number"
-                      value={editingCostItem.surcharge_per_saree || 0}
-                      onChange={(e) => setEditingCostItem({ ...editingCostItem, surcharge_per_saree: parseFloat(e.target.value) || 0 })}
+                      step="any"
+                      value={editingCostItem.surcharge_per_saree !== undefined ? editingCostItem.surcharge_per_saree : ''}
+                      onChange={(e) => setEditingCostItem({ ...editingCostItem, surcharge_per_saree: e.target.value })}
                       className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white"
                     />
                   </div>
@@ -1655,8 +1721,9 @@ export default function AdminDashboard({
                       <label className="text-xs text-zinc-300 block mb-1">Gram Consumption</label>
                       <input
                         type="number"
-                        value={editingCostItem.consumption_grams || 180}
-                        onChange={(e) => setEditingCostItem({ ...editingCostItem, consumption_grams: parseFloat(e.target.value) || 180 })}
+                        step="any"
+                        value={editingCostItem.consumption_grams !== undefined ? editingCostItem.consumption_grams : ''}
+                        onChange={(e) => setEditingCostItem({ ...editingCostItem, consumption_grams: e.target.value })}
                         className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white"
                       />
                     </div>
@@ -1665,8 +1732,9 @@ export default function AdminDashboard({
                     <label className="text-xs text-zinc-300 block mb-1">Additional Cost Surcharge (INR ₹)</label>
                     <input
                       type="number"
-                      value={editingCostItem.additional_cost || 0}
-                      onChange={(e) => setEditingCostItem({ ...editingCostItem, additional_cost: parseFloat(e.target.value) || 0 })}
+                      step="any"
+                      value={editingCostItem.additional_cost !== undefined ? editingCostItem.additional_cost : ''}
+                      onChange={(e) => setEditingCostItem({ ...editingCostItem, additional_cost: e.target.value })}
                       className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white"
                     />
                   </div>
@@ -1699,8 +1767,9 @@ export default function AdminDashboard({
                     <label className="text-xs text-zinc-300 block mb-1">Pattern Charge Per Saree (INR ₹)</label>
                     <input
                       type="number"
-                      value={editingCostItem.design_charge || 0}
-                      onChange={(e) => setEditingCostItem({ ...editingCostItem, design_charge: parseFloat(e.target.value) || 0 })}
+                      step="any"
+                      value={editingCostItem.design_charge !== undefined ? editingCostItem.design_charge : ''}
+                      onChange={(e) => setEditingCostItem({ ...editingCostItem, design_charge: e.target.value })}
                       className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white"
                     />
                   </div>
@@ -1733,8 +1802,9 @@ export default function AdminDashboard({
                       <label className="text-xs text-zinc-300 block mb-1">Rate (INR ₹ / saree)</label>
                       <input
                         type="number"
-                        value={editingCostItem.rate || 0}
-                        onChange={(e) => setEditingCostItem({ ...editingCostItem, rate: parseFloat(e.target.value) || 0 })}
+                        step="any"
+                        value={editingCostItem.rate !== undefined ? editingCostItem.rate : ''}
+                        onChange={(e) => setEditingCostItem({ ...editingCostItem, rate: e.target.value })}
                         className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white"
                       />
                     </div>

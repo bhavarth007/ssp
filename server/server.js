@@ -224,6 +224,10 @@ app.put('/api/colours/:id', (req, res) => {
     .run(name, hex_code, surcharge_per_saree, is_active !== undefined ? is_active : 1, req.params.id);
   res.json(db.prepare('SELECT * FROM colours WHERE id = ?').get(req.params.id));
 });
+app.delete('/api/colours/:id', (req, res) => {
+  db.prepare('DELETE FROM colours WHERE id = ?').run(req.params.id);
+  res.json({ success: true, message: 'Colour deleted' });
+});
 
 // Zari
 app.get('/api/zari', (req, res) => {
@@ -248,6 +252,10 @@ app.put('/api/zari/:id', (req, res) => {
   `).run(name, grade, finish_tone, thickness_count, consumption_grams, rate_per_gram, additional_cost, is_active !== undefined ? is_active : 1, req.params.id);
   res.json(db.prepare('SELECT * FROM zari_options WHERE id = ?').get(req.params.id));
 });
+app.delete('/api/zari/:id', (req, res) => {
+  db.prepare('DELETE FROM zari_options WHERE id = ?').run(req.params.id);
+  res.json({ success: true, message: 'Zari option deleted' });
+});
 
 // Designs
 app.get('/api/designs', (req, res) => {
@@ -270,6 +278,10 @@ app.put('/api/designs/:id', (req, res) => {
     WHERE id = ?
   `).run(design_code, name, motif_type, thumbnail, design_charge, is_active !== undefined ? is_active : 1, req.params.id);
   res.json(db.prepare('SELECT * FROM designs WHERE id = ?').get(req.params.id));
+});
+app.delete('/api/designs/:id', (req, res) => {
+  db.prepare('DELETE FROM designs WHERE id = ?').run(req.params.id);
+  res.json({ success: true, message: 'Design deleted' });
 });
 
 // Threads
@@ -294,6 +306,10 @@ app.put('/api/threads/:id', (req, res) => {
   `).run(thread_code, name, count_spec, consumption_meters, additional_cost, is_active !== undefined ? is_active : 1, req.params.id);
   res.json(db.prepare('SELECT * FROM thread_options WHERE id = ?').get(req.params.id));
 });
+app.delete('/api/threads/:id', (req, res) => {
+  db.prepare('DELETE FROM thread_options WHERE id = ?').run(req.params.id);
+  res.json({ success: true, message: 'Thread option deleted' });
+});
 
 // Manufacturing Processes
 app.get('/api/processes', (req, res) => {
@@ -316,6 +332,10 @@ app.put('/api/processes/:id', (req, res) => {
     WHERE id = ?
   `).run(process_code, name, description, rate_type, rate, is_mandatory ? 1 : 0, is_active !== undefined ? is_active : 1, req.params.id);
   res.json(db.prepare('SELECT * FROM manufacturing_processes WHERE id = ?').get(req.params.id));
+});
+app.delete('/api/processes/:id', (req, res) => {
+  db.prepare('DELETE FROM manufacturing_processes WHERE id = ?').run(req.params.id);
+  res.json({ success: true, message: 'Process deleted' });
 });
 
 // ==========================================

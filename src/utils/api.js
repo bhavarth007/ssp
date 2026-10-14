@@ -52,11 +52,13 @@ export async function fetchApi(endpoint, options = {}) {
 function handleStaticFallback(endpoint, options = {}) {
   const cleanEndpoint = endpoint.split('?')[0];
   const method = (options.method || 'GET').toUpperCase();
+  const body = options.body ? JSON.parse(options.body) : {};
 
   // 1. Settings
   if (cleanEndpoint === '/settings') {
     if (method === 'PUT') {
-      const updated = { ...EMBEDDED_SETTINGS, ...JSON.parse(options.body || '{}') };
+      const current = getLocalCustom('settings', EMBEDDED_SETTINGS);
+      const updated = { ...current, ...body };
       setLocalCustom('settings', updated);
       return updated;
     }
@@ -67,7 +69,23 @@ function handleStaticFallback(endpoint, options = {}) {
   if (cleanEndpoint === '/products') {
     const allProducts = getLocalCustom('products', EMBEDDED_PRODUCTS);
     if (method === 'POST') {
-      const newProd = { id: Date.now(), ...JSON.parse(options.body || '{}') };
+      const newProd = {
+        id: Date.now(),
+        product_code: body.product_code || `SP-${Date.now().toString().slice(-4)}`,
+        name: body.name || 'New Saree Weave',
+        category: body.category || 'Surat Weaves',
+        collection: body.collection || 'Festive Luxe',
+        base_price: parseFloat(body.base_price) || 2950,
+        moq: parseInt(body.moq, 10) || 1,
+        lead_time_days: parseInt(body.lead_time_days, 10) || 7,
+        status: 'active',
+        hero_image: body.hero_image || '/assets/products/model-crimson-runway.jpg',
+        border_image: body.border_image || '/assets/products/crimson-border-detail.jpg',
+        pallu_image: body.pallu_image || '/assets/products/saree-crimson-meenakari-real.jpg',
+        close_up_image: body.close_up_image || '/assets/products/crimson-medallion-detail.jpg',
+        demo_video_url: body.demo_video_url || '/assets/videos/saree-crimson-runway-walk.mp4',
+        ...body
+      };
       const updatedList = [newProd, ...allProducts];
       setLocalCustom('products', updatedList);
       return newProd;
@@ -77,29 +95,76 @@ function handleStaticFallback(endpoint, options = {}) {
 
   if (cleanEndpoint.startsWith('/products/')) {
     const idOrCode = decodeURIComponent(cleanEndpoint.replace('/products/', ''));
-    const allProducts = getLocalCustom('products', EMBEDDED_PRODUCTS);
+    let allProducts = getLocalCustom('products', EMBEDDED_PRODUCTS);
+    
+    if (method === 'DELETE') {
+      allProducts = allProducts.filter(p => String(p.id) !== idOrCode && p.product_code !== idOrCode);
+      setLocalCustom('products', allProducts);
+      return { success: true, message: 'Product deleted' };
+    }
+
+    if (method === 'PUT') {
+      allProducts = allProducts.map(p => {
+        if (String(p.id) === idOrCode || p.product_code === idOrCode) {
+          return { ...p, ...body };
+        }
+        return p;
+      });
+      setLocalCustom('products', allProducts);
+      return { success: true, product: body };
+    }
+
     const prod = allProducts.find(p => String(p.id) === idOrCode || p.product_code === idOrCode || p.qr_identifier === idOrCode);
     if (prod) return prod;
     return allProducts[0];
   }
 
-  // 3. Customization Libraries
-  if (cleanEndpoint === '/colours') return getLocalCustom('colours', EMBEDDED_COLOURS);
-  if (cleanEndpoint === '/zari') return getLocalCustom('zari', EMBEDDED_ZARI);
-  if (cleanEndpoint === '/designs') return getLocalCustom('designs', EMBEDDED_DESIGNS);
-  if (cleanEndpoint === '/threads') return getLocalCustom('threads', EMBEDDED_THREADS);
-  if (cleanEndpoint === '/processes') return getLocalCustom('processes', EMBEDDED_PROCESSES);
+  // Helper for generic collection CRUD in static mode
+  const handleCollectionCrud = (collKey, defaultData) => {
+    let items = getLocalCustom(collKey, defaultData);
+    const subPath = cleanEndpoint.replace(`/${collKey}`, '');
+
+    if (subPath === '' || subPath === '/') {
+      if (method === 'POST') {
+        const newItem = { id: Date.now(), ...body };
+        items = [...items, newItem];
+        setLocalCustom(collKey, items);
+        return newItem;
+      }
+      return items;
+    }
+
+    const itemId = subPath.replace('/', '');
+    if (method === 'DELETE') {
+      items = items.filter(i => String(i.id) !== itemId && i.process_code !== itemId && i.design_code !== itemId && i.thread_code !== itemId);
+      setLocalCustom(collKey, items);
+      return { success: true, message: 'Deleted' };
+    }
+
+    if (method === 'PUT') {
+      items = items.map(i => (String(i.id) === itemId ? { ...i, ...body } : i));
+      setLocalCustom(collKey, items);
+      return { success: true, item: body };
+    }
+
+    return items.find(i => String(i.id) === itemId) || items[0];
+  };
+
+  if (cleanEndpoint.startsWith('/colours')) return handleCollectionCrud('colours', EMBEDDED_COLOURS);
+  if (cleanEndpoint.startsWith('/zari')) return handleCollectionCrud('zari', EMBEDDED_ZARI);
+  if (cleanEndpoint.startsWith('/designs')) return handleCollectionCrud('designs', EMBEDDED_DESIGNS);
+  if (cleanEndpoint.startsWith('/threads')) return handleCollectionCrud('threads', EMBEDDED_THREADS);
+  if (cleanEndpoint.startsWith('/processes')) return handleCollectionCrud('processes', EMBEDDED_PROCESSES);
 
   // 4. Real-time Pricing Calculation
   if (cleanEndpoint === '/pricing/calculate') {
-    const body = JSON.parse(options.body || '{}');
     const base = Number(body.base_price || 2950);
     const colourCost = Number(body.colour_surcharge || 0);
     const zariCost = Number(body.zari_cost || 0);
     const designCost = Number(body.design_charge || 0);
     const processSum = (body.processes || []).reduce((sum, p) => sum + Number(p.rate || 0), 0);
     const subtotal = base + colourCost + zariCost + designCost + processSum;
-    const qty = Number(body.quantity || 10);
+    const qty = Math.max(1, parseInt(body.quantity, 10) || 1);
     const discountPct = qty >= 100 ? 15 : qty >= 50 ? 10 : qty >= 20 ? 5 : 0;
     const discountAmt = (subtotal * discountPct) / 100;
     const taxable = subtotal - discountAmt;
@@ -108,20 +173,28 @@ function handleStaticFallback(endpoint, options = {}) {
     const finalUnit = taxable + gstAmt;
 
     return {
-      base_price: base,
-      colour_surcharge: colourCost,
-      zari_cost: zariCost,
-      design_charge: designCost,
-      processes_cost: processSum,
-      subtotal_per_saree: subtotal,
+      productId: body.productId || 1,
       quantity: qty,
-      volume_discount_percent: discountPct,
-      discount_amount_per_saree: discountAmt,
-      taxable_amount_per_saree: taxable,
-      gst_rate: gstRate,
-      gst_amount_per_saree: gstAmt,
-      final_price_per_saree: Math.round(finalUnit),
-      total_order_value: Math.round(finalUnit * qty)
+      breakdown: {
+        basePrice: base,
+        colourCost,
+        colourName: 'Custom Colour Selection',
+        zariCost,
+        zariName: 'Zari Yarn',
+        designCost,
+        designName: 'Jacquard Pattern',
+        threadCost: 0,
+        threadName: 'Standard Poly Filament',
+        manufacturingCost: processSum,
+        appliedProcesses: body.processes || []
+      },
+      unitPrice: Math.round(subtotal),
+      subtotal: Math.round(subtotal * qty),
+      discountPercentage: discountPct,
+      discountAmount: Math.round(discountAmt * qty),
+      gstRate: gstRate,
+      gstAmount: Math.round(gstAmt * qty),
+      grandTotal: Math.round(finalUnit * qty)
     };
   }
 
@@ -134,7 +207,7 @@ function handleStaticFallback(endpoint, options = {}) {
         order_number: `ORD-SSP-${Math.floor(1000 + Math.random() * 9000)}`,
         created_at: new Date().toISOString(),
         status: 'quoted',
-        ...JSON.parse(options.body || '{}')
+        ...body
       };
       setLocalCustom('orders', [newOrder, ...orders]);
       return newOrder;
@@ -142,7 +215,25 @@ function handleStaticFallback(endpoint, options = {}) {
     return orders;
   }
 
-  // 6. QR generation fallback (uses quickchart / static QR image)
+  if (cleanEndpoint.startsWith('/orders/')) {
+    let orders = getLocalCustom('orders', []);
+    const parts = cleanEndpoint.replace('/orders/', '').split('/');
+    const orderId = parts[0];
+
+    if (parts[1] === 'status' && method === 'PATCH') {
+      orders = orders.map(o => String(o.id) === orderId ? { ...o, status: body.status } : o);
+      setLocalCustom('orders', orders);
+      return { success: true };
+    }
+
+    if (method === 'DELETE') {
+      orders = orders.filter(o => String(o.id) !== orderId);
+      setLocalCustom('orders', orders);
+      return { success: true };
+    }
+  }
+
+  // 6. QR generation fallback
   if (cleanEndpoint === '/qr/generate') {
     const urlParams = new URLSearchParams(endpoint.split('?')[1] || '');
     const text = urlParams.get('text') || 'SSP-QR';
@@ -169,22 +260,27 @@ export const deleteProduct = (id) => fetchApi(`/products/${id}`, { method: 'DELE
 export const getColours = () => fetchApi('/colours');
 export const createColour = (data) => fetchApi('/colours', { method: 'POST', body: JSON.stringify(data) });
 export const updateColour = (id, data) => fetchApi(`/colours/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const deleteColour = (id) => fetchApi(`/colours/${id}`, { method: 'DELETE' });
 
 export const getZari = () => fetchApi('/zari');
 export const createZari = (data) => fetchApi('/zari', { method: 'POST', body: JSON.stringify(data) });
 export const updateZari = (id, data) => fetchApi(`/zari/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const deleteZari = (id) => fetchApi(`/zari/${id}`, { method: 'DELETE' });
 
 export const getDesigns = () => fetchApi('/designs');
 export const createDesign = (data) => fetchApi('/designs', { method: 'POST', body: JSON.stringify(data) });
 export const updateDesign = (id, data) => fetchApi(`/designs/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const deleteDesign = (id) => fetchApi(`/designs/${id}`, { method: 'DELETE' });
 
 export const getThreads = () => fetchApi('/threads');
 export const createThread = (data) => fetchApi('/threads', { method: 'POST', body: JSON.stringify(data) });
 export const updateThread = (id, data) => fetchApi(`/threads/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const deleteThread = (id) => fetchApi(`/threads/${id}`, { method: 'DELETE' });
 
 export const getProcesses = () => fetchApi('/processes');
 export const createProcess = (data) => fetchApi('/processes', { method: 'POST', body: JSON.stringify(data) });
 export const updateProcess = (id, data) => fetchApi(`/processes/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const deleteProcess = (id) => fetchApi(`/processes/${id}`, { method: 'DELETE' });
 
 // 4. Real-time Pricing Calculation
 export const calculatePricing = (payload) => fetchApi('/pricing/calculate', { method: 'POST', body: JSON.stringify(payload) });
@@ -213,10 +309,9 @@ export async function uploadMedia(file) {
     }
     return await response.json();
   } catch (err) {
-    // In static mode, convert to local ObjectURL or base64 data URL
     return new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onload = (e) => resolve({ file_url: e.target.result, filename: file.name });
+      reader.onload = (e) => resolve({ file_url: e.target.result, url: e.target.result, filename: file.name });
       reader.readAsDataURL(file);
     });
   }
