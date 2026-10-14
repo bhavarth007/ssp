@@ -19,6 +19,52 @@ export default function PricingSummaryBar({
   onProceedToOrder
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [localQty, setLocalQty] = useState(String(quantity || 1));
+
+  React.useEffect(() => {
+    if (quantity !== undefined && quantity !== null) {
+      setLocalQty(String(quantity));
+    }
+  }, [quantity]);
+
+  const handleInputChange = (e) => {
+    const rawVal = e.target.value;
+    if (rawVal === '') {
+      setLocalQty('');
+      return;
+    }
+    const digitsOnly = rawVal.replace(/[^0-9]/g, '');
+    setLocalQty(digitsOnly);
+    const parsed = parseInt(digitsOnly, 10);
+    if (!isNaN(parsed) && parsed >= 1) {
+      setQuantity(parsed);
+    }
+  };
+
+  const handleInputBlur = () => {
+    const parsed = parseInt(localQty, 10);
+    if (isNaN(parsed) || parsed < 1) {
+      setLocalQty('1');
+      setQuantity(1);
+    } else {
+      setLocalQty(String(parsed));
+      setQuantity(parsed);
+    }
+  };
+
+  const handleDecrement = () => {
+    const current = parseInt(localQty, 10) || quantity || 1;
+    const nextVal = Math.max(1, current - 1);
+    setLocalQty(String(nextVal));
+    setQuantity(nextVal);
+  };
+
+  const handleIncrement = () => {
+    const current = parseInt(localQty, 10) || quantity || 1;
+    const nextVal = current + 1;
+    setLocalQty(String(nextVal));
+    setQuantity(nextVal);
+  };
 
   if (!calculation) return null;
 
@@ -131,22 +177,28 @@ export default function PricingSummaryBar({
             <span className="text-xs text-zinc-400 hidden md:inline">Order Quantity:</span>
             <div className="flex items-center p-1 rounded-xl bg-zinc-900 border border-white/15">
               <button
-                onClick={() => setQuantity(Math.max(1, quantity - (quantity > 20 ? 5 : 1)))}
-                className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition"
-                title="Decrease Quantity"
+                type="button"
+                onClick={handleDecrement}
+                className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition active:scale-95"
+                title="Decrease Quantity (-1)"
               >
                 <Minus className="w-3.5 h-3.5" />
               </button>
               <input
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                className="w-12 text-center text-xs font-bold bg-transparent text-white focus:outline-none"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={localQty}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                placeholder="1"
+                className="w-14 text-center text-xs font-bold bg-transparent text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
               <button
-                onClick={() => setQuantity(quantity + (quantity >= 20 ? 5 : 1))}
-                className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition"
-                title="Increase Quantity"
+                type="button"
+                onClick={handleIncrement}
+                className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-300 hover:text-white transition active:scale-95"
+                title="Increase Quantity (+1)"
               >
                 <Plus className="w-3.5 h-3.5" />
               </button>

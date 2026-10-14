@@ -207,128 +207,35 @@ export default function FabricPreviewCanvas({
               }}
             />
 
-            {/* DYNAMIC LAYER 2: Jacquard Weave Motifs Overlay */}
-            {/* High-definition woven motifs rendered across the saree body & pleats */}
-            <div 
-              className="absolute inset-0 pointer-events-none mix-blend-overlay transition-opacity duration-500"
-              style={{
-                opacity: 0.75,
-                clipPath: 'polygon(22% 28%, 78% 28%, 85% 96%, 15% 96%)'
-              }}
-            >
-              {activeMotif === 'kalka' && (
-                <svg className="w-full h-full opacity-60" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <pattern id="kalka-jaal" width="80" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
-                      <path d="M40 10 C30 25, 20 40, 40 60 C60 40, 50 25, 40 10 Z" fill="none" stroke={zariPalette.primary} strokeWidth="1.8" />
-                      <circle cx="40" cy="38" r="5" fill={zariPalette.highlight} opacity="0.8" />
-                      <circle cx="20" cy="20" r="3" fill={zariPalette.primary} />
-                      <circle cx="60" cy="20" r="3" fill={zariPalette.primary} />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#kalka-jaal)" />
-                </svg>
-              )}
-
-              {activeMotif === 'elephant' && (
-                <svg className="w-full h-full opacity-60" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <pattern id="elephant-medallion" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="rotate(5)">
-                      <circle cx="50" cy="50" r="32" fill="none" stroke={zariPalette.primary} strokeWidth="2" strokeDasharray="3,3" />
-                      <circle cx="50" cy="50" r="26" fill="none" stroke={zariPalette.highlight} strokeWidth="1.2" />
-                      <path d="M40 54 Q44 42 50 42 Q56 42 60 54 Q56 50 50 50 Q44 50 40 54 Z" fill={zariPalette.primary} />
-                      <circle cx="50" cy="46" r="3" fill={zariPalette.highlight} />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#elephant-medallion)" />
-                </svg>
-              )}
-
-              {activeMotif === 'scallop' && (
-                <svg className="w-full h-full opacity-60" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <pattern id="scallop-vine" width="70" height="70" patternUnits="userSpaceOnUse" patternTransform="rotate(25)">
-                      <path d="M0 35 Q17.5 10 35 35 T70 35" fill="none" stroke={zariPalette.primary} strokeWidth="1.8" />
-                      <circle cx="35" cy="35" r="4" fill={zariPalette.highlight} />
-                      <circle cx="17" cy="22" r="2.5" fill={zariPalette.primary} />
-                      <circle cx="52" cy="48" r="2.5" fill={zariPalette.primary} />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#scallop-vine)" />
-                </svg>
-              )}
-
-              {activeMotif === 'patola' && (
-                <svg className="w-full h-full opacity-60" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <pattern id="patola-ikat" width="50" height="50" patternUnits="userSpaceOnUse">
-                      <polygon points="25,5 45,25 25,45 5,25" fill="none" stroke={zariPalette.primary} strokeWidth="1.6" />
-                      <polygon points="25,14 36,25 25,36 14,25" fill={zariPalette.primary} opacity="0.35" />
-                      <circle cx="25" cy="25" r="3" fill={zariPalette.highlight} />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#patola-ikat)" />
-                </svg>
-              )}
-
-              {activeMotif === 'peacock' && (
-                <svg className="w-full h-full opacity-60" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <pattern id="peacock-gopuram" width="90" height="90" patternUnits="userSpaceOnUse" patternTransform="rotate(10)">
-                      <path d="M45 10 L65 40 L55 40 L70 65 L20 65 L35 40 L25 40 Z" fill="none" stroke={zariPalette.primary} strokeWidth="1.8" />
-                      <circle cx="45" cy="35" r="4" fill={zariPalette.highlight} />
-                      <circle cx="45" cy="52" r="6" fill="none" stroke={zariPalette.primary} strokeWidth="1.2" />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#peacock-gopuram)" />
-                </svg>
-              )}
-            </div>
-
-            {/* DYNAMIC LAYER 3: Metallic Zari Shimmer & Dynamic Spotlight Glint */}
+            {/* DYNAMIC LAYER 2: Metallic Zari Shimmer & Stage Lighting Reflection */}
             {showZariShimmer && (
               <div 
                 className="absolute inset-0 pointer-events-none mix-blend-color-dodge transition-all duration-500 animate-pulse"
                 style={{
                   background: `radial-gradient(ellipse at 50% 62%, ${zariPalette.glow} 0%, transparent 68%)`,
-                  opacity: 0.75
+                  opacity: 0.65
                 }}
               />
             )}
 
-            {/* DYNAMIC LAYER 4: Diang / High-Luster Calendering Silk Sheen */}
+            {/* DYNAMIC LAYER 3: Diang / High-Luster Calendering Silk Sheen */}
             {hasDiang && (
               <div 
                 className="absolute inset-0 pointer-events-none mix-blend-overlay transition-opacity duration-500"
                 style={{
-                  background: 'linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.45) 48%, rgba(255,255,255,0.6) 52%, transparent 75%)',
-                  opacity: 0.9,
+                  background: 'linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.35) 48%, rgba(255,255,255,0.5) 52%, transparent 75%)',
+                  opacity: 0.85,
                   animation: 'pulse 3.5s infinite'
                 }}
               />
             )}
 
-            {/* DYNAMIC LAYER 5: Handcrafted Silk & Zari Pallu Tassels (Latkan Finishing) */}
+            {/* Customization Feature Tag Badges */}
             {hasTassels && (
-              <div 
-                className="absolute left-[24%] bottom-[7%] right-[22%] h-10 pointer-events-none flex justify-between items-start z-10"
-              >
-                {[...Array(12)].map((_, idx) => (
-                  <div key={idx} className="flex flex-col items-center animate-bounce" style={{ animationDuration: `${1.4 + (idx % 3) * 0.2}s` }}>
-                    {/* Golden Zari Bead */}
-                    <div 
-                      className="w-2 h-2 rounded-full border border-amber-300 shadow-sm"
-                      style={{ backgroundColor: zariPalette.primary }}
-                    />
-                    {/* Silk Hanging String */}
-                    <div className="w-[1.5px] h-3 bg-amber-200/90" />
-                    {/* Silk Fluff Tassel Ball */}
-                    <div 
-                      className="w-2.5 h-3.5 rounded-b-full shadow-md"
-                      style={{ backgroundColor: baseColorHex, border: `1px solid ${zariPalette.primary}` }}
-                    />
-                  </div>
-                ))}
+              <div className="absolute top-4 left-4 z-10 pointer-events-none">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-950/80 border border-amber-500/40 text-[11px] font-semibold text-amber-300 backdrop-blur-md shadow-lg">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Handcrafted Pallu Tassels (Latkan)
+                </span>
               </div>
             )}
 

@@ -32,7 +32,7 @@ export default function PresentationApp({
   onOpenQrScanner
 }) {
   const [viewMode, setViewMode] = useState('overview'); // 'overview' | 'customize'
-  const [quantity, setQuantity] = useState(15);
+  const [quantity, setQuantity] = useState(1);
   
   // Customization state
   const [customization, setCustomization] = useState({
@@ -69,8 +69,6 @@ export default function PresentationApp({
       thread: defaultThread,
       processes: mandatoryProcesses
     });
-
-    setQuantity(selectedProduct.moq || 10);
   }, [selectedProduct, colours, zariOptions, designs, threads, processes]);
 
   // Recalculate price with backend server whenever customization or quantity changes
