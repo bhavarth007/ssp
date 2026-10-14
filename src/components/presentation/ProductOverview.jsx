@@ -18,7 +18,8 @@ import {
 export default function ProductOverview({
   product,
   onStartCustomize,
-  onOpenCompare
+  onOpenCompare,
+  onLaunchFullscreenVideo
 }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -66,12 +67,24 @@ export default function ProductOverview({
                   <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-300 border border-amber-500/30 text-xs font-semibold">
                     4K International Model Runway Catwalk
                   </span>
-                  <button
-                    onClick={() => setIsMuted(!isMuted)}
-                    className="p-2 rounded-full bg-black/60 text-white hover:bg-black/90"
-                  >
-                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setIsMuted(!isMuted)}
+                      className="p-2 rounded-full bg-black/60 text-white hover:bg-black/90"
+                      title={isMuted ? "Unmute" : "Mute"}
+                    >
+                      {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    </button>
+                    {onLaunchFullscreenVideo && (
+                      <button
+                        onClick={() => onLaunchFullscreenVideo(product)}
+                        className="p-2 rounded-full bg-black/60 text-amber-300 hover:bg-black/90 hover:text-white"
+                        title="Enter Fullscreen Runway Walk Theater"
+                      >
+                        <Maximize className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex justify-center items-center pointer-events-auto">

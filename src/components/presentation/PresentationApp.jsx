@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   QrCode, 
   Sparkles, 
+  Play,
   ChevronLeft, 
   SlidersHorizontal, 
   FileText, 
@@ -29,7 +30,8 @@ export default function PresentationApp({
   threads = [],
   processes = [],
   settings,
-  onOpenQrScanner
+  onOpenQrScanner,
+  onLaunchFullscreenVideo
 }) {
   const [viewMode, setViewMode] = useState('overview'); // 'overview' | 'customize'
   const [quantity, setQuantity] = useState(1);
@@ -187,6 +189,18 @@ export default function PresentationApp({
             ))}
           </select>
 
+          {onLaunchFullscreenVideo && (
+            <button
+              onClick={() => onLaunchFullscreenVideo(selectedProduct)}
+              className="px-3.5 py-2 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 text-xs font-bold flex items-center gap-1.5 shrink-0 transition active:scale-95 shadow-sm"
+              title="Watch Fullscreen Model Catwalk"
+            >
+              <Play className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+              <span className="hidden sm:inline">Runway Walk</span>
+              <span className="sm:hidden">Runway</span>
+            </button>
+          )}
+
           {viewMode === 'overview' ? (
             <button
               onClick={() => setViewMode('customize')}
@@ -212,6 +226,7 @@ export default function PresentationApp({
         <ProductOverview
           product={selectedProduct}
           onStartCustomize={() => setViewMode('customize')}
+          onLaunchFullscreenVideo={onLaunchFullscreenVideo}
           onOpenCompare={() => {
             handleDuplicateToAlt();
             setIsCompareOpen(true);

@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import PresentationApp from './components/presentation/PresentationApp';
 import AdminDashboard from './components/admin/AdminDashboard';
 import QrScannerModal from './components/presentation/QrScannerModal';
+import FullScreenCatwalkTheater from './components/presentation/FullScreenCatwalkTheater';
 import { 
   getProducts, 
   getProduct, 
@@ -28,6 +29,7 @@ export default function App() {
 
   const [theme, setTheme] = useState('dark');
   const [isQrScannerOpen, setIsQrScannerOpen] = useState(false);
+  const [fullscreenVideoProduct, setFullscreenVideoProduct] = useState(null);
   
   // Core Entities State
   const [products, setProducts] = useState([]);
@@ -157,6 +159,7 @@ export default function App() {
       if (found) {
         setSelectedProduct(found);
         setCurrentView('presentation');
+        setFullscreenVideoProduct(found);
       }
     } catch (err) {
       const matched = products.find(p => 
@@ -166,6 +169,7 @@ export default function App() {
       if (matched) {
         setSelectedProduct(matched);
         setCurrentView('presentation');
+        setFullscreenVideoProduct(matched);
       } else {
         alert(`Saree product with QR code "${code}" not found in factory database.`);
       }
@@ -208,6 +212,7 @@ export default function App() {
                 processes={processes}
                 settings={settings}
                 onOpenQrScanner={() => setIsQrScannerOpen(true)}
+                onLaunchFullscreenVideo={(p) => setFullscreenVideoProduct(p || selectedProduct)}
               />
             ) : (
               <AdminDashboard
@@ -229,6 +234,15 @@ export default function App() {
           </>
         )}
       </main>
+
+      {/* Fullscreen Saree Catwalk Runway Theater (Launched upon QR Scan) */}
+      {fullscreenVideoProduct && (
+        <FullScreenCatwalkTheater
+          product={fullscreenVideoProduct}
+          onComplete={() => setFullscreenVideoProduct(null)}
+          onSkipToCustomize={() => setFullscreenVideoProduct(null)}
+        />
+      )}
 
       {/* Camera QR Scanner Modal */}
       <QrScannerModal

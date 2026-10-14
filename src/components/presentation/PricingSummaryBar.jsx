@@ -219,10 +219,11 @@ export default function PricingSummaryBar({
 
             <button
               onClick={onProceedToOrder}
-              className="flex items-center gap-2 px-5 py-3 rounded-2xl gold-gradient-bg text-zinc-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition"
+              className="flex items-center justify-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-3 rounded-2xl gold-gradient-bg text-zinc-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 active:scale-95 transition shrink-0"
             >
-              <span>GENERATE PURCHASE ORDER (PO)</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="hidden sm:inline">GENERATE PURCHASE ORDER (PO)</span>
+              <span className="sm:hidden">GENERATE PO</span>
+              <ArrowRight className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
             </button>
           </div>
 
