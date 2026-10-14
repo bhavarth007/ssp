@@ -1,0 +1,16 @@
+{
+  "name": "Sahjanand Polyweaves Presentation",
+  "short_name": "SPPL Showroom",
+  "description": "Smart Saree Customization, Live Sales Presentation & PO System",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0c0e",
+  "theme_color": "#121216",
+  "icons": [
+    {
+      "src": "/assets/patterns/kalka.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

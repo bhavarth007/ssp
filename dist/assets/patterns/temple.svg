@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Traditional South Indian Temple Gopuram Chevron Motif -->
+  <polygon points="50,10 90,80 10,80" stroke="currentColor" stroke-width="2.5" fill="none"/>
+  <polygon points="50,28 78,75 22,75" stroke="currentColor" stroke-width="1.8" fill="currentColor" opacity="0.3"/>
+  <polygon points="50,45 66,72 34,72" fill="currentColor" opacity="0.8"/>
+  <circle cx="50" cy="10" r="4" fill="currentColor"/>
+  <line x1="10" y1="88" x2="90" y2="88" stroke="currentColor" stroke-width="3"/>
+  <line x1="10" y1="94" x2="90" y2="94" stroke="currentColor" stroke-width="1.5"/>
+</svg>
