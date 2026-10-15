@@ -22,5 +22,11 @@ export function getAssetUrl(path) {
     baseUrl += '/';
   }
 
+  // Idempotently handle paths that already contain the base path (e.g. ssp/assets/...)
+  const cleanBase = baseUrl.replace(/^\/+|\/+$/g, '');
+  if (cleanBase && (cleanPath === cleanBase || cleanPath.startsWith(cleanBase + '/'))) {
+    return `/${cleanPath}`;
+  }
+
   return `${baseUrl}${cleanPath}`;
 }

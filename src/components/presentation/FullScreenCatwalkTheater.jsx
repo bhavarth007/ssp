@@ -25,19 +25,26 @@ export default function FullScreenCatwalkTheater({
 
   if (!product) return null;
 
-  // Resolve matching video URL
-  const videoUrl = getAssetUrl(product.demo_video_url || (() => {
+  // Resolve matching video and poster URLs cleanly
+  const rawVideoUrl = product.demo_video_url || (() => {
     const code = (product.product_code || '').toLowerCase();
     if (code.includes('indigo') || code.includes('blue')) return '/assets/videos/saree-indigo-runway-walk.mp4';
     if (code.includes('rani') || code.includes('pink')) return '/assets/videos/saree-rani-runway-walk.mp4';
     if (code.includes('gold') || code.includes('mustard')) return '/assets/videos/saree-mustard-runway-walk.mp4';
     if (code.includes('teal') || code.includes('green')) return '/assets/videos/saree-teal-runway-walk.mp4';
     return '/assets/videos/saree-crimson-runway-walk.mp4';
-  })());
+  })();
+
+  const mp4Url = getAssetUrl(rawVideoUrl.endsWith('.mp4') ? rawVideoUrl : rawVideoUrl.replace(/\.webm$/i, '.mp4'));
+  const webmUrl = getAssetUrl(rawVideoUrl.endsWith('.webm') ? rawVideoUrl : rawVideoUrl.replace(/\.mp4$/i, '.webm'));
+  const posterUrl = getAssetUrl(product.hero_image || product.border_image || '');
 
   // Ensure video plays smoothly across mobile browsers
   useEffect(() => {
     if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = isMuted;
+      videoRef.current.load();
       const p = videoRef.current.play();
       if (p !== undefined) {
         p.then(() => {
@@ -48,7 +55,7 @@ export default function FullScreenCatwalkTheater({
         });
       }
     }
-  }, [videoUrl]);
+  }, [mp4Url]);
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
@@ -137,14 +144,20 @@ export default function FullScreenCatwalkTheater({
       <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden bg-black">
         <video
           ref={videoRef}
-          src={videoUrl}
           autoPlay
           playsInline
+          webkit-playsinline="true"
           muted={isMuted}
+          poster={posterUrl}
+          preload="auto"
           onTimeUpdate={handleTimeUpdate}
           onEnded={handleVideoEnded}
           className="w-full h-full object-contain max-h-screen"
-        />
+        >
+          <source src={mp4Url} type="video/mp4" />
+          <source src={webmUrl} type="video/webm" />
+          Your browser does not support HTML5 video.
+        </video>
 
         {/* Soft Luxury Runway Vignette */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/30" />
