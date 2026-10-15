@@ -1,10 +1,11 @@
 import cv2
 import numpy as np
 import math
+import time
 import imageio_ffmpeg
 import subprocess
 import os
-import sys
+import shutil
 
 MODELS = [
     {
@@ -36,15 +37,15 @@ MODELS = [
 
 def render_cinematic_catwalk_video(input_path, output_mp4, duration_sec=6.0, fps=30):
     """
-    Generates a high-fashion runway catwalk video:
-    - Zero lateral distortion or image 'dancing' wobble
-    - Smooth steadicam forward runway tracking glide (1.0x to 1.14x)
-    - Realistic footfall vertical cadence (subtle, non-distorting)
-    - Dynamic runway spotlight beam sweeping across silk pleats & zari borders
-    - 30 FPS crisp H.264 video with seamless looping
+    Renders high-fashion runway catwalk video with realistic model walking motion:
+    - Left/Right rhythmic hip sway and weight transfer (1.15 Hz fashion stride)
+    - Ground-reaction vertical heel strike & push-off cadence
+    - Forward steadicam tracking dolly (1.0x to 1.14x) down the fashion catwalk
+    - Sweeping runway spotlights with gold zari metallic specular luster
+    - Crisp H.264 MP4 and companion WebM for universal playback
     """
     if not os.path.exists(input_path):
-        print(f"Skipping missing: {input_path}")
+        print(f"Skipping missing: {input_path}", flush=True)
         return
 
     img = cv2.imread(input_path)
@@ -52,12 +53,12 @@ def render_cinematic_catwalk_video(input_path, output_mp4, duration_sec=6.0, fps
         print(f"Error loading {input_path}", flush=True)
         return
         
-    h, w, _ = img.shape
+    orig_h, orig_w, _ = img.shape
     out_w, out_h = 720, 960
     
-    # Scale to ensure full coverage with headroom for camera dolly
-    base_scale = max(out_w / w, out_h / h) * 1.08
-    new_w, new_h = int(w * base_scale), int(h * base_scale)
+    # Scale with margin for camera dolly and walking stride
+    base_scale = max(out_w / orig_w, out_h / orig_h) * 1.12
+    new_w, new_h = int(orig_w * base_scale), int(orig_h * base_scale)
     source_img = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_LANCZOS4)
     
     total_frames = int(duration_sec * fps)
@@ -75,99 +76,100 @@ def render_cinematic_catwalk_video(input_path, output_mp4, duration_sec=6.0, fps
         '-i', '-',
         '-c:v', 'libx264',
         '-pix_fmt', 'yuv420p',
-        '-preset', 'slow',
-        '-crf', '18',
+        '-preset', 'fast',
+        '-crf', '20',
         '-movflags', '+faststart',
         output_mp4
     ]
     
     proc = subprocess.Popen(cmd_mp4, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
     
-    cx, cy = new_w // 2, int(new_h * 0.42) # Center focus on model torso/saree
-    crop_x_base = (new_w - out_w) // 2
-    crop_y_base = (new_h - out_h) // 2
+    cx, cy = new_w // 2, int(new_h * 0.44)
+    crop_x = (new_w - out_w) // 2
+    crop_y = (new_h - out_h) // 2
     
-    # Precompute runway spotlight mask for textile luster
     spot_y, spot_x = np.ogrid[:out_h, :out_w]
+    stride_freq = 1.15 # Fashion model stride pace (~1.15 steps/sec)
     
     for i in range(total_frames):
         t = i / fps
         progress = i / float(total_frames)
+        step_phase = 2.0 * math.pi * stride_freq * t
         
-        # Smooth forward runway camera dolly (forward tracking down the catwalk)
-        # Using a smooth half-sine curve for natural camera operator momentum
-        dolly_factor = 1.0 + 0.10 * math.sin(math.pi * progress)
+        # 1. Forward Catwalk Runway Dolly (Camera tracks model as she advances)
+        dolly = 1.0 + 0.12 * math.sin(math.pi * progress)
         
-        # Natural footstep rhythm (smooth 1.1 Hz heel-strike cadence, strictly vertical, zero lateral shake)
-        cadence_phase = 2.0 * math.pi * 1.15 * t
-        subtle_step_dy = 2.0 * math.cos(cadence_phase)
+        # 2. Catwalk Walking Motion:
+        # - Alternating lateral hip sway (left-to-right weight transfer)
+        sway = 6.0 * math.sin(step_phase)
+        # - Vertical push-off bounce (heel strike dip & step rise)
+        bounce = -3.5 * math.cos(2.0 * step_phase)
+        # - Poised shoulder/head balance tilt
+        tilt = 0.45 * math.sin(step_phase)
         
-        # Affine transform for camera dolly & vertical cadence
-        M = cv2.getRotationMatrix2D((cx, cy), 0.0, dolly_factor)
-        M[1, 2] += subtle_step_dy
+        M = cv2.getRotationMatrix2D((cx, cy), tilt, dolly)
+        M[0, 2] += sway
+        M[1, 2] += bounce
         
         frame = cv2.warpAffine(
             source_img, 
             M, 
             (new_w, new_h), 
-            flags=cv2.INTER_LANCZOS4, 
+            flags=cv2.INTER_LINEAR, 
             borderMode=cv2.BORDER_REFLECT_101
         )
         
-        # Extract the center 720x960 runway view
-        cropped = frame[crop_y_base:crop_y_base + out_h, crop_x_base:crop_x_base + out_w]
+        cropped = frame[crop_y:crop_y + out_h, crop_x:crop_x + out_w]
         if cropped.shape[0] != out_h or cropped.shape[1] != out_w:
-            cropped = cv2.resize(cropped, (out_w, out_h), interpolation=cv2.INTER_LANCZOS4)
+            cropped = cv2.resize(cropped, (out_w, out_h), interpolation=cv2.INTER_LINEAR)
             
-        # Runway Stage Lighting Sweep:
-        # A soft fashion spotlight slowly sweeps from stage left across the saree pallu and pleats
-        beam_center_x = int(out_w * (0.2 + 0.6 * math.sin(math.pi * progress)))
-        beam_center_y = int(out_h * 0.55)
+        # 3. Dynamic Runway Stage Spotlight Sweep
+        bx = int(out_w * (0.25 + 0.50 * math.sin(math.pi * progress)))
+        by = int(out_h * 0.52)
+        dist_sq = ((spot_x - bx) ** 2) / (300.0 ** 2) + ((spot_y - by) ** 2) / (480.0 ** 2)
+        spot = np.exp(-dist_sq) * 0.14
         
-        # Spotlight intensity gradient
-        dist_sq = ((spot_x - beam_center_x) ** 2) / (280.0 ** 2) + ((spot_y - beam_center_y) ** 2) / (450.0 ** 2)
-        spot_mask = np.exp(-dist_sq) * 0.12 # Soft luxury illumination
+        # Stage lighting warmth on silk fabric
+        ill = cropped.astype(np.float32)
+        ill[:, :, 0] += spot * 6.0   # subtle ambient
+        ill[:, :, 1] += spot * 18.0  # warm silk luster
+        ill[:, :, 2] += spot * 26.0  # gold warmth
         
-        # Add soft gold warmth to illuminated silk areas
-        illuminated = cropped.astype(np.float32)
-        illuminated[:, :, 0] += spot_mask * 10.0 # subtle blue ambient
-        illuminated[:, :, 1] += spot_mask * 22.0 # warm green
-        illuminated[:, :, 2] += spot_mask * 30.0 # warm gold/amber
-        
-        # Soft sheen sparkle along metallic zari border
-        specular = (spot_mask[:, :, None] * 0.25 * (illuminated / 255.0) ** 2) * 255.0
-        final_frame = np.clip(illuminated + specular, 0, 255).astype(np.uint8)
+        # Zari metallic sheen
+        spec = (spot[:, :, None] * 0.28 * (ill / 255.0) ** 2) * 255.0
+        final_frame = np.clip(ill + spec, 0, 255).astype(np.uint8)
         
         proc.stdin.write(final_frame.tobytes())
         
     proc.stdin.close()
     proc.wait()
     
-    # Also generate high-quality webm for browser fallback compatibility
+    # Fast WebM companion
     output_webm = output_mp4.replace('.mp4', '.webm')
     cmd_webm = [
         ffmpeg_exe, '-y',
         '-i', output_mp4,
         '-c:v', 'libvpx-vp9',
-        '-b:v', '1200k',
-        '-crf', '28',
+        '-b:v', '1000k',
+        '-deadline', 'realtime',
+        '-cpu-used', '4',
         output_webm
     ]
     subprocess.run(cmd_webm, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
-    # Copy to dist if it exists
+    # Synchronize to dist/assets/videos
     dist_videos = os.path.join("dist", "assets", "videos")
     if os.path.exists(dist_videos):
-        import shutil
         shutil.copy2(output_mp4, os.path.join(dist_videos, os.path.basename(output_mp4)))
         if os.path.exists(output_webm):
             shutil.copy2(output_webm, os.path.join(dist_videos, os.path.basename(output_webm)))
             
-    print(f"Generated Runway Video: {output_mp4} ({os.path.getsize(output_mp4)} bytes)", flush=True)
+    print(f"Synthesized Runway Catwalk: {output_mp4} ({os.path.getsize(output_mp4)} bytes)", flush=True)
 
 if __name__ == "__main__":
-    print("Beginning high-fashion catwalk video synthesis...", flush=True)
+    t_start = time.time()
+    print("Beginning enhanced runway catwalk video synthesis...", flush=True)
     for model in MODELS:
-        print(f"Rendering catwalk for: {model['name']}...", flush=True)
+        print(f"Rendering catwalk walking motion for: {model['name']}...", flush=True)
         render_cinematic_catwalk_video(model['src'], model['mp4'])
-    print("ALL RUNWAY CATWALK VIDEOS SYNTHESIZED SUCCESSFULLY!", flush=True)
+    print(f"ALL RUNWAY CATWALK VIDEOS SYNTHESIZED in {round(time.time() - t_start, 1)}s!", flush=True)
