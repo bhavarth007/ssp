@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
 import QRCode from 'qrcode';
@@ -63,6 +64,32 @@ const upload = multer({
 // ==========================================
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString(), server: 'Sahjanand Polyweaves Core' });
+});
+
+app.get('/api/network-info', (req, res) => {
+  const nets = os.networkInterfaces();
+  const addresses = [];
+  let primaryLanIp = '127.0.0.1';
+
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      // Find valid IPv4 address that is not loopback
+      if ((net.family === 'IPv4' || net.family === 4) && !net.internal) {
+        addresses.push({ interface: name, address: net.address });
+        if (primaryLanIp === '127.0.0.1') {
+          primaryLanIp = net.address;
+        }
+      }
+    }
+  }
+
+  res.json({
+    primaryLanIp,
+    addresses,
+    port: PORT,
+    publicCloudUrl: 'https://bhavarth007.github.io/ssp/',
+    lanBaseUrl: `http://${primaryLanIp}:${PORT}`
+  });
 });
 
 app.get('/api/settings', (req, res) => {

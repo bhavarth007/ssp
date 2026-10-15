@@ -35,6 +35,21 @@ export default function FullScreenCatwalkTheater({
     return '/assets/videos/saree-crimson-runway-walk.mp4';
   })());
 
+  // Ensure video plays smoothly across mobile browsers
+  useEffect(() => {
+    if (videoRef.current) {
+      const p = videoRef.current.play();
+      if (p !== undefined) {
+        p.then(() => {
+          setIsPlaying(true);
+        }).catch((err) => {
+          console.warn('Autoplay prevented by mobile browser policy:', err);
+          setIsPlaying(false);
+        });
+      }
+    }
+  }, [videoUrl]);
+
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       setCurrentTime(videoRef.current.currentTime);
@@ -145,6 +160,21 @@ export default function FullScreenCatwalkTheater({
             </span>
           </div>
         </div>
+
+        {/* Center Tap-To-Play Button (If mobile browser paused/prevented autoplay) */}
+        {!isPlaying && (
+          <button
+            onClick={togglePlay}
+            className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] transition hover:bg-black/30"
+          >
+            <div className="w-20 h-20 rounded-full gold-gradient-bg flex items-center justify-center text-zinc-950 shadow-2xl shadow-amber-500/50 animate-pulse hover:scale-110 active:scale-95 transition">
+              <Play className="w-10 h-10 fill-current ml-1" />
+            </div>
+            <span className="mt-3 px-4 py-1.5 rounded-full bg-black/80 border border-amber-500/40 text-xs font-bold text-amber-300 tracking-wider uppercase">
+              Tap to Watch 4K Catwalk Video
+            </span>
+          </button>
+        )}
       </div>
 
       {/* 3. BOTTOM CINEMATIC CONTROLS & TRANSITION BAR */}

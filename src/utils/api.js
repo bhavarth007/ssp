@@ -340,8 +340,9 @@ export const createOrder = (data) => fetchApi('/orders', { method: 'POST', body:
 export const updateOrderStatus = (id, status) => fetchApi(`/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) });
 export const deleteOrder = (id) => fetchApi(`/orders/${id}`, { method: 'DELETE' });
 
-// 6. QR Code Generation
+// 6. QR Code Generation & Network Info
 export const getQrDataUrl = (text, size = 300) => fetchApi(`/qr/generate?text=${encodeURIComponent(text)}&size=${size}`);
+export const getNetworkInfo = () => fetchApi('/network-info');
 
 // 7. Media Upload
 export async function uploadMedia(file) {

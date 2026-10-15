@@ -120,12 +120,31 @@ export default function App() {
       }
 
       if (requestedCode && prodsRes.length > 0) {
-        const matched = prodsRes.find(p => 
-          p.product_code?.toLowerCase() === requestedCode.toLowerCase() || 
-          p.qr_identifier?.toLowerCase() === requestedCode.toLowerCase()
+        const cleanRequested = requestedCode.trim();
+        const norm = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const targetClean = norm(cleanRequested);
+        
+        let matched = prodsRes.find(p => 
+          norm(p.product_code) === targetClean || 
+          norm(p.qr_identifier) === targetClean ||
+          (p.product_code && p.product_code.toLowerCase() === cleanRequested.toLowerCase()) ||
+          (p.qr_identifier && p.qr_identifier.toLowerCase() === cleanRequested.toLowerCase())
         );
+
+        if (!matched) {
+          // Substring match e.g. 'rani', 'indigo', 'meena', '03'
+          matched = prodsRes.find(p =>
+            norm(p.product_code).includes(targetClean) ||
+            norm(p.name).includes(targetClean) ||
+            targetClean.includes(norm(p.product_code))
+          );
+        }
+
         if (matched) {
           setSelectedProduct(matched);
+          setCurrentView('presentation');
+          // IMMEDIATELY LAUNCH FULLSCREEN 4K CATWALK VIDEO!
+          setFullscreenVideoProduct(matched);
         } else {
           setSelectedProduct(prodsRes[0]);
         }
@@ -192,17 +211,25 @@ export default function App() {
     } catch (e) {}
 
     // 2. Direct match by SKU or QR identifier or numeric ID
+    const norm = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const targetNorm = norm(target);
+
     let found = products.find(p => 
       p.product_code?.toLowerCase() === target.toLowerCase() ||
       p.qr_identifier?.toLowerCase() === target.toLowerCase() ||
+      norm(p.product_code) === targetNorm ||
+      norm(p.qr_identifier) === targetNorm ||
       String(p.id) === target
     );
 
-    // 3. Substring/partial match (e.g. contains 'meena', '01', 'indigo', etc.)
+    // 3. Substring/partial match (e.g. contains 'meena', '01', 'indigo', 'rani', etc.)
     if (!found) {
       found = products.find(p => 
         p.product_code?.toLowerCase().includes(target.toLowerCase()) ||
-        p.name?.toLowerCase().includes(target.toLowerCase())
+        p.name?.toLowerCase().includes(target.toLowerCase()) ||
+        norm(p.product_code).includes(targetNorm) ||
+        norm(p.name).includes(targetNorm) ||
+        targetNorm.includes(norm(p.product_code))
       );
     }
 

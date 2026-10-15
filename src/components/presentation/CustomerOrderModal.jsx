@@ -100,10 +100,11 @@ export default function CustomerOrderModal({
         origin: { y: 0.6 }
       });
 
-      // Generate PDF & QR Code in background
+      // Generate PDF & QR Code in background (Encoding web URL so phone scanners launch video)
       let qrDataUrl = null;
       try {
-        const qrRes = await getQrDataUrl(product.qr_identifier || product.product_code);
+        const orderQrUrl = `https://bhavarth007.github.io/ssp/?sku=${encodeURIComponent(product.product_code || '')}`;
+        const qrRes = await getQrDataUrl(orderQrUrl);
         qrDataUrl = qrRes.qrDataUrl;
       } catch {}
 
