@@ -46,53 +46,73 @@ export default function FabricPreviewCanvas({
     p.process_code?.includes('TASSEL') || p.name?.toLowerCase().includes('tassel')
   );
 
-  // 1. Select the base authentic 4K photograph of the runway model matching the active color
+  // 1. Base authentic 4K photograph of the runway model belongs to the selected saree product
   const getBaseModelImage = () => {
-    if (colorName.includes('blue') || colorName.includes('indigo') || colorName.includes('navy')) {
-      return getAssetUrl('/assets/products/model-indigo-runway.jpg');
-    }
-    if (colorName.includes('pink') || colorName.includes('rani') || colorName.includes('magenta')) {
-      return getAssetUrl('/assets/products/model-rani-pink-runway.jpg');
-    }
-    if (colorName.includes('gold') || colorName.includes('mustard') || colorName.includes('yellow')) {
-      return getAssetUrl('/assets/products/model-mustard-gold-runway.jpg');
-    }
-    if (colorName.includes('green') || colorName.includes('emerald') || colorName.includes('teal')) {
-      return getAssetUrl('/assets/products/model-teal-green-runway.jpg');
-    }
-    return getAssetUrl('/assets/products/model-crimson-runway.jpg');
+    return getAssetUrl(selectedProduct?.hero_image || '/assets/products/model-crimson-runway.jpg');
   };
 
-  // Custom dye tone adjustments for non-catalog reactive colors (no bounding box)
-  const getCustomSilkFilter = () => {
-    if (colorName.includes('wine') || colorName.includes('plum')) {
-      return { filter: 'hue-rotate(295deg) saturate(1.15)' };
-    }
-    if (colorName.includes('ivory') || colorName.includes('pearl')) {
-      return { filter: 'sepia(0.2) brightness(1.22) saturate(0.65)' };
-    }
-    if (colorName.includes('black')) {
-      return { filter: 'brightness(0.42) contrast(1.3)' };
-    }
-    return { filter: 'none' };
-  };
-
-  // 2. Select the matching 4K catwalk walking motion video
+  // 2. Matching 4K catwalk walking motion video belongs to the selected saree product
   const getRunwayVideo = () => {
-    if (colorName.includes('blue') || colorName.includes('indigo') || colorName.includes('navy')) {
-      return getAssetUrl('/assets/videos/saree-indigo-runway-walk.mp4');
-    }
-    if (colorName.includes('pink') || colorName.includes('rani') || colorName.includes('magenta')) {
-      return getAssetUrl('/assets/videos/saree-rani-runway-walk.mp4');
-    }
-    if (colorName.includes('gold') || colorName.includes('mustard') || colorName.includes('yellow')) {
-      return getAssetUrl('/assets/videos/saree-mustard-runway-walk.mp4');
-    }
-    if (colorName.includes('green') || colorName.includes('emerald') || colorName.includes('teal')) {
-      return getAssetUrl('/assets/videos/saree-teal-runway-walk.mp4');
-    }
-    return getAssetUrl('/assets/videos/saree-crimson-runway-walk.mp4');
+    return getAssetUrl(selectedProduct?.demo_video_url || '/assets/videos/saree-crimson-runway-walk.mp4');
   };
+
+  // Dynamic Silk Dye Color Filter: Photorealistically shifts the saree fabric color while preserving weave texture & lighting
+  const getSilkColorFilter = () => {
+    const targetHex = (customization?.colour?.hex_code || selectedProduct?.base_colour_hex || '#7B1113').toLowerCase();
+    const baseHex = (selectedProduct?.base_colour_hex || '#7B1113').toLowerCase();
+    const targetName = (customization?.colour?.name || '').toLowerCase();
+
+    // If target matches product base, no filter needed
+    if (targetHex === baseHex && !targetName.includes('ivory') && !targetName.includes('black')) {
+      return { filter: 'none' };
+    }
+
+    // High-fidelity handcrafted presets for specialty non-chromatic finishes
+    if (targetName.includes('ivory') || targetName.includes('pearl') || targetHex === '#f5f2e9') {
+      return { filter: 'sepia(0.35) saturate(0.35) brightness(1.35) contrast(0.95)' };
+    }
+    if (targetName.includes('black') || targetHex === '#1a1a1a') {
+      return { filter: 'saturate(0.12) brightness(0.42) contrast(1.35)' };
+    }
+    if (targetName.includes('wine') || targetName.includes('plum') || targetHex === '#4a0e2e') {
+      return { filter: 'hue-rotate(325deg) saturate(1.15) brightness(0.85) contrast(1.1)' };
+    }
+
+    // Precise HSL delta conversion
+    const hexToHsl = (hex) => {
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const r = parseInt(c.substring(0, 2), 16) / 255;
+      const g = parseInt(c.substring(2, 4), 16) / 255;
+      const b = parseInt(c.substring(4, 6), 16) / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let h = 0, s = 0, l = (max + min) / 2;
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h *= 60;
+      }
+      return { h: Math.round(h), s: s * 100, l: l * 100 };
+    };
+
+    const bHsl = hexToHsl(baseHex);
+    const tHsl = hexToHsl(targetHex);
+
+    const deltaHue = (tHsl.h - bHsl.h + 360) % 360;
+    const satScale = Math.min(Math.max(tHsl.s / Math.max(bHsl.s, 1), 0.75), 1.35).toFixed(2);
+    const briScale = Math.min(Math.max(tHsl.l / Math.max(bHsl.l, 1), 0.78), 1.35).toFixed(2);
+
+    return {
+      filter: `hue-rotate(${deltaHue}deg) saturate(${satScale}) brightness(${briScale})`
+    };
+  };
+
+  const silkColorFilter = getSilkColorFilter();
 
   // 3. Flatlay & Macro Closeups
   const getFlatlayImage = () => {
@@ -204,25 +224,39 @@ export default function FabricPreviewCanvas({
             className="relative w-full h-full transition-transform duration-300 ease-out flex items-center justify-center overflow-hidden"
             style={{ transform: `scale(${zoomLevel})` }}
           >
-            {/* BASE LAYER: Authentic 4K High-Fashion Model Runway Photograph */}
+            {/* BASE LAYER: Authentic 4K High-Fashion Model Runway Photograph (Preserves Model Face, Hair & Stage) */}
             <img
               src={getBaseModelImage()}
               alt="International Model Wearing Saree on Stage"
               className="w-full h-full object-cover select-none transition-all duration-500"
-              style={getCustomSilkFilter()}
               draggable="false"
             />
 
+            {/* DYNAMIC REACTIVE SILK DYE COLOR LAYER: Photorealistically shifts color on the SAME saree fabric */}
+            {silkColorFilter.filter !== 'none' && (
+              <img
+                src={getBaseModelImage()}
+                alt="Color Customized Saree"
+                className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none transition-all duration-500 ease-in-out"
+                style={{
+                  ...silkColorFilter,
+                  maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 16%, rgba(0,0,0,0.85) 23%, black 30%, black 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 16%, rgba(0,0,0,0.85) 23%, black 30%, black 100%)'
+                }}
+                draggable="false"
+              />
+            )}
+
             {/* DYNAMIC JACQUARD WEAVE MOTIF OVERLAY: Embossed directly onto saree drape */}
             <div 
-              className="absolute inset-0 pointer-events-none transition-all duration-500 mix-blend-screen opacity-75"
+              className="absolute inset-0 pointer-events-none transition-all duration-500 mix-blend-overlay opacity-80"
               style={{
                 backgroundImage: `url(${getActivePatternSvg()})`,
-                backgroundSize: '80px 80px',
+                backgroundSize: '85px 85px',
                 backgroundRepeat: 'repeat',
                 filter: zariPalette.filter,
-                maskImage: 'radial-gradient(ellipse at 50% 68%, black 42%, transparent 78%)',
-                WebkitMaskImage: 'radial-gradient(ellipse at 50% 68%, black 42%, transparent 78%)'
+                maskImage: 'radial-gradient(ellipse at 50% 68%, black 45%, transparent 80%)',
+                WebkitMaskImage: 'radial-gradient(ellipse at 50% 68%, black 45%, transparent 80%)'
               }}
             />
 
@@ -269,7 +303,8 @@ export default function FabricPreviewCanvas({
               muted
               playsInline
               autoPlay
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-all duration-500"
+              style={silkColorFilter}
               onPlay={() => setIsPlayingVideo(true)}
               onPause={() => setIsPlayingVideo(false)}
             />
@@ -346,7 +381,8 @@ export default function FabricPreviewCanvas({
             <img
               src={getFlatlayImage()}
               alt="Authentic 4K Saree Weaving & Zari Work"
-              className="w-full h-full object-cover select-none"
+              className="w-full h-full object-cover select-none transition-all duration-500"
+              style={silkColorFilter}
               draggable="false"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
@@ -362,7 +398,8 @@ export default function FabricPreviewCanvas({
             <img
               src={getMacroImage()}
               alt="4K Macro Zari Weft Grain"
-              className="w-full h-full object-cover select-none filter contrast-125 brightness-105"
+              className="w-full h-full object-cover select-none filter contrast-125 brightness-105 transition-all duration-500"
+              style={silkColorFilter}
               draggable="false"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />

@@ -37,31 +37,9 @@ export default function CustomizationStudio({
 
   const formatInr = (num) => `+₹${(parseFloat(num) || 0).toFixed(0)}`;
 
-  // Handle color selection with automatic real saree product match
+  // Handle color selection: Changes color on the SAME saree without switching product or pattern
   const handleSelectColour = (c) => {
-    setCustomization({ ...customization, colour: c });
-
-    if (setSelectedProduct && products && products.length > 0) {
-      const cName = (c.name || '').toLowerCase();
-      const cHex = (c.hex_code || '').toLowerCase();
-
-      const matched = products.find(p => {
-        const pColor = (p.base_colour || '').toLowerCase();
-        const pHex = (p.base_colour_hex || '').toLowerCase();
-        return (
-          pHex === cHex ||
-          (cName.includes('green') && (pColor.includes('green') || pColor.includes('teal'))) ||
-          (cName.includes('blue') && (pColor.includes('blue') || pColor.includes('indigo'))) ||
-          (cName.includes('pink') && (pColor.includes('pink') || pColor.includes('rani'))) ||
-          (cName.includes('gold') && (pColor.includes('gold') || pColor.includes('mustard'))) ||
-          (cName.includes('crimson') && (pColor.includes('crimson') || pColor.includes('meenakari') || pColor.includes('maroon')))
-        );
-      });
-
-      if (matched && matched.id !== selectedProduct?.id) {
-        setSelectedProduct(matched);
-      }
-    }
+    setCustomization(prev => ({ ...prev, colour: c }));
   };
 
   // Process toggle handler

@@ -92,34 +92,6 @@ export default function Navbar({
 
         {/* Right action controls */}
         <div className="flex items-center space-x-2 sm:space-x-3">
-          {/* Quick Direct Link: Admin Side Link / Client Showroom Link */}
-          {currentView === 'presentation' ? (
-            <a
-              href="./?view=admin"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNav('admin');
-              }}
-              title="Go to Admin & Product Management Portal"
-              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-amber-200 border border-amber-500/30 text-xs font-semibold transition active:scale-95 shadow-sm"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden md:inline">Admin Side</span>
-            </a>
-          ) : (
-            <a
-              href="./"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNav('presentation');
-              }}
-              title="Return to Live Client Presentation Showroom"
-              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold transition active:scale-95 shadow-sm"
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Client Showroom</span>
-            </a>
-          )}
 
           {/* QR Scanner trigger */}
           <button
