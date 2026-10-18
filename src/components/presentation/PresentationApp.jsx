@@ -54,23 +54,19 @@ export default function PresentationApp({
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
 
-  // Initialize customization defaults when product changes
+  // Initialize customization defaults when product changes, preserving active selections
   useEffect(() => {
     if (!selectedProduct) return;
 
     const defaultColour = colours.find(c => c.hex_code.toLowerCase() === (selectedProduct.base_colour_hex || '').toLowerCase()) || colours[0];
-    const defaultZari = zariOptions[0] || null;
-    const defaultDesign = designs[0] || null;
-    const defaultThread = threads[0] || null;
-    const mandatoryProcesses = processes.filter(p => p.is_mandatory);
 
-    setCustomization({
-      colour: defaultColour,
-      zari: defaultZari,
-      design: defaultDesign,
-      thread: defaultThread,
-      processes: mandatoryProcesses
-    });
+    setCustomization(prev => ({
+      colour: prev.colour && prev.colour.id ? prev.colour : defaultColour,
+      zari: prev.zari || zariOptions[0] || null,
+      design: prev.design || designs[0] || null,
+      thread: prev.thread || threads[0] || null,
+      processes: prev.processes && prev.processes.length > 0 ? prev.processes : processes.filter(p => p.is_mandatory)
+    }));
   }, [selectedProduct, colours, zariOptions, designs, threads, processes]);
 
   // Recalculate price with backend server whenever customization or quantity changes
@@ -263,6 +259,8 @@ export default function PresentationApp({
           <div className="lg:col-span-6 space-y-4">
             <CustomizationStudio
               selectedProduct={selectedProduct}
+              setSelectedProduct={setSelectedProduct}
+              products={products}
               customization={customization}
               setCustomization={setCustomization}
               colours={colours}
