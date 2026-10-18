@@ -10,7 +10,7 @@ export const EMBEDDED_SETTINGS = {
   pan: 'AAACS3829P',
   email: 'sales@sahjanandpolyweaves.com',
   phone: '+91 98251 44550 / +91 261 2899400',
-  website: 'www.sahjanandpolyweaves.com',
+  website: 'https://bhavarth007.github.io/ssp/',
   bank_name: 'HDFC Bank, Ring Road Branch, Surat',
   account_no: '50200088921478',
   ifsc_code: 'HDFC0000241',

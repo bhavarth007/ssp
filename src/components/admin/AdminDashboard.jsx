@@ -30,7 +30,8 @@ import {
   Layers,
   ChevronRight,
   ShieldCheck,
-  Copy
+  Copy,
+  Globe
 } from 'lucide-react';
 import { 
   createProduct, 
@@ -466,6 +467,47 @@ export default function AdminDashboard({
             <Plus className="w-4 h-4" />
             <span>Add Saree Product</span>
           </button>
+        </div>
+      </div>
+
+      {/* Live GitHub Pages Production Server & Direct Admin Link Banner */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-zinc-900/80 to-zinc-900 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">
+            <Globe className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">Live Production Server</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium">GitHub Pages Active</span>
+            </div>
+            <p className="text-xs text-zinc-300 font-mono mt-0.5">https://bhavarth007.github.io/ssp/?view=admin</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => {
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText('https://bhavarth007.github.io/ssp/?view=admin');
+              }
+              alert('Admin link copied to clipboard!\nhttps://bhavarth007.github.io/ssp/?view=admin');
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold border border-white/10 active:scale-95 transition"
+          >
+            <Copy className="w-3.5 h-3.5 text-amber-400" />
+            <span>Copy Admin Link</span>
+          </button>
+
+          <a
+            href="https://bhavarth007.github.io/ssp/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl gold-gradient-bg text-zinc-950 text-xs font-bold shadow-md hover:scale-[1.02] active:scale-95 transition"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span>Open Client Showroom</span>
+          </a>
         </div>
       </div>
 

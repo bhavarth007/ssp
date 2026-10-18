@@ -1,3 +1,4 @@
+import QRCode from 'qrcode';
 import {
   EMBEDDED_SETTINGS,
   EMBEDDED_COLOURS,
@@ -10,7 +11,7 @@ import {
 import { getAssetUrl } from './assetHelper.js';
 
 const API_BASE = '/api';
-const STORAGE_VERSION = 'v2026_model_saree_catwalk_v4';
+const STORAGE_VERSION = 'v2026_model_saree_catwalk_v5';
 
 export function normalizeProduct(p) {
   if (!p) return p;
@@ -66,6 +67,17 @@ function setLocalCustom(key, data) {
 }
 
 export async function fetchApi(endpoint, options = {}) {
+  // If running on static production (GitHub Pages) or offline, serve immediately without failing network roundtrips
+  const isStaticHosting = typeof window !== 'undefined' && (
+    window.location.hostname.includes('github.io') ||
+    window.location.protocol === 'file:' ||
+    (!['localhost', '127.0.0.1'].includes(window.location.hostname) && !window.location.port)
+  );
+
+  if (isStaticHosting) {
+    return handleStaticFallback(endpoint, options);
+  }
+
   const url = `${API_BASE}${endpoint}`;
   try {
     const response = await fetch(url, {
@@ -340,8 +352,25 @@ export const createOrder = (data) => fetchApi('/orders', { method: 'POST', body:
 export const updateOrderStatus = (id, status) => fetchApi(`/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) });
 export const deleteOrder = (id) => fetchApi(`/orders/${id}`, { method: 'DELETE' });
 
-// 6. QR Code Generation & Network Info
-export const getQrDataUrl = (text, size = 300) => fetchApi(`/qr/generate?text=${encodeURIComponent(text)}&size=${size}`);
+// 6. QR Code Generation & Network Info (Client-side fast generation via qrcode package)
+export const getQrDataUrl = async (text, size = 300) => {
+  try {
+    const qrDataUrl = await QRCode.toDataURL(text, {
+      width: size,
+      margin: 1,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      }
+    });
+    return { qrDataUrl };
+  } catch (err) {
+    console.warn('In-browser QRCode failed, trying service fallback:', err);
+    return {
+      qrDataUrl: `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}`
+    };
+  }
+};
 export const getNetworkInfo = () => fetchApi('/network-info');
 
 // 7. Media Upload

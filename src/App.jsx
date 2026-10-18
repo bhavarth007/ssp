@@ -57,21 +57,27 @@ export default function App() {
     }
   }, [theme]);
 
-  // Handle URL change / back-forward navigation
+  // Handle URL change / back-forward navigation and hash change
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname.toLowerCase();
-      if (path.includes('/admin')) {
-        setIsAdminRoute(true);
-        setCurrentView('admin');
-      } else {
-        setIsAdminRoute(false);
-        setCurrentView('presentation');
-      }
+      const search = new URLSearchParams(window.location.search);
+      const hash = window.location.hash.toLowerCase();
+      const isAdm = path.includes('/admin') || search.get('view') === 'admin' || hash.includes('admin');
+      setIsAdminRoute(isAdm);
+      setCurrentView(isAdm ? 'admin' : 'presentation');
     };
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
   }, []);
+
+  useEffect(() => {
+    setIsAdminRoute(currentView === 'admin');
+  }, [currentView]);
 
   // Master initial data fetch on mount
   useEffect(() => {
