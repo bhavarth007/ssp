@@ -70,25 +70,13 @@ export default function CustomizationStudio({
 
   const tabsContainerRef = useRef(null);
   const tabButtonRefs = useRef({});
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeftPos, setScrollLeftPos] = useState(0);
 
-  const updateScrollState = () => {
-    if (tabsContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tabsContainerRef.current;
-      setCanScrollLeft(scrollLeft > 4);
-      setCanScrollRight(scrollWidth > clientWidth + 4 && scrollLeft + clientWidth < scrollWidth - 4);
-    }
-  };
-
   useEffect(() => {
     const el = tabsContainerRef.current;
     if (!el) return;
-
-    updateScrollState();
 
     // Native { passive: false } event listener translates vertical mouse wheel into horizontal scroll
     const onWheel = (e) => {
@@ -96,23 +84,13 @@ export default function CustomizationStudio({
         e.preventDefault();
         const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
         el.scrollLeft += delta;
-        updateScrollState();
       }
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('resize', updateScrollState);
-
-    let ro;
-    if (typeof ResizeObserver !== 'undefined') {
-      ro = new ResizeObserver(() => updateScrollState());
-      ro.observe(el);
-    }
 
     return () => {
       el.removeEventListener('wheel', onWheel);
-      window.removeEventListener('resize', updateScrollState);
-      if (ro) ro.disconnect();
     };
   }, []);
 
@@ -124,16 +102,7 @@ export default function CustomizationStudio({
         block: 'nearest'
       });
     }
-    setTimeout(updateScrollState, 150);
   }, [activeTab]);
-
-  const scrollTabs = (direction) => {
-    if (tabsContainerRef.current) {
-      const amount = direction === 'left' ? -220 : 220;
-      tabsContainerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
-      setTimeout(updateScrollState, 260);
-    }
-  };
 
   const handleMouseDown = (e) => {
     if (!tabsContainerRef.current) return;
@@ -150,7 +119,6 @@ export default function CustomizationStudio({
     const x = e.pageX - tabsContainerRef.current.offsetLeft;
     const walk = (x - startX) * 1.5;
     tabsContainerRef.current.scrollLeft = scrollLeftPos - walk;
-    updateScrollState();
   };
 
   const tabOrder = ['colour', 'zari', 'design', 'thread', 'process'];
@@ -167,23 +135,8 @@ export default function CustomizationStudio({
 
   return (
     <div className="flex flex-col h-full glass-card rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-      {/* Category Tabs Header with Permanent Navigation Arrows, Visible Gold Scrollbar & Smooth Mouse Wheel Scrolling */}
-      <div className="relative border-b border-white/10 bg-zinc-950/90 px-2 py-2 flex items-center gap-1.5 shadow-md">
-        {/* Scroll Left Button */}
-        <button
-          type="button"
-          onClick={() => scrollTabs('left')}
-          disabled={!canScrollLeft}
-          className={`p-2 rounded-xl transition shrink-0 ${
-            canScrollLeft
-              ? 'bg-zinc-800/90 text-amber-300 hover:text-white hover:bg-amber-500/20 active:scale-95 cursor-pointer border border-amber-500/40 shadow-lg'
-              : 'text-zinc-600 opacity-40 cursor-not-allowed border border-white/5 bg-zinc-900/40'
-          }`}
-          title="Scroll tabs left"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-
+      {/* Category Tabs Header with Sleek Underline Scrollbar & Smooth Mouse Wheel / Drag Scrolling */}
+      <div className="relative border-b border-white/10 bg-zinc-950/90 px-3 py-2 shadow-md">
         {/* Scrollable Tabs Track */}
         <div
           ref={tabsContainerRef}
@@ -191,9 +144,8 @@ export default function CustomizationStudio({
           onMouseLeave={handleMouseLeaveOrUp}
           onMouseUp={handleMouseLeaveOrUp}
           onMouseMove={handleMouseMove}
-          onScroll={updateScrollState}
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#f59e0b #18181b' }}
-          className={`flex-1 flex items-center overflow-x-auto p-1 gap-2 scroll-smooth ${
+          className={`w-full flex items-center overflow-x-auto p-1 gap-2 scroll-smooth ${
             isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
           } [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-track]:bg-white/5`}
         >
@@ -217,21 +169,6 @@ export default function CustomizationStudio({
             );
           })}
         </div>
-
-        {/* Scroll Right Button */}
-        <button
-          type="button"
-          onClick={() => scrollTabs('right')}
-          disabled={!canScrollRight}
-          className={`p-2 rounded-xl transition shrink-0 ${
-            canScrollRight
-              ? 'bg-zinc-800/90 text-amber-300 hover:text-white hover:bg-amber-500/20 active:scale-95 cursor-pointer border border-amber-500/40 shadow-lg'
-              : 'text-zinc-600 opacity-40 cursor-not-allowed border border-white/5 bg-zinc-900/40'
-          }`}
-          title="Scroll tabs right"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
       </div>
 
       {/* Tab Panels */}

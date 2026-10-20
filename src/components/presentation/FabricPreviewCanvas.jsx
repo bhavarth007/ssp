@@ -577,107 +577,74 @@ export default function FabricPreviewCanvas({
           </span>
         </div>
 
-        {/* View Mode Switcher with Navigation Arrows & Mouse Wheel Scrolling */}
-        <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/90 backdrop-blur-md border border-white/20 pointer-events-auto shadow-2xl max-w-full overflow-hidden">
-          {/* Scroll Left Button */}
+        {/* View Mode Switcher with Clean Underline Scrollbar & Mouse Wheel Scrolling */}
+        <div
+          ref={viewModesTrackRef}
+          onMouseDown={handleModeMouseDown}
+          onMouseLeave={handleModeMouseLeaveOrUp}
+          onMouseUp={handleModeMouseLeaveOrUp}
+          onMouseMove={handleModeMouseMove}
+          onScroll={updateModeScrollState}
+          style={{ scrollbarWidth: 'thin', scrollbarColor: '#f59e0b #18181b' }}
+          className={`flex items-center gap-1 p-1 rounded-2xl bg-black/90 backdrop-blur-md border border-white/20 pointer-events-auto shadow-2xl overflow-x-auto scroll-smooth max-w-[280px] xs:max-w-[340px] sm:max-w-md ${
+            isModeDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+          } [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/70 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-track]:bg-white/5`}
+        >
           <button
-            type="button"
-            onClick={() => scrollModes('left')}
-            disabled={!canScrollModeLeft}
-            className={`p-1.5 rounded-xl transition shrink-0 ${
-              canScrollModeLeft
-                ? 'bg-zinc-800/90 text-amber-300 hover:text-white hover:bg-amber-500/20 active:scale-95 cursor-pointer border border-amber-500/30'
-                : 'text-zinc-600 opacity-40 cursor-not-allowed border border-transparent'
+            onClick={() => setViewMode('model')}
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition ${
+              viewMode === 'model'
+                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                : 'text-zinc-300 hover:text-white hover:bg-white/10'
             }`}
-            title="Scroll view modes left"
           >
-            <ChevronLeft className="w-3.5 h-3.5" />
+            Model View
           </button>
 
-          {/* Scrollable Modes Track */}
-          <div
-            ref={viewModesTrackRef}
-            onMouseDown={handleModeMouseDown}
-            onMouseLeave={handleModeMouseLeaveOrUp}
-            onMouseUp={handleModeMouseLeaveOrUp}
-            onMouseMove={handleModeMouseMove}
-            onScroll={updateModeScrollState}
-            style={{ scrollbarWidth: 'thin', scrollbarColor: '#f59e0b #18181b' }}
-            className={`flex items-center gap-1 overflow-x-auto scroll-smooth py-0.5 px-0.5 max-w-[260px] xs:max-w-[320px] sm:max-w-md ${
-              isModeDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
-            } [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-track]:bg-white/5`}
-          >
-            <button
-              onClick={() => setViewMode('model')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition ${
-                viewMode === 'model'
-                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              Model View
-            </button>
-
-            <button
-              onClick={() => setViewMode('video')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 shrink-0 transition ${
-                viewMode === 'video'
-                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <Play className="w-3 h-3 fill-current" />
-              <span>Catwalk Video</span>
-            </button>
-
-            <button
-              onClick={() => setViewMode('pattern')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1 shrink-0 transition ${
-                viewMode === 'pattern'
-                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <Grid className="w-3 h-3" />
-              <span>Jacquard Motifs</span>
-            </button>
-
-            <button
-              onClick={() => setViewMode('flatlay')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition ${
-                viewMode === 'flatlay'
-                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              Real Saree
-            </button>
-
-            <button
-              onClick={() => setViewMode('macro')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition ${
-                viewMode === 'macro'
-                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              4K Macro
-            </button>
-          </div>
-
-          {/* Scroll Right Button */}
           <button
-            type="button"
-            onClick={() => scrollModes('right')}
-            disabled={!canScrollModeRight}
-            className={`p-1.5 rounded-xl transition shrink-0 ${
-              canScrollModeRight
-                ? 'bg-zinc-800/90 text-amber-300 hover:text-white hover:bg-amber-500/20 active:scale-95 cursor-pointer border border-amber-500/30'
-                : 'text-zinc-600 opacity-40 cursor-not-allowed border border-transparent'
+            onClick={() => setViewMode('video')}
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 shrink-0 transition ${
+              viewMode === 'video'
+                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                : 'text-zinc-300 hover:text-white hover:bg-white/10'
             }`}
-            title="Scroll view modes right"
           >
-            <ChevronRight className="w-3.5 h-3.5" />
+            <Play className="w-3 h-3 fill-current" />
+            <span>Catwalk Video</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode('pattern')}
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1 shrink-0 transition ${
+              viewMode === 'pattern'
+                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                : 'text-zinc-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Grid className="w-3 h-3" />
+            <span>Jacquard Motifs</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode('flatlay')}
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition ${
+              viewMode === 'flatlay'
+                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                : 'text-zinc-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            Real Saree
+          </button>
+
+          <button
+            onClick={() => setViewMode('macro')}
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition ${
+              viewMode === 'macro'
+                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                : 'text-zinc-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            4K Macro
           </button>
         </div>
 
