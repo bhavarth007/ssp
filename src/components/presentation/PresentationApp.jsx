@@ -277,6 +277,7 @@ export default function PresentationApp({
 
       {/* Persistent Live Pricing Bar */}
       <PricingSummaryBar
+        product={selectedProduct}
         calculation={pricingCalculation}
         quantity={quantity}
         setQuantity={setQuantity}

@@ -1,7 +1,86 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <!-- Lotus (Kamal) Heritage Motif -->
-  <path d="M50 85 C35 85, 20 70, 25 50 C28 35, 45 20, 50 15 C55 20, 72 35, 75 50 C80 70, 65 85, 50 85 Z" stroke="currentColor" stroke-width="2" fill="none"/>
-  <path d="M50 80 C40 65, 40 40, 50 25 C60 40, 60 65, 50 80 Z" fill="currentColor" opacity="0.65"/>
-  <path d="M25 55 C12 65, 20 80, 42 82" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  <path d="M75 55 C88 65, 80 80, 58 82" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" fill="none">
+  <defs>
+    <linearGradient id="lotusGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95"/>
+      <stop offset="30%" stop-color="#fbbf24" stop-opacity="0.95"/>
+      <stop offset="65%" stop-color="#d97706" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#78350f" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <linearGradient id="lotusSheen" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="45%" stop-color="#fef9c3" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <filter id="lotusGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="0.5" stdDeviation="0.6" flood-color="#78350f" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#lotusGlow)">
+    <!-- Swirling Water-Lily Tendrils Linking Blossoms (Seamless Repeat) -->
+    <path d="M 0 80 C 30 50, 50 110, 80 80 C 110 50, 130 110, 160 80" stroke="url(#lotusGold)" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M 80 0 C 50 30, 110 50, 80 80 C 50 110, 110 130, 80 160" stroke="url(#lotusSheen)" stroke-width="1.8" stroke-linecap="round"/>
+
+    <!-- 1. Central Blooming Sacred Lotus (Kamal) -->
+    <g transform="translate(80, 80)">
+      <!-- Outer Spreading Petals -->
+      <path d="M 0 0 C -22 -10, -32 -25, -20 -38 C -10 -30, -5 -15, 0 0 Z" fill="url(#lotusGold)" stroke="#78350f" stroke-width="0.8"/>
+      <path d="M 0 0 C 22 -10, 32 -25, 20 -38 C 10 -30, 5 -15, 0 0 Z" fill="url(#lotusGold)" stroke="#78350f" stroke-width="0.8"/>
+      <path d="M 0 0 C -15 -25, -10 -40, 0 -44 C 10 -40, 15 -25, 0 0 Z" fill="url(#lotusSheen)" stroke="#b45309" stroke-width="0.8"/>
+
+      <!-- Lateral Lower Petals -->
+      <path d="M 0 0 C -30 5, -38 -5, -28 -18 C -18 -8, -10 -2, 0 0 Z" fill="url(#lotusGold)"/>
+      <path d="M 0 0 C 30 5, 38 -5, 28 -18 C 18 -8, 10 -2, 0 0 Z" fill="url(#lotusGold)"/>
+
+      <!-- Inner Sacred Bud Core -->
+      <path d="M 0 0 C -8 -15, -4 -25, 0 -30 C 4 -25, 8 -15, 0 0 Z" fill="#fef08a" stroke="#d97706" stroke-width="1"/>
+      <circle cx="0" cy="-6" r="3.2" fill="#78350f"/>
+
+      <!-- Base Lotus Calyx & Water Droplet -->
+      <path d="M -16 6 C 0 14, 0 14, 16 6 C 10 2, -10 2, -16 6 Z" fill="url(#lotusGold)"/>
+      <circle cx="0" cy="12" r="2.2" fill="#fef08a"/>
+    </g>
+
+    <!-- 2. Four Corner Half-Lotuses for Seamless Repeat -->
+    <g transform="translate(0, 0)">
+      <path d="M 0 0 C 18 10, 28 25, 18 36 C 8 28, 2 15, 0 0 Z" fill="url(#lotusGold)"/>
+      <path d="M 0 0 C 10 18, 25 28, 36 18 C 28 8, 15 2, 0 0 Z" fill="url(#lotusGold)"/>
+      <circle cx="0" cy="0" r="5" fill="#fef08a" stroke="#d97706" stroke-width="1"/>
+    </g>
+    <g transform="translate(160, 0)">
+      <path d="M 0 0 C -18 10, -28 25, -18 36 C -8 28, -2 15, 0 0 Z" fill="url(#lotusGold)"/>
+      <path d="M 0 0 C -10 18, -25 28, -36 18 C -28 8, -15 2, 0 0 Z" fill="url(#lotusGold)"/>
+      <circle cx="0" cy="0" r="5" fill="#fef08a" stroke="#d97706" stroke-width="1"/>
+    </g>
+    <g transform="translate(0, 160)">
+      <path d="M 0 0 C 18 -10, 28 -25, 18 -36 C 8 -28, 2 -15, 0 0 Z" fill="url(#lotusGold)"/>
+      <path d="M 0 0 C 10 -18, 25 -28, 36 -18 C 28 -8, 15 -2, 0 0 Z" fill="url(#lotusGold)"/>
+      <circle cx="0" cy="0" r="5" fill="#fef08a" stroke="#d97706" stroke-width="1"/>
+    </g>
+    <g transform="translate(160, 160)">
+      <path d="M 0 0 C -18 -10, -28 -25, -18 -36 C -8 -28, -2 -15, 0 0 Z" fill="url(#lotusGold)"/>
+      <path d="M 0 0 C -10 -18, -25 -28, -36 -18 C -28 -8, -15 -2, 0 0 Z" fill="url(#lotusGold)"/>
+      <circle cx="0" cy="0" r="5" fill="#fef08a" stroke="#d97706" stroke-width="1"/>
+    </g>
+
+    <!-- 3. Floating Lotus Buds & Leaf Sprigs in Voids -->
+    <g transform="translate(35, 35)">
+      <path d="M 0 10 C -8 0, 0 -12, 0 -12 C 0 -12, 8 0, 0 10 Z" fill="url(#lotusSheen)" stroke="#b45309" stroke-width="0.8"/>
+      <circle cx="0" cy="12" r="1.8" fill="#fef08a"/>
+    </g>
+    <g transform="translate(125, 35)">
+      <path d="M 0 10 C -8 0, 0 -12, 0 -12 C 0 -12, 8 0, 0 10 Z" fill="url(#lotusSheen)" stroke="#b45309" stroke-width="0.8"/>
+      <circle cx="0" cy="12" r="1.8" fill="#fef08a"/>
+    </g>
+    <g transform="translate(35, 125)">
+      <path d="M 0 10 C -8 0, 0 -12, 0 -12 C 0 -12, 8 0, 0 10 Z" fill="url(#lotusSheen)" stroke="#b45309" stroke-width="0.8"/>
+      <circle cx="0" cy="12" r="1.8" fill="#fef08a"/>
+    </g>
+    <g transform="translate(125, 125)">
+      <path d="M 0 10 C -8 0, 0 -12, 0 -12 C 0 -12, 8 0, 0 10 Z" fill="url(#lotusSheen)" stroke="#b45309" stroke-width="0.8"/>
+      <circle cx="0" cy="12" r="1.8" fill="#fef08a"/>
+    </g>
+  </g>
 </svg>

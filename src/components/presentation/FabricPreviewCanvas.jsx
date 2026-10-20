@@ -15,7 +15,9 @@ import {
   Sliders,
   Grid,
   Package,
-  Scissors
+  Scissors,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { getAssetUrl } from '../../utils/assetHelper';
 
@@ -30,6 +32,80 @@ export default function FabricPreviewCanvas({
   const [isPlayingVideo, setIsPlayingVideo] = useState(true);
   const containerRef = useRef(null);
   const videoRef = useRef(null);
+
+  // Horizontal Scrolling Controls for View Mode Switcher
+  const viewModesTrackRef = useRef(null);
+  const [canScrollModeLeft, setCanScrollModeLeft] = useState(false);
+  const [canScrollModeRight, setCanScrollModeRight] = useState(true);
+  const [isModeDragging, setIsModeDragging] = useState(false);
+  const [modeStartX, setModeStartX] = useState(0);
+  const [modeScrollLeftPos, setModeScrollLeftPos] = useState(0);
+
+  const updateModeScrollState = () => {
+    if (viewModesTrackRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = viewModesTrackRef.current;
+      setCanScrollModeLeft(scrollLeft > 4);
+      setCanScrollModeRight(scrollWidth > clientWidth + 4 && scrollLeft + clientWidth < scrollWidth - 4);
+    }
+  };
+
+  useEffect(() => {
+    const el = viewModesTrackRef.current;
+    if (!el) return;
+
+    updateModeScrollState();
+
+    // Native { passive: false } listener translates vertical mouse wheel into horizontal scroll
+    const handleWheel = (e) => {
+      if (e.deltaY !== 0 || e.deltaX !== 0) {
+        e.preventDefault();
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        el.scrollLeft += delta;
+        updateModeScrollState();
+      }
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('resize', updateModeScrollState);
+
+    let ro;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => updateModeScrollState());
+      ro.observe(el);
+    }
+
+    return () => {
+      el.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('resize', updateModeScrollState);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
+  const scrollModes = (direction) => {
+    if (viewModesTrackRef.current) {
+      const amount = direction === 'left' ? -180 : 180;
+      viewModesTrackRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+      setTimeout(updateModeScrollState, 260);
+    }
+  };
+
+  const handleModeMouseDown = (e) => {
+    if (!viewModesTrackRef.current) return;
+    setIsModeDragging(true);
+    setModeStartX(e.pageX - viewModesTrackRef.current.offsetLeft);
+    setModeScrollLeftPos(viewModesTrackRef.current.scrollLeft);
+  };
+
+  const handleModeMouseLeaveOrUp = () => setIsModeDragging(false);
+
+  const handleModeMouseMove = (e) => {
+    if (!isModeDragging || !viewModesTrackRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - viewModesTrackRef.current.offsetLeft;
+    const walk = (x - modeStartX) * 1.5;
+    viewModesTrackRef.current.scrollLeft = modeScrollLeftPos - walk;
+    updateModeScrollState();
+  };
 
   // Active Customization Parameters
   const colorName = (customization?.colour?.name || selectedProduct?.base_colour || '').toLowerCase();
@@ -180,20 +256,32 @@ export default function FabricPreviewCanvas({
 
   // 5. Active Jacquard Motif SVG
   const getActivePatternSvg = () => {
-    if (designName.includes('meenakari') || designName.includes('floral')) {
+    const id = customization?.design?.id;
+    const code = (customization?.design?.design_code || '').toLowerCase();
+    const name = (customization?.design?.name || designName || '').toLowerCase();
+
+    if (id === 2 || name.includes('meenakari') || name.includes('floral') || code.includes('meena')) {
       return getAssetUrl('/assets/patterns/meenakari.svg');
     }
-    if (designName.includes('temple') || designName.includes('chevron')) {
+    if (id === 3 || name.includes('temple') || name.includes('chevron') || code.includes('temple')) {
       return getAssetUrl('/assets/patterns/temple.svg');
     }
-    if (designName.includes('kamal') || designName.includes('lotus')) {
+    if (id === 4 || name.includes('kamal') || name.includes('lotus') || code.includes('kamal')) {
       return getAssetUrl('/assets/patterns/lotus.svg');
     }
-    if (designName.includes('tree') || designName.includes('kalpavriksha')) {
+    if (id === 5 || name.includes('tree') || name.includes('kalpavriksha') || code.includes('tree')) {
       return getAssetUrl('/assets/patterns/kalpavriksha.svg');
     }
     return getAssetUrl('/assets/patterns/kalka.svg');
   };
+
+  // Precise geometric polygon isolating the saree drape on the runway model
+  const sareeClipPath = 'polygon(' +
+    '37% 36%, 42% 30%, 48% 25%, 54% 20.5%, 68% 21%, ' +
+    '71% 28%, 73% 38%, 74.5% 50%, 75.5% 62%, 74% 74%, ' +
+    '71% 83%, 64.5% 91%, 41.5% 91%, 40% 84%, 39% 72%, ' +
+    '38% 60%, 36.5% 45%' +
+  ')';
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
@@ -232,6 +320,39 @@ export default function FabricPreviewCanvas({
               draggable="false"
             />
 
+            {/* SVG Defs for Saree Drape Featheared Mask */}
+            <svg className="absolute w-0 h-0 pointer-events-none" style={{ position: 'absolute' }} aria-hidden="true">
+              <defs>
+                <filter id="maskFeather" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="0.006" />
+                </filter>
+                <mask id="sareeDrapeMask" maskContentUnits="objectBoundingBox">
+                  <rect x="0" y="0" width="1" height="1" fill="black" />
+                  <path
+                    d="M 0.37 0.36
+                       C 0.40 0.31, 0.46 0.26, 0.54 0.205
+                       C 0.59 0.20, 0.65 0.205, 0.68 0.21
+                       C 0.70 0.26, 0.72 0.35, 0.735 0.45
+                       C 0.75 0.55, 0.755 0.65, 0.74 0.75
+                       C 0.72 0.82, 0.69 0.87, 0.645 0.91
+                       L 0.415 0.91
+                       C 0.405 0.84, 0.395 0.72, 0.39 0.62
+                       C 0.38 0.52, 0.365 0.44, 0.37 0.36 Z"
+                    fill="white"
+                    filter="url(#maskFeather)"
+                  />
+                  {/* Exclude Bare Right Arm & Skin */}
+                  <path
+                    d="M 0.33 0.33 L 0.385 0.33 L 0.385 0.46 L 0.34 0.46 Z"
+                    fill="black"
+                    filter="url(#maskFeather)"
+                  />
+                  {/* Exclude Hand resting on waist */}
+                  <ellipse cx="0.505" cy="0.38" rx="0.04" ry="0.025" fill="black" filter="url(#maskFeather)" />
+                </mask>
+              </defs>
+            </svg>
+
             {/* DYNAMIC REACTIVE SILK DYE COLOR LAYER: Photorealistically shifts color on the SAME saree fabric */}
             {silkColorFilter.filter !== 'none' && (
               <img
@@ -240,33 +361,65 @@ export default function FabricPreviewCanvas({
                 className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none transition-all duration-500 ease-in-out"
                 style={{
                   ...silkColorFilter,
-                  maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 16%, rgba(0,0,0,0.85) 23%, black 30%, black 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 16%, rgba(0,0,0,0.85) 23%, black 30%, black 100%)'
+                  mask: 'url(#sareeDrapeMask)',
+                  WebkitMask: 'url(#sareeDrapeMask)',
+                  clipPath: sareeClipPath
                 }}
                 draggable="false"
               />
             )}
 
-            {/* DYNAMIC JACQUARD WEAVE MOTIF OVERLAY: Embossed directly onto saree drape */}
+            {/* DYNAMIC JACQUARD WEAVE MOTIFS: Woven directly onto saree fabric with realistic metallic zari depth & fold shadows */}
             <div 
-              className="absolute inset-0 pointer-events-none transition-all duration-500 mix-blend-overlay opacity-80"
+              className="absolute inset-0 pointer-events-none transition-all duration-500 overflow-hidden"
               style={{
-                backgroundImage: `url(${getActivePatternSvg()})`,
-                backgroundSize: '85px 85px',
-                backgroundRepeat: 'repeat',
-                filter: zariPalette.filter,
-                maskImage: 'radial-gradient(ellipse at 50% 68%, black 45%, transparent 80%)',
-                WebkitMaskImage: 'radial-gradient(ellipse at 50% 68%, black 45%, transparent 80%)'
+                mask: 'url(#sareeDrapeMask)',
+                WebkitMask: 'url(#sareeDrapeMask)',
+                clipPath: sareeClipPath
               }}
-            />
+            >
+              {/* LAYER A: Luminous Gold Jacquard Weave Threads */}
+              <div 
+                className="absolute inset-0 transition-all duration-500"
+                style={{
+                  backgroundImage: `url(${getActivePatternSvg()})`,
+                  backgroundSize: '115px 115px',
+                  backgroundRepeat: 'repeat',
+                  mixBlendMode: 'screen',
+                  opacity: 0.95,
+                  filter: zariPalette.filter
+                }}
+              />
 
-            {/* DYNAMIC METALLIC ZARI SPECULAR LUSTER */}
-            <div 
-              className="absolute inset-0 pointer-events-none mix-blend-color-dodge transition-all duration-500 opacity-60"
-              style={{
-                background: `radial-gradient(ellipse at 50% 62%, ${zariPalette.glow} 0%, transparent 65%)`
-              }}
-            />
+              {/* LAYER B: Embossed Metallic Zari Sheen */}
+              <div 
+                className="absolute inset-0 transition-all duration-500"
+                style={{
+                  backgroundImage: `url(${getActivePatternSvg()})`,
+                  backgroundSize: '115px 115px',
+                  backgroundRepeat: 'repeat',
+                  mixBlendMode: 'color-dodge',
+                  opacity: 0.70,
+                  filter: zariPalette.filter
+                }}
+              />
+
+              {/* LAYER C: Fabric Creases, Folds & Shadow Modulator (multiplies photograph folds onto motifs) */}
+              <img
+                src={getBaseModelImage()}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover pointer-events-none mix-blend-multiply opacity-70 transition-all duration-500"
+                draggable="false"
+              />
+
+              {/* LAYER D: Specular Metallic Zari Luster Spotlight Sheen */}
+              <div 
+                className="absolute inset-0 pointer-events-none mix-blend-color-dodge transition-all duration-500 opacity-60"
+                style={{
+                  background: `radial-gradient(ellipse at 52% 58%, ${zariPalette.glow} 0%, transparent 65%)`
+                }}
+              />
+            </div>
 
             {/* DYNAMIC FINISHING: Diang Calendering Silk Sheen */}
             {hasDiang && (
@@ -424,63 +577,107 @@ export default function FabricPreviewCanvas({
           </span>
         </div>
 
-        {/* View Mode Switcher Pills */}
-        <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/85 backdrop-blur-md border border-white/15 pointer-events-auto shadow-xl overflow-x-auto scrollbar-none">
+        {/* View Mode Switcher with Navigation Arrows & Mouse Wheel Scrolling */}
+        <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/90 backdrop-blur-md border border-white/20 pointer-events-auto shadow-2xl max-w-full overflow-hidden">
+          {/* Scroll Left Button */}
           <button
-            onClick={() => setViewMode('model')}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-              viewMode === 'model'
-                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/10'
+            type="button"
+            onClick={() => scrollModes('left')}
+            disabled={!canScrollModeLeft}
+            className={`p-1.5 rounded-xl transition shrink-0 ${
+              canScrollModeLeft
+                ? 'bg-zinc-800/90 text-amber-300 hover:text-white hover:bg-amber-500/20 active:scale-95 cursor-pointer border border-amber-500/30'
+                : 'text-zinc-600 opacity-40 cursor-not-allowed border border-transparent'
             }`}
+            title="Scroll view modes left"
           >
-            Model View
+            <ChevronLeft className="w-3.5 h-3.5" />
           </button>
 
-          <button
-            onClick={() => setViewMode('video')}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition ${
-              viewMode === 'video'
-                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/10'
-            }`}
+          {/* Scrollable Modes Track */}
+          <div
+            ref={viewModesTrackRef}
+            onMouseDown={handleModeMouseDown}
+            onMouseLeave={handleModeMouseLeaveOrUp}
+            onMouseUp={handleModeMouseLeaveOrUp}
+            onMouseMove={handleModeMouseMove}
+            onScroll={updateModeScrollState}
+            style={{ scrollbarWidth: 'thin', scrollbarColor: '#f59e0b #18181b' }}
+            className={`flex items-center gap-1 overflow-x-auto scroll-smooth py-0.5 px-0.5 max-w-[260px] xs:max-w-[320px] sm:max-w-md ${
+              isModeDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+            } [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-track]:bg-white/5`}
           >
-            <Play className="w-3 h-3 fill-current" />
-            <span>Catwalk Video</span>
-          </button>
+            <button
+              onClick={() => setViewMode('model')}
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition ${
+                viewMode === 'model'
+                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              Model View
+            </button>
 
-          <button
-            onClick={() => setViewMode('pattern')}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1 transition ${
-              viewMode === 'pattern'
-                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/10'
-            }`}
-          >
-            <Grid className="w-3 h-3" />
-            <span>Jacquard Motifs</span>
-          </button>
+            <button
+              onClick={() => setViewMode('video')}
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 shrink-0 transition ${
+                viewMode === 'video'
+                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Play className="w-3 h-3 fill-current" />
+              <span>Catwalk Video</span>
+            </button>
 
-          <button
-            onClick={() => setViewMode('flatlay')}
-            className={`hidden md:inline-block px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-              viewMode === 'flatlay'
-                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/10'
-            }`}
-          >
-            Real Saree
-          </button>
+            <button
+              onClick={() => setViewMode('pattern')}
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1 shrink-0 transition ${
+                viewMode === 'pattern'
+                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Grid className="w-3 h-3" />
+              <span>Jacquard Motifs</span>
+            </button>
 
+            <button
+              onClick={() => setViewMode('flatlay')}
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition ${
+                viewMode === 'flatlay'
+                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              Real Saree
+            </button>
+
+            <button
+              onClick={() => setViewMode('macro')}
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition ${
+                viewMode === 'macro'
+                  ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
+                  : 'text-zinc-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              4K Macro
+            </button>
+          </div>
+
+          {/* Scroll Right Button */}
           <button
-            onClick={() => setViewMode('macro')}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-              viewMode === 'macro'
-                ? 'gold-gradient-bg text-zinc-950 shadow-md font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/10'
+            type="button"
+            onClick={() => scrollModes('right')}
+            disabled={!canScrollModeRight}
+            className={`p-1.5 rounded-xl transition shrink-0 ${
+              canScrollModeRight
+                ? 'bg-zinc-800/90 text-amber-300 hover:text-white hover:bg-amber-500/20 active:scale-95 cursor-pointer border border-amber-500/30'
+                : 'text-zinc-600 opacity-40 cursor-not-allowed border border-transparent'
             }`}
+            title="Scroll view modes right"
           >
-            4K Macro
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 

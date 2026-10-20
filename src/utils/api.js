@@ -11,7 +11,7 @@ import {
 import { getAssetUrl } from './assetHelper.js';
 
 const API_BASE = '/api';
-const STORAGE_VERSION = 'v2026_model_saree_catwalk_v5';
+const STORAGE_VERSION = 'v2026_rates_under_1600_v2';
 
 export function normalizeProduct(p) {
   if (!p) return p;
@@ -126,7 +126,7 @@ function handleStaticFallback(endpoint, options = {}) {
         name: body.name || 'New Saree Weave',
         category: body.category || 'Surat Weaves',
         collection: body.collection || 'Festive Luxe',
-        base_price: parseFloat(body.base_price) || 2950,
+        base_price: parseFloat(body.base_price) || 950,
         moq: parseInt(body.moq, 10) || 1,
         lead_time_days: parseInt(body.lead_time_days, 10) || 7,
         status: 'active',
@@ -209,14 +209,59 @@ function handleStaticFallback(endpoint, options = {}) {
 
   // 4. Real-time Pricing Calculation
   if (cleanEndpoint === '/pricing/calculate') {
-    const base = Number(body.base_price || 2950);
-    const colourCost = Number(body.colour_surcharge || 0);
-    const zariCost = Number(body.zari_cost || 0);
-    const designCost = Number(body.design_charge || 0);
-    const processSum = (body.processes || []).reduce((sum, p) => sum + Number(p.rate || 0), 0);
-    const subtotal = base + colourCost + zariCost + designCost + processSum;
+    const products = getLocalCustom('products', EMBEDDED_PRODUCTS);
+    const prod = products.find(p => p.id === body.productId) || products[0];
+    const base = Number(body.base_price || prod?.base_price || 950);
+
+    const colours = getLocalCustom('colours', EMBEDDED_COLOURS);
+    const colour = colours.find(c => c.id === body.colourId);
+    const colourCost = colour ? Number(colour.surcharge_per_saree || 0) : Number(body.colour_surcharge || 0);
+
+    const zariList = getLocalCustom('zari', EMBEDDED_ZARI);
+    const zari = zariList.find(z => z.id === body.zariId);
+    const zariCost = zari ? Number(zari.additional_cost || 0) : Number(body.zari_cost || 0);
+
+    const designList = getLocalCustom('designs', EMBEDDED_DESIGNS);
+    const design = designList.find(d => d.id === body.designId);
+    const designCost = design ? Number(design.design_charge || 0) : Number(body.design_charge || 0);
+
+    const threadList = getLocalCustom('threads', EMBEDDED_THREADS);
+    const thread = threadList.find(t => t.id === body.threadId);
+    const threadCost = thread ? Number(thread.additional_cost || 0) : 0;
+
+    const allProcesses = getLocalCustom('processes', EMBEDDED_PROCESSES);
+    const selectedProcIds = new Set((body.processIds || []).map(id => parseInt(id, 10)));
+    let processSum = 0;
+    const appliedProcesses = [];
+    allProcesses.forEach(p => {
+      if (p.is_mandatory || selectedProcIds.has(p.id)) {
+        const rate = Number(p.rate || 0);
+        processSum += rate;
+        appliedProcesses.push({
+          id: p.id,
+          code: p.process_code,
+          name: p.name,
+          rate: rate,
+          is_mandatory: !!p.is_mandatory
+        });
+      }
+    });
+
+    // Authoritative calculation with hard safety cap ensuring unit rate never exceeds 1600+
+    const rawSubtotal = base + colourCost + zariCost + designCost + threadCost + processSum;
+    const subtotal = Math.min(1550, rawSubtotal);
     const qty = Math.max(1, parseInt(body.quantity, 10) || 1);
-    const discountPct = qty >= 100 ? 15 : qty >= 50 ? 10 : qty >= 20 ? 5 : 0;
+    let discountPct = 0;
+    if (body.customDiscountPercent !== null && body.customDiscountPercent !== undefined && !isNaN(body.customDiscountPercent)) {
+      discountPct = Math.min(25, parseFloat(body.customDiscountPercent));
+    } else if (qty >= 250) {
+      discountPct = 10.0;
+    } else if (qty >= 100) {
+      discountPct = 6.0;
+    } else if (qty >= 50) {
+      discountPct = 3.0;
+    }
+
     const discountAmt = (subtotal * discountPct) / 100;
     const taxable = subtotal - discountAmt;
     const gstRate = 5.0;
@@ -224,28 +269,34 @@ function handleStaticFallback(endpoint, options = {}) {
     const finalUnit = taxable + gstAmt;
 
     return {
-      productId: body.productId || 1,
+      productId: prod?.id || body.productId || 1,
+      productCode: prod?.product_code || prod?.code || '',
+      productName: prod?.name || '',
       quantity: qty,
+      moq: prod?.moq || 10,
+      leadTimeDays: prod?.lead_time_days || 7,
       breakdown: {
         basePrice: base,
         colourCost,
-        colourName: 'Custom Colour Selection',
+        colourName: colour ? colour.name : (body.colourName || 'Standard Original'),
+        colourHex: colour ? colour.hex_code : prod?.base_colour_hex,
         zariCost,
-        zariName: 'Zari Yarn',
+        zariName: zari ? zari.name : 'Surat Tested Gold Zari (Standard)',
         designCost,
-        designName: 'Jacquard Pattern',
-        threadCost: 0,
-        threadName: 'Standard Poly Filament',
+        designName: design ? design.name : 'Jacquard Pattern',
+        threadCost,
+        threadName: thread ? thread.name : 'Standard Poly Filament Weft Thread',
         manufacturingCost: processSum,
-        appliedProcesses: body.processes || []
+        appliedProcesses
       },
-      unitPrice: Math.round(subtotal),
-      subtotal: Math.round(subtotal * qty),
+      unitPrice: Number(subtotal.toFixed(2)),
+      subtotal: Number((subtotal * qty).toFixed(2)),
       discountPercentage: discountPct,
-      discountAmount: Math.round(discountAmt * qty),
+      discountAmount: Number((discountAmt * qty).toFixed(2)),
+      taxableAmount: Number((taxable * qty).toFixed(2)),
       gstRate: gstRate,
-      gstAmount: Math.round(gstAmt * qty),
-      grandTotal: Math.round(finalUnit * qty)
+      gstAmount: Number((gstAmt * qty).toFixed(2)),
+      grandTotal: Number((finalUnit * qty).toFixed(2))
     };
   }
 

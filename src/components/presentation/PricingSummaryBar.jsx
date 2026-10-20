@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 
 export default function PricingSummaryBar({
+  product,
   calculation,
   quantity,
   setQuantity,
@@ -156,17 +157,9 @@ export default function PricingSummaryBar({
             </button>
 
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-white truncate max-w-[160px] sm:max-w-[200px]">
-                  {calculation.productName}
-                </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-amber-300 border border-amber-500/30 font-mono">
-                  {calculation.productCode}
-                </span>
-              </div>
-              <p className="text-[11px] text-zinc-400 flex items-center gap-1.5 mt-0.5">
-                <span>Unit Rate:</span>
-                <strong className="text-amber-300">{formatInr(calculation.unitPrice)}</strong>
+              <p className="text-xs text-zinc-400 flex items-center gap-1.5">
+                <span className="font-medium text-zinc-400">Unit Rate:</span>
+                <strong className="text-amber-300 font-bold text-sm sm:text-base">{formatInr(calculation.unitPrice)}</strong>
                 <span className="text-[10px] text-zinc-500">/ saree</span>
               </p>
             </div>

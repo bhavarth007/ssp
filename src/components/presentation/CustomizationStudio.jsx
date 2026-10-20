@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Palette, 
   Sparkles, 
@@ -6,6 +6,7 @@ import {
   Scissors, 
   Check, 
   Info,
+  ChevronLeft,
   ChevronRight,
   Flame,
   Package
@@ -60,28 +61,170 @@ export default function CustomizationStudio({
     }
   };
 
+  const tabsContainerRef = useRef(null);
+  const tabButtonRefs = useRef({});
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftPos, setScrollLeftPos] = useState(0);
+
+  const updateScrollState = () => {
+    if (tabsContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsContainerRef.current;
+      setCanScrollLeft(scrollLeft > 4);
+      setCanScrollRight(scrollWidth > clientWidth + 4 && scrollLeft + clientWidth < scrollWidth - 4);
+    }
+  };
+
+  useEffect(() => {
+    const el = tabsContainerRef.current;
+    if (!el) return;
+
+    updateScrollState();
+
+    // Native { passive: false } event listener translates vertical mouse wheel into horizontal scroll
+    const onWheel = (e) => {
+      if (e.deltaY !== 0 || e.deltaX !== 0) {
+        e.preventDefault();
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        el.scrollLeft += delta;
+        updateScrollState();
+      }
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('resize', updateScrollState);
+
+    let ro;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => updateScrollState());
+      ro.observe(el);
+    }
+
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      window.removeEventListener('resize', updateScrollState);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (tabButtonRefs.current[activeTab]) {
+      tabButtonRefs.current[activeTab].scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest'
+      });
+    }
+    setTimeout(updateScrollState, 150);
+  }, [activeTab]);
+
+  const scrollTabs = (direction) => {
+    if (tabsContainerRef.current) {
+      const amount = direction === 'left' ? -220 : 220;
+      tabsContainerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+      setTimeout(updateScrollState, 260);
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    if (!tabsContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - tabsContainerRef.current.offsetLeft);
+    setScrollLeftPos(tabsContainerRef.current.scrollLeft);
+  };
+
+  const handleMouseLeaveOrUp = () => setIsDragging(false);
+
+  const handleMouseMove = (e) => {
+    if (!isDragging || !tabsContainerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - tabsContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    tabsContainerRef.current.scrollLeft = scrollLeftPos - walk;
+    updateScrollState();
+  };
+
+  const tabOrder = ['colour', 'zari', 'design', 'thread', 'process'];
+  const currentIndex = tabOrder.indexOf(activeTab);
+  const prevTabId = currentIndex > 0 ? tabOrder[currentIndex - 1] : null;
+  const nextTabId = currentIndex < tabOrder.length - 1 ? tabOrder[currentIndex + 1] : null;
+
+  const nextTabLabels = {
+    zari: '2. Metallic Zari Specification',
+    design: '3. Jacquard Weave Motifs',
+    thread: '4. High-Tenacity Weft Thread',
+    process: '5. Diang & Finishing Ops',
+  };
+
   return (
     <div className="flex flex-col h-full glass-card rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-      {/* Category Tabs */}
-      <div className="flex overflow-x-auto p-2 gap-1.5 border-b border-white/10 bg-zinc-950/70 scrollbar-none">
-        {tabs.map((t) => {
-          const Icon = t.icon;
-          const isActive = activeTab === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-medium whitespace-nowrap transition-all ${
-                isActive
-                  ? 'gold-gradient-bg text-zinc-950 font-semibold shadow-md'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              <span>{t.label}</span>
-            </button>
-          );
-        })}
+      {/* Category Tabs Header with Permanent Navigation Arrows, Visible Gold Scrollbar & Smooth Mouse Wheel Scrolling */}
+      <div className="relative border-b border-white/10 bg-zinc-950/90 px-2 py-2 flex items-center gap-1.5 shadow-md">
+        {/* Scroll Left Button */}
+        <button
+          type="button"
+          onClick={() => scrollTabs('left')}
+          disabled={!canScrollLeft}
+          className={`p-2 rounded-xl transition shrink-0 ${
+            canScrollLeft
+              ? 'bg-zinc-800/90 text-amber-300 hover:text-white hover:bg-amber-500/20 active:scale-95 cursor-pointer border border-amber-500/40 shadow-lg'
+              : 'text-zinc-600 opacity-40 cursor-not-allowed border border-white/5 bg-zinc-900/40'
+          }`}
+          title="Scroll tabs left"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+
+        {/* Scrollable Tabs Track */}
+        <div
+          ref={tabsContainerRef}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeaveOrUp}
+          onMouseUp={handleMouseLeaveOrUp}
+          onMouseMove={handleMouseMove}
+          onScroll={updateScrollState}
+          style={{ scrollbarWidth: 'thin', scrollbarColor: '#f59e0b #18181b' }}
+          className={`flex-1 flex items-center overflow-x-auto p-1 gap-2 scroll-smooth ${
+            isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+          } [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-track]:bg-white/5`}
+        >
+          {tabs.map((t) => {
+            const Icon = t.icon;
+            const isActive = activeTab === t.id;
+            return (
+              <button
+                key={t.id}
+                ref={(el) => (tabButtonRefs.current[t.id] = el)}
+                onClick={() => setActiveTab(t.id)}
+                className={`flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
+                  isActive
+                    ? 'gold-gradient-bg text-zinc-950 font-bold shadow-md ring-1 ring-amber-400'
+                    : 'text-zinc-300 hover:text-white hover:bg-zinc-800/80 bg-zinc-900/70 border border-white/10'
+                }`}
+              >
+                <Icon className="w-4 h-4 shrink-0" />
+                <span>{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Scroll Right Button */}
+        <button
+          type="button"
+          onClick={() => scrollTabs('right')}
+          disabled={!canScrollRight}
+          className={`p-2 rounded-xl transition shrink-0 ${
+            canScrollRight
+              ? 'bg-zinc-800/90 text-amber-300 hover:text-white hover:bg-amber-500/20 active:scale-95 cursor-pointer border border-amber-500/40 shadow-lg'
+              : 'text-zinc-600 opacity-40 cursor-not-allowed border border-white/5 bg-zinc-900/40'
+          }`}
+          title="Scroll tabs right"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Tab Panels */}
@@ -137,6 +280,18 @@ export default function CustomizationStudio({
                 );
               })}
             </div>
+
+            {/* Step Navigation Footer */}
+            <div className="pt-3 border-t border-white/10 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setActiveTab('zari')}
+                className="px-4 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
+              >
+                <span>Next: 2. Metallic Zari Specification</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -176,6 +331,26 @@ export default function CustomizationStudio({
                 );
               })}
             </div>
+
+            {/* Step Navigation Footer */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setActiveTab('colour')}
+                className="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition active:scale-95"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('design')}
+                className="px-4 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
+              >
+                <span>Next: 3. Jacquard Weave Motifs</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -214,6 +389,26 @@ export default function CustomizationStudio({
                 );
               })}
             </div>
+
+            {/* Step Navigation Footer */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setActiveTab('zari')}
+                className="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition active:scale-95"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('thread')}
+                className="px-4 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
+              >
+                <span>Next: 4. High-Tenacity Weft Thread</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -248,6 +443,26 @@ export default function CustomizationStudio({
                   </button>
                 );
               })}
+            </div>
+
+            {/* Step Navigation Footer */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setActiveTab('design')}
+                className="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition active:scale-95"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('process')}
+                className="px-4 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
+              >
+                <span>Next: 5. Diang & Finishing Ops</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         )}
@@ -309,6 +524,21 @@ export default function CustomizationStudio({
                   </div>
                 );
               })}
+            </div>
+
+            {/* Step Navigation Footer */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setActiveTab('thread')}
+                className="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition active:scale-95"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Back: 4. Weft Thread</span>
+              </button>
+              <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
+                <Check className="w-4 h-4" /> All 5 Categories Customised
+              </span>
             </div>
           </div>
         )}

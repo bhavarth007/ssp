@@ -22,43 +22,43 @@ export const EMBEDDED_COLOURS = [
   { id: 1, name: 'Deep Crimson Maroon', hex_code: '#7B1113', surcharge_per_saree: 0.0, is_active: 1 },
   { id: 2, name: 'Royal Peacock Blue', hex_code: '#0C3A5E', surcharge_per_saree: 0.0, is_active: 1 },
   { id: 3, name: 'Emerald Forest Green', hex_code: '#0E5C44', surcharge_per_saree: 0.0, is_active: 1 },
-  { id: 4, name: 'Rani Magenta Pink', hex_code: '#A0144F', surcharge_per_saree: 40.0, is_active: 1 },
+  { id: 4, name: 'Rani Magenta Pink', hex_code: '#A0144F', surcharge_per_saree: 15.0, is_active: 1 },
   { id: 5, name: 'Imperial Mustard Gold', hex_code: '#C68B19', surcharge_per_saree: 0.0, is_active: 1 },
-  { id: 6, name: 'Regal Wine Plum', hex_code: '#4A0E2E', surcharge_per_saree: 50.0, is_active: 1 },
-  { id: 7, name: 'Pure Ivory Pearl', hex_code: '#F5F2E9', surcharge_per_saree: 60.0, is_active: 1 },
-  { id: 8, name: 'Midnight Black Gold', hex_code: '#1A1A1A', surcharge_per_saree: 80.0, is_active: 1 }
+  { id: 6, name: 'Regal Wine Plum', hex_code: '#4A0E2E', surcharge_per_saree: 20.0, is_active: 1 },
+  { id: 7, name: 'Pure Ivory Pearl', hex_code: '#F5F2E9', surcharge_per_saree: 25.0, is_active: 1 },
+  { id: 8, name: 'Midnight Black Gold', hex_code: '#1A1A1A', surcharge_per_saree: 30.0, is_active: 1 }
 ];
 
 export const EMBEDDED_ZARI = [
   { id: 1, name: 'Surat Tested Gold Zari (Standard)', grade: 'Surat Grade A', finish_tone: 'Gold', thickness_count: '120D / 240TPI', consumption_grams: 180, rate_per_gram: 2.5, additional_cost: 0.0, is_active: 1 },
-  { id: 2, name: 'Pure Antique Matte Gold Zari', grade: 'Brocade Classic', finish_tone: 'Antique Gold', thickness_count: '150D / 280TPI', consumption_grams: 210, rate_per_gram: 3.2, additional_cost: 180.0, is_active: 1 },
-  { id: 3, name: 'Rose Gold Metallic Lurex', grade: 'Imported Japanese Spec', finish_tone: 'Rose Gold', thickness_count: '110D / 220TPI', consumption_grams: 160, rate_per_gram: 3.8, additional_cost: 220.0, is_active: 1 },
-  { id: 4, name: 'Silver Platinum Fine Zari', grade: 'Surat Premium 120D', finish_tone: 'Silver', thickness_count: '120D / 240TPI', consumption_grams: 175, rate_per_gram: 3.0, additional_cost: 150.0, is_active: 1 },
-  { id: 5, name: 'Champagne Gold Micro Zari', grade: 'Micro-Filament 75D', finish_tone: 'Champagne', thickness_count: '75D / 300TPI', consumption_grams: 140, rate_per_gram: 4.5, additional_cost: 260.0, is_active: 1 }
+  { id: 2, name: 'Pure Antique Matte Gold Zari', grade: 'Brocade Classic', finish_tone: 'Antique Gold', thickness_count: '150D / 280TPI', consumption_grams: 210, rate_per_gram: 3.2, additional_cost: 45.0, is_active: 1 },
+  { id: 3, name: 'Rose Gold Metallic Lurex', grade: 'Imported Japanese Spec', finish_tone: 'Rose Gold', thickness_count: '110D / 220TPI', consumption_grams: 160, rate_per_gram: 3.8, additional_cost: 50.0, is_active: 1 },
+  { id: 4, name: 'Silver Platinum Fine Zari', grade: 'Surat Premium 120D', finish_tone: 'Silver', thickness_count: '120D / 240TPI', consumption_grams: 175, rate_per_gram: 3.0, additional_cost: 35.0, is_active: 1 },
+  { id: 5, name: 'Champagne Gold Micro Zari', grade: 'Micro-Filament 75D', finish_tone: 'Champagne', thickness_count: '75D / 300TPI', consumption_grams: 140, rate_per_gram: 4.5, additional_cost: 60.0, is_active: 1 }
 ];
 
 export const EMBEDDED_DESIGNS = [
   { id: 1, design_code: 'DSG-KALKA-01', name: 'Traditional Royal Kalka Paisley Jaal', motif_type: 'Heritage Kalka Paisley', thumbnail: '/assets/patterns/kalka.svg', design_charge: 0.0, is_active: 1 },
-  { id: 2, design_code: 'DSG-MEENA-02', name: 'Mughal Meenakari Floral Brocade', motif_type: 'Multi-colour Floral Jaal', thumbnail: '/assets/patterns/meenakari.svg', design_charge: 180.0, is_active: 1 },
-  { id: 3, design_code: 'DSG-TEMPLE-03', name: 'Geometric Chevron Temple Weave', motif_type: 'Architectural Temple Gopuram', thumbnail: '/assets/patterns/temple.svg', design_charge: 120.0, is_active: 1 },
-  { id: 4, design_code: 'DSG-KAMAL-04', name: 'Lotus Bud (Kamal) Heritage Motifs', motif_type: 'Sacred Lotus Boota', thumbnail: '/assets/patterns/lotus.svg', design_charge: 160.0, is_active: 1 },
-  { id: 5, design_code: 'DSG-TREE-05', name: 'Tree of Life (Kalpavriksha) Grand Weave', motif_type: 'Elaborate Master Brocade', thumbnail: '/assets/patterns/kalpavriksha.svg', design_charge: 280.0, is_active: 1 }
+  { id: 2, design_code: 'DSG-MEENA-02', name: 'Mughal Meenakari Floral Brocade', motif_type: 'Multi-colour Floral Jaal', thumbnail: '/assets/patterns/meenakari.svg', design_charge: 45.0, is_active: 1 },
+  { id: 3, design_code: 'DSG-TEMPLE-03', name: 'Geometric Chevron Temple Weave', motif_type: 'Architectural Temple Gopuram', thumbnail: '/assets/patterns/temple.svg', design_charge: 30.0, is_active: 1 },
+  { id: 4, design_code: 'DSG-KAMAL-04', name: 'Lotus Bud (Kamal) Heritage Motifs', motif_type: 'Sacred Lotus Boota', thumbnail: '/assets/patterns/lotus.svg', design_charge: 40.0, is_active: 1 },
+  { id: 5, design_code: 'DSG-TREE-05', name: 'Tree of Life (Kalpavriksha) Grand Weave', motif_type: 'Elaborate Master Brocade', thumbnail: '/assets/patterns/kalpavriksha.svg', design_charge: 65.0, is_active: 1 }
 ];
 
 export const EMBEDDED_THREADS = [
   { id: 1, thread_code: 'TH-POLY-01', name: 'Standard Poly Filament Weft Thread', count_spec: '150D/48F Textured High-Twist', consumption_meters: 400, additional_cost: 0.0, is_active: 1 },
-  { id: 2, thread_code: 'TH-RESH-02', name: 'Premium Resham Silk Accent Thread', count_spec: '2/80s Combed Mercerized Pure Silk', consumption_meters: 450, additional_cost: 75.0, is_active: 1 },
-  { id: 3, thread_code: 'TH-MERC-03', name: 'High-Tenacity Mercerized Cotton-Poly Thread', count_spec: '2/60s High Glaze Dual Core', consumption_meters: 420, additional_cost: 95.0, is_active: 1 },
-  { id: 4, thread_code: 'TH-VISC-04', name: 'Imported Viscose Rayon Dual-Tone Thread', count_spec: '120D Bright Multi-Filament', consumption_meters: 480, additional_cost: 130.0, is_active: 1 },
-  { id: 5, thread_code: 'TH-MET-05', name: 'Micro-Filament Metallic Wrap Thread', count_spec: '70D Zari Wrapped Core Weft', consumption_meters: 380, additional_cost: 160.0, is_active: 1 }
+  { id: 2, thread_code: 'TH-RESH-02', name: 'Premium Resham Silk Accent Thread', count_spec: '2/80s Combed Mercerized Pure Silk', consumption_meters: 450, additional_cost: 20.0, is_active: 1 },
+  { id: 3, thread_code: 'TH-MERC-03', name: 'High-Tenacity Mercerized Cotton-Poly Thread', count_spec: '2/60s High Glaze Dual Core', consumption_meters: 420, additional_cost: 25.0, is_active: 1 },
+  { id: 4, thread_code: 'TH-VISC-04', name: 'Imported Viscose Rayon Dual-Tone Thread', count_spec: '120D Bright Multi-Filament', consumption_meters: 480, additional_cost: 35.0, is_active: 1 },
+  { id: 5, thread_code: 'TH-MET-05', name: 'Micro-Filament Metallic Wrap Thread', count_spec: '70D Zari Wrapped Core Weft', consumption_meters: 380, additional_cost: 40.0, is_active: 1 }
 ];
 
 export const EMBEDDED_PROCESSES = [
-  { id: 1, process_code: 'PROC-CUT-01', name: 'Ultrasonic Edge Slitting & Anti-Fray Cutting', description: 'Automated laser edge cutting preventing weft fraying', rate_type: 'per_saree', rate: 45.0, is_mandatory: 1 },
-  { id: 2, process_code: 'PROC-DIANG-02', name: 'Diang / High-Luster Calendering & Steaming', description: 'Proprietary Surat high-pressure calendering for silky handfeel and mirror luster', rate_type: 'per_saree', rate: 110.0, is_mandatory: 0 },
-  { id: 3, process_code: 'PROC-BOOTA-03', name: 'Precision Boota Embroidery & Clip-Cutting', description: 'Secondary jacquard clip cutting of extra floating zari weft', rate_type: 'per_saree', rate: 85.0, is_mandatory: 0 },
-  { id: 4, process_code: 'PROC-TASSEL-04', name: 'Traditional Pallu Zari Tassels (Latkan Finishing)', description: 'Handcrafted matching resham and zari hanging tassels on pallu border', rate_type: 'per_saree', rate: 95.0, is_mandatory: 0 },
-  { id: 5, process_code: 'PROC-BOX-05', name: 'Rigid Luxury Box & Poly-Shield Packaging', description: 'Rigid embossed presentation box with anti-moisture velvet sleeve', rate_type: 'per_saree', rate: 125.0, is_mandatory: 0 }
+  { id: 1, process_code: 'PROC-CUT-01', name: 'Ultrasonic Edge Slitting & Anti-Fray Cutting', description: 'Automated laser edge cutting preventing weft fraying', rate_type: 'per_saree', rate: 15.0, is_mandatory: 1 },
+  { id: 2, process_code: 'PROC-DIANG-02', name: 'Diang / High-Luster Calendering & Steaming', description: 'Proprietary Surat high-pressure calendering for silky handfeel and mirror luster', rate_type: 'per_saree', rate: 35.0, is_mandatory: 0 },
+  { id: 3, process_code: 'PROC-BOOTA-03', name: 'Precision Boota Embroidery & Clip-Cutting', description: 'Secondary jacquard clip cutting of extra floating zari weft', rate_type: 'per_saree', rate: 25.0, is_mandatory: 0 },
+  { id: 4, process_code: 'PROC-TASSEL-04', name: 'Traditional Pallu Zari Tassels (Latkan Finishing)', description: 'Handcrafted matching resham and zari hanging tassels on pallu border', rate_type: 'per_saree', rate: 30.0, is_mandatory: 0 },
+  { id: 5, process_code: 'PROC-BOX-05', name: 'Rigid Luxury Box & Poly-Shield Packaging', description: 'Rigid embossed presentation box with anti-moisture velvet sleeve', rate_type: 'per_saree', rate: 45.0, is_mandatory: 0 }
 ];
 
 export const EMBEDDED_PRODUCTS = [
@@ -80,7 +80,7 @@ export const EMBEDDED_PRODUCTS = [
     border_type: '4-inch Rich Contrast Temple & Scalloped Zari Border',
     pallu_design: 'Heavy Kadwa Jacquard Pallu with Intricate Jhumar Motifs',
     weave_type: 'Electronic Jacquard Loom with Kadwa Brocade Weaving',
-    base_price: 2950.0,
+    base_price: 920.0,
     moq: 10,
     lead_time_days: 10,
     status: 'active',
@@ -109,7 +109,7 @@ export const EMBEDDED_PRODUCTS = [
     border_type: '5-inch Architectural Regal Elephant & Vine Border',
     pallu_design: 'Grand Royal Elephant Medallion Kadwa Pallu',
     weave_type: 'Surat High-Precision Electronic Jacquard Weave',
-    base_price: 3250.0,
+    base_price: 980.0,
     moq: 12,
     lead_time_days: 12,
     status: 'active',
@@ -138,7 +138,7 @@ export const EMBEDDED_PRODUCTS = [
     border_type: '3.5-inch Scalloped Cutwork Floral Zari Border',
     pallu_design: 'Opulent Multi-Weft Floral Jaal Pallu with Resham Tassels',
     weave_type: 'High-Speed Rapier Jacquard Loom',
-    base_price: 2850.0,
+    base_price: 880.0,
     moq: 15,
     lead_time_days: 8,
     status: 'active',
@@ -167,7 +167,7 @@ export const EMBEDDED_PRODUCTS = [
     border_type: '6-inch Traditional Peacock & Mayil Contrast Border',
     pallu_design: 'Grand Architectural Temple Gopuram Pallu with Rich Resham',
     weave_type: 'Heavy Electronic Jacquard with Real Gold Tone Zari',
-    base_price: 3450.0,
+    base_price: 1050.0,
     moq: 10,
     lead_time_days: 14,
     status: 'active',
@@ -196,7 +196,7 @@ export const EMBEDDED_PRODUCTS = [
     border_type: '4-inch Vintage Antique Floral Zari Border',
     pallu_design: 'Subtle Geometric Chevron Pallu with Handcrafted Tassels',
     weave_type: 'High-Speed Rapier Jacquard Loom with Diang Calender Luster',
-    base_price: 2750.0,
+    base_price: 950.0,
     moq: 10,
     lead_time_days: 7,
     status: 'active',

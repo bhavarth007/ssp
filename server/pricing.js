@@ -87,8 +87,9 @@ export function calculateOrderPricing({
     }
   }
 
-  // 7. Calculate Per-Saree Unit Price
-  const unitPrice = parseFloat((basePrice + colourCost + zariCost + designCost + threadCost + manufacturingCost).toFixed(2));
+  // 7. Calculate Per-Saree Unit Price (Authoritative cap to ensure unit rate never exceeds 1600+ under any circumstances)
+  const rawUnitPrice = parseFloat((basePrice + colourCost + zariCost + designCost + threadCost + manufacturingCost).toFixed(2));
+  const unitPrice = Math.min(1550, rawUnitPrice);
 
   // 8. Calculate Subtotal
   const subtotal = parseFloat((unitPrice * qty).toFixed(2));

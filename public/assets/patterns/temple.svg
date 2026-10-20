@@ -1,9 +1,72 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <!-- Traditional South Indian Temple Gopuram Chevron Motif -->
-  <polygon points="50,10 90,80 10,80" stroke="currentColor" stroke-width="2.5" fill="none"/>
-  <polygon points="50,28 78,75 22,75" stroke="currentColor" stroke-width="1.8" fill="currentColor" opacity="0.3"/>
-  <polygon points="50,45 66,72 34,72" fill="currentColor" opacity="0.8"/>
-  <circle cx="50" cy="10" r="4" fill="currentColor"/>
-  <line x1="10" y1="88" x2="90" y2="88" stroke="currentColor" stroke-width="3"/>
-  <line x1="10" y1="94" x2="90" y2="94" stroke="currentColor" stroke-width="1.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" fill="none">
+  <defs>
+    <linearGradient id="templeGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#fbbf24" stop-opacity="0.95"/>
+      <stop offset="70%" stop-color="#d97706" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#78350f" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <linearGradient id="templeSheen" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#fde68a" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <filter id="templeGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="0.5" stdDeviation="0.6" flood-color="#78350f" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#templeGlow)">
+    <!-- 1. Interlocking Stepped Temple Gopurams (Chevrons) -->
+    <!-- Center Grand Temple Gopuram -->
+    <g transform="translate(80, 45)">
+      <!-- Stepped Pyramidal Spires -->
+      <polygon points="0,-35 25,0 -25,0" fill="url(#templeGold)" stroke="#78350f" stroke-width="1.2"/>
+      <polygon points="0,-22 18,0 -18,0" fill="url(#templeSheen)" stroke="#b45309" stroke-width="0.8"/>
+      <polygon points="0,-10 9,0 -9,0" fill="#fef08a"/>
+      <circle cx="0" cy="-37" r="2.8" fill="#fef08a" stroke="#d97706" stroke-width="0.8"/>
+      <!-- Base Brocade Plinth -->
+      <rect x="-28" y="0" width="56" height="4" fill="url(#templeGold)"/>
+      <rect x="-24" y="4" width="48" height="2" fill="url(#templeSheen)"/>
+    </g>
+
+    <!-- Inverted Bottom Center Temple Gopuram -->
+    <g transform="translate(80, 115) rotate(180)">
+      <polygon points="0,-35 25,0 -25,0" fill="url(#templeGold)" stroke="#78350f" stroke-width="1.2"/>
+      <polygon points="0,-22 18,0 -18,0" fill="url(#templeSheen)" stroke="#b45309" stroke-width="0.8"/>
+      <polygon points="0,-10 9,0 -9,0" fill="#fef08a"/>
+      <circle cx="0" cy="-37" r="2.8" fill="#fef08a" stroke="#d97706" stroke-width="0.8"/>
+      <rect x="-28" y="0" width="56" height="4" fill="url(#templeGold)"/>
+    </g>
+
+    <!-- 2. Side Temple Gopurams for Seamless Repeat -->
+    <g transform="translate(0, 80) rotate(90)">
+      <polygon points="0,-25 18,0 -18,0" fill="url(#templeSheen)" stroke="#b45309" stroke-width="1"/>
+      <circle cx="0" cy="-27" r="2.2" fill="#fef08a"/>
+    </g>
+    <g transform="translate(160, 80) rotate(-90)">
+      <polygon points="0,-25 18,0 -18,0" fill="url(#templeSheen)" stroke="#b45309" stroke-width="1"/>
+      <circle cx="0" cy="-27" r="2.2" fill="#fef08a"/>
+    </g>
+
+    <!-- 3. Geometric Diamond Trellis Interlocking Framework -->
+    <path d="M 0 0 L 80 80 L 160 0" stroke="url(#templeGold)" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 0 160 L 80 80 L 160 160" stroke="url(#templeGold)" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 0 80 L 80 0 L 160 80 L 80 160 Z" stroke="url(#templeSheen)" stroke-width="1.6" stroke-dasharray="6,3"/>
+
+    <!-- Central 8-Point Geometric Star Rosette inside Trellis -->
+    <g transform="translate(80, 80)">
+      <rect x="-5" y="-5" width="10" height="10" fill="url(#templeGold)" stroke="#b45309" stroke-width="0.8"/>
+      <rect x="-5" y="-5" width="10" height="10" transform="rotate(45)" fill="url(#templeSheen)" stroke="#b45309" stroke-width="0.8"/>
+      <circle cx="0" cy="0" r="2.2" fill="#78350f"/>
+    </g>
+
+    <!-- Corner Star Rosettes -->
+    <circle cx="0" cy="0" r="4" fill="url(#templeGold)"/>
+    <circle cx="160" cy="0" r="4" fill="url(#templeGold)"/>
+    <circle cx="0" cy="160" r="4" fill="url(#templeGold)"/>
+    <circle cx="160" cy="160" r="4" fill="url(#templeGold)"/>
+  </g>
 </svg>

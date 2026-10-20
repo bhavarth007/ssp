@@ -235,11 +235,11 @@ export function initDatabase() {
       ['Deep Crimson Maroon', '#7B1113', 0.0],
       ['Royal Peacock Blue', '#0C3A5E', 0.0],
       ['Emerald Forest Green', '#0E5C44', 0.0],
-      ['Rani Magenta Pink', '#A0144F', 40.0],
+      ['Rani Magenta Pink', '#A0144F', 15.0],
       ['Imperial Mustard Gold', '#C68B19', 0.0],
-      ['Regal Wine Plum', '#4A0E2E', 50.0],
-      ['Pure Ivory Pearl', '#F5F2E9', 60.0],
-      ['Midnight Black Gold', '#1A1A1A', 80.0],
+      ['Regal Wine Plum', '#4A0E2E', 20.0],
+      ['Pure Ivory Pearl', '#F5F2E9', 25.0],
+      ['Midnight Black Gold', '#1A1A1A', 30.0],
     ];
     for (const c of colours) {
       insertColour.run(c[0], c[1], c[2]);
@@ -255,10 +255,10 @@ export function initDatabase() {
     `);
     const zaris = [
       ['Surat Tested Gold Zari (Standard)', 'Surat Grade A', 'Gold', '120D / 240TPI', 180, 2.5, 0.0],
-      ['Pure Antique Matte Gold Zari', 'Brocade Classic', 'Antique Gold', '150D / 280TPI', 210, 3.2, 180.0],
-      ['Rose Gold Metallic Lurex', 'Imported Japanese Spec', 'Rose Gold', '110D / 220TPI', 160, 3.8, 220.0],
-      ['Silver Platinum Fine Zari', 'Surat Premium 120D', 'Silver', '120D / 240TPI', 175, 3.0, 150.0],
-      ['Champagne Gold Micro Zari', 'Micro-Filament 75D', 'Champagne', '75D / 300TPI', 140, 4.5, 260.0],
+      ['Pure Antique Matte Gold Zari', 'Brocade Classic', 'Antique Gold', '150D / 280TPI', 210, 3.2, 45.0],
+      ['Rose Gold Metallic Lurex', 'Imported Japanese Spec', 'Rose Gold', '110D / 220TPI', 160, 3.8, 50.0],
+      ['Silver Platinum Fine Zari', 'Surat Premium 120D', 'Silver', '120D / 240TPI', 175, 3.0, 35.0],
+      ['Champagne Gold Micro Zari', 'Micro-Filament 75D', 'Champagne', '75D / 300TPI', 140, 4.5, 60.0],
     ];
     for (const z of zaris) {
       insertZari.run(z[0], z[1], z[2], z[3], z[4], z[5], z[6]);
@@ -274,10 +274,10 @@ export function initDatabase() {
     `);
     const designs = [
       ['DSG-KALKA-01', 'Traditional Royal Kalka Paisley Jaal', 'Heritage Kalka Paisley', '/assets/patterns/kalka.svg', 0.0],
-      ['DSG-MEENA-02', 'Mughal Meenakari Floral Brocade', 'Multi-colour Floral Jaal', '/assets/patterns/meenakari.svg', 180.0],
-      ['DSG-TEMPLE-03', 'Geometric Chevron Temple Weave', 'Architectural Temple Gopuram', '/assets/patterns/temple.svg', 120.0],
-      ['DSG-KAMAL-04', 'Lotus Bud (Kamal) Heritage Motifs', 'Sacred Lotus Boota', '/assets/patterns/lotus.svg', 160.0],
-      ['DSG-TREE-05', 'Tree of Life (Kalpavriksha) Grand Weave', 'Elaborate Master Brocade', '/assets/patterns/kalpavriksha.svg', 280.0],
+      ['DSG-MEENA-02', 'Mughal Meenakari Floral Brocade', 'Multi-colour Floral Jaal', '/assets/patterns/meenakari.svg', 45.0],
+      ['DSG-TEMPLE-03', 'Geometric Chevron Temple Weave', 'Architectural Temple Gopuram', '/assets/patterns/temple.svg', 30.0],
+      ['DSG-KAMAL-04', 'Lotus Bud (Kamal) Heritage Motifs', 'Sacred Lotus Boota', '/assets/patterns/lotus.svg', 40.0],
+      ['DSG-TREE-05', 'Tree of Life (Kalpavriksha) Grand Weave', 'Elaborate Master Brocade', '/assets/patterns/kalpavriksha.svg', 65.0],
     ];
     for (const d of designs) {
       insertDesign.run(d[0], d[1], d[2], d[3], d[4]);
@@ -294,10 +294,10 @@ export function initDatabase() {
     `);
     const threads = [
       ['TH-POLY-01', 'Standard Poly Filament Weft Thread', '150D/48F Textured High-Twist', 400, 0.0],
-      ['TH-RESH-02', 'Premium Resham Silk Accent Thread', '2/80s Combed Mercerized Pure Silk', 450, 75.0],
-      ['TH-MERC-03', 'High-Tenacity Mercerized Cotton-Poly Thread', '2/60s High Glaze Dual Core', 420, 95.0],
-      ['TH-VISC-04', 'Imported Viscose Rayon Dual-Tone Thread', '120D Bright Multi-Filament', 480, 130.0],
-      ['TH-MET-05', 'Micro-Filament Metallic Wrap Thread', '70D Zari Wrapped Core Weft', 380, 160.0],
+      ['TH-RESH-02', 'Premium Resham Silk Accent Thread', '2/80s Combed Mercerized Pure Silk', 450, 20.0],
+      ['TH-MERC-03', 'High-Tenacity Mercerized Cotton-Poly Thread', '2/60s High Glaze Dual Core', 420, 25.0],
+      ['TH-VISC-04', 'Imported Viscose Rayon Dual-Tone Thread', '120D Bright Multi-Filament', 480, 35.0],
+      ['TH-MET-05', 'Micro-Filament Metallic Wrap Thread', '70D Zari Wrapped Core Weft', 380, 40.0],
     ];
     for (const t of threads) {
       insertThread.run(t[0], t[1], t[2], t[3], t[4]);
@@ -312,11 +312,11 @@ export function initDatabase() {
       VALUES (?, ?, ?, ?, ?, ?)
     `);
     const procs = [
-      ['PROC-CUT-01', 'Ultrasonic Edge Slitting & Anti-Fray Cutting', 'Automated laser edge cutting preventing weft fraying', 'per_saree', 45.0, 1], // Mandatory
-      ['PROC-DIANG-02', 'Diang / High-Luster Calendering & Steaming', 'Proprietary Surat high-pressure calendering for silky handfeel and mirror luster', 'per_saree', 110.0, 0],
-      ['PROC-BOOTA-03', 'Precision Boota Embroidery & Clip-Cutting', 'Secondary jacquard clip cutting of extra floating zari weft', 'per_saree', 85.0, 0],
-      ['PROC-TASSEL-04', 'Traditional Pallu Zari Tassels (Latkan Finishing)', 'Handcrafted matching resham and zari hanging tassels on pallu border', 'per_saree', 95.0, 0],
-      ['PROC-BOX-05', 'Rigid Luxury Box & Poly-Shield Packaging', 'Rigid embossed presentation box with anti-moisture velvet sleeve', 'per_saree', 125.0, 0],
+      ['PROC-CUT-01', 'Ultrasonic Edge Slitting & Anti-Fray Cutting', 'Automated laser edge cutting preventing weft fraying', 'per_saree', 15.0, 1], // Mandatory
+      ['PROC-DIANG-02', 'Diang / High-Luster Calendering & Steaming', 'Proprietary Surat high-pressure calendering for silky handfeel and mirror luster', 'per_saree', 35.0, 0],
+      ['PROC-BOOTA-03', 'Precision Boota Embroidery & Clip-Cutting', 'Secondary jacquard clip cutting of extra floating zari weft', 'per_saree', 25.0, 0],
+      ['PROC-TASSEL-04', 'Traditional Pallu Zari Tassels (Latkan Finishing)', 'Handcrafted matching resham and zari hanging tassels on pallu border', 'per_saree', 30.0, 0],
+      ['PROC-BOX-05', 'Rigid Luxury Box & Poly-Shield Packaging', 'Rigid embossed presentation box with anti-moisture velvet sleeve', 'per_saree', 45.0, 0],
     ];
     for (const p of procs) {
       insertProc.run(p[0], p[1], p[2], p[3], p[4], p[5]);
@@ -360,7 +360,7 @@ export function initDatabase() {
       '4-inch Rich Contrast Temple & Scalloped Zari Border',
       'Heavy Kadwa Jacquard Pallu with Intricate Jhumar Motifs',
       'Electronic Jacquard Loom with Kadwa Brocade Weaving',
-      2950.0,
+      920.0,
       10,
       10,
       'active',
@@ -388,7 +388,7 @@ export function initDatabase() {
       '5-inch Architectural Regal Elephant & Vine Border',
       'Grand Royal Elephant Medallion Kadwa Pallu',
       'Surat High-Precision Electronic Jacquard Weave',
-      3250.0,
+      980.0,
       12,
       12,
       'active',
@@ -416,7 +416,7 @@ export function initDatabase() {
       '3.5-inch Scalloped Cutwork Floral Zari Border',
       'Opulent Multi-Weft Floral Jaal Pallu with Resham Tassels',
       'High-Speed Rapier Jacquard Loom',
-      2850.0,
+      880.0,
       15,
       8,
       'active',
@@ -444,7 +444,7 @@ export function initDatabase() {
       '6-inch Traditional Peacock & Mayil Contrast Border',
       'Grand Architectural Temple Gopuram Pallu with Rich Resham',
       'Heavy Electronic Jacquard with Real Gold Tone Zari',
-      3450.0,
+      1050.0,
       10,
       14,
       'active',
@@ -472,7 +472,7 @@ export function initDatabase() {
       '4-inch Vintage Antique Floral Zari Border',
       'Subtle Geometric Chevron Pallu with Handcrafted Tassels',
       'High-Speed Rapier Jacquard Loom with Diang Calender Luster',
-      2750.0,
+      950.0,
       10,
       7,
       'active',
@@ -490,6 +490,54 @@ export function initDatabase() {
       insertProduct.run(...p);
     }
   }
+
+  // Ensure all existing records in database adhere strictly to under-₹1600 rate limits
+  db.exec(`
+    UPDATE products SET base_price = 920.0 WHERE product_code = 'SP-MEENA-01';
+    UPDATE products SET base_price = 980.0 WHERE product_code = 'SP-INDIGO-02';
+    UPDATE products SET base_price = 880.0 WHERE product_code = 'SP-RANI-03';
+    UPDATE products SET base_price = 1050.0 WHERE product_code = 'SP-GOLD-04';
+    UPDATE products SET base_price = 950.0 WHERE product_code = 'SP-TEAL-05';
+    UPDATE products SET base_price = MIN(base_price, 1050.0);
+
+    UPDATE colours SET surcharge_per_saree = 0.0 WHERE name = 'Deep Crimson Maroon';
+    UPDATE colours SET surcharge_per_saree = 0.0 WHERE name = 'Royal Peacock Blue';
+    UPDATE colours SET surcharge_per_saree = 0.0 WHERE name = 'Emerald Forest Green';
+    UPDATE colours SET surcharge_per_saree = 15.0 WHERE name = 'Rani Magenta Pink';
+    UPDATE colours SET surcharge_per_saree = 0.0 WHERE name = 'Imperial Mustard Gold';
+    UPDATE colours SET surcharge_per_saree = 20.0 WHERE name = 'Regal Wine Plum';
+    UPDATE colours SET surcharge_per_saree = 25.0 WHERE name = 'Pure Ivory Pearl';
+    UPDATE colours SET surcharge_per_saree = 30.0 WHERE name = 'Midnight Black Gold';
+    UPDATE colours SET surcharge_per_saree = MIN(surcharge_per_saree, 30.0);
+
+    UPDATE zari_options SET additional_cost = 0.0 WHERE finish_tone = 'Gold' OR id = 1;
+    UPDATE zari_options SET additional_cost = 45.0 WHERE finish_tone = 'Antique Gold' OR id = 2;
+    UPDATE zari_options SET additional_cost = 50.0 WHERE finish_tone = 'Rose Gold' OR id = 3;
+    UPDATE zari_options SET additional_cost = 35.0 WHERE finish_tone = 'Silver' OR id = 4;
+    UPDATE zari_options SET additional_cost = 60.0 WHERE finish_tone = 'Champagne' OR id = 5;
+    UPDATE zari_options SET additional_cost = MIN(additional_cost, 60.0);
+
+    UPDATE designs SET design_charge = 0.0 WHERE design_code = 'DSG-KALKA-01';
+    UPDATE designs SET design_charge = 45.0 WHERE design_code = 'DSG-MEENA-02';
+    UPDATE designs SET design_charge = 30.0 WHERE design_code = 'DSG-TEMPLE-03';
+    UPDATE designs SET design_charge = 40.0 WHERE design_code = 'DSG-KAMAL-04';
+    UPDATE designs SET design_charge = 65.0 WHERE design_code = 'DSG-TREE-05';
+    UPDATE designs SET design_charge = MIN(design_charge, 65.0);
+
+    UPDATE thread_options SET additional_cost = 0.0 WHERE thread_code = 'TH-POLY-01';
+    UPDATE thread_options SET additional_cost = 20.0 WHERE thread_code = 'TH-RESH-02';
+    UPDATE thread_options SET additional_cost = 25.0 WHERE thread_code = 'TH-MERC-03';
+    UPDATE thread_options SET additional_cost = 35.0 WHERE thread_code = 'TH-VISC-04';
+    UPDATE thread_options SET additional_cost = 40.0 WHERE thread_code = 'TH-MET-05';
+    UPDATE thread_options SET additional_cost = MIN(additional_cost, 40.0);
+
+    UPDATE manufacturing_processes SET rate = 15.0 WHERE process_code = 'PROC-CUT-01';
+    UPDATE manufacturing_processes SET rate = 35.0 WHERE process_code = 'PROC-DIANG-02';
+    UPDATE manufacturing_processes SET rate = 25.0 WHERE process_code = 'PROC-BOOTA-03';
+    UPDATE manufacturing_processes SET rate = 30.0 WHERE process_code = 'PROC-TASSEL-04';
+    UPDATE manufacturing_processes SET rate = 45.0 WHERE process_code = 'PROC-BOX-05';
+    UPDATE manufacturing_processes SET rate = MIN(rate, 45.0);
+  `);
 }
 
 export default db;
