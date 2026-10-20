@@ -43,22 +43,29 @@ export default function CustomizationStudio({
     setCustomization(prev => ({ ...prev, colour: c }));
   };
 
-  // Process toggle handler
+  const handleSelectZari = (z) => {
+    setCustomization(prev => ({ ...prev, zari: z }));
+  };
+
+  const handleSelectDesign = (d) => {
+    setCustomization(prev => ({ ...prev, design: d }));
+  };
+
+  const handleSelectThread = (t) => {
+    setCustomization(prev => ({ ...prev, thread: t }));
+  };
+
+  // Process toggle handler: robust ID/code matching with live state update
   const handleToggleProcess = (proc) => {
     if (proc.is_mandatory) return; // Cannot toggle mandatory processes
-    const current = customization.processes || [];
-    const exists = current.some(p => p.id === proc.id);
-    if (exists) {
-      setCustomization({
-        ...customization,
-        processes: current.filter(p => p.id !== proc.id)
-      });
-    } else {
-      setCustomization({
-        ...customization,
-        processes: [...current, proc]
-      });
-    }
+    setCustomization(prev => {
+      const current = prev.processes || [];
+      const exists = current.some(p => String(p.id) === String(proc.id) || p.process_code === proc.process_code);
+      const updated = exists 
+        ? current.filter(p => String(p.id) !== String(proc.id) && p.process_code !== proc.process_code)
+        : [...current, proc];
+      return { ...prev, processes: updated };
+    });
   };
 
   const tabsContainerRef = useRef(null);
@@ -305,11 +312,11 @@ export default function CustomizationStudio({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {zariOptions.map((z) => {
-                const isSelected = customization.zari?.id === z.id;
+                const isSelected = customization.zari && (String(customization.zari.id) === String(z.id) || customization.zari.name === z.name);
                 return (
                   <button
                     key={z.id}
-                    onClick={() => setCustomization({ ...customization, zari: z })}
+                    onClick={() => handleSelectZari(z)}
                     className={`p-3.5 rounded-2xl border text-left transition-all relative ${
                       isSelected
                         ? 'border-amber-400 bg-amber-500/10 shadow-lg shadow-amber-500/10'
@@ -364,11 +371,11 @@ export default function CustomizationStudio({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {designs.map((d) => {
-                const isSelected = customization.design?.id === d.id;
+                const isSelected = customization.design && (String(customization.design.id) === String(d.id) || customization.design.design_code === d.design_code);
                 return (
                   <button
                     key={d.id}
-                    onClick={() => setCustomization({ ...customization, design: d })}
+                    onClick={() => handleSelectDesign(d)}
                     className={`flex items-center gap-3 p-3 rounded-2xl border text-left transition-all ${
                       isSelected
                         ? 'border-amber-400 bg-amber-500/10 shadow-lg'
@@ -422,11 +429,11 @@ export default function CustomizationStudio({
 
             <div className="space-y-2.5">
               {threads.map((t) => {
-                const isSelected = customization.thread?.id === t.id;
+                const isSelected = customization.thread && (String(customization.thread.id) === String(t.id) || customization.thread.name === t.name);
                 return (
                   <button
                     key={t.id}
-                    onClick={() => setCustomization({ ...customization, thread: t })}
+                    onClick={() => handleSelectThread(t)}
                     className={`w-full flex items-center justify-between p-3.5 rounded-2xl border text-left transition-all ${
                       isSelected
                         ? 'border-amber-400 bg-amber-500/10'
@@ -482,7 +489,7 @@ export default function CustomizationStudio({
 
             <div className="space-y-2.5">
               {processes.map((p) => {
-                const isSelected = (customization.processes || []).some(x => x.id === p.id);
+                const isSelected = (customization.processes || []).some(x => String(x.id) === String(p.id) || x.process_code === p.process_code);
                 return (
                   <div
                     key={p.id}

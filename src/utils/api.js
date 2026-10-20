@@ -11,7 +11,7 @@ import {
 import { getAssetUrl } from './assetHelper.js';
 
 const API_BASE = '/api';
-const STORAGE_VERSION = 'v2026_rates_under_1600_v2';
+const STORAGE_VERSION = 'v2026_rates_under_1800_live_v3';
 
 export function normalizeProduct(p) {
   if (!p) return p;
@@ -210,31 +210,31 @@ function handleStaticFallback(endpoint, options = {}) {
   // 4. Real-time Pricing Calculation
   if (cleanEndpoint === '/pricing/calculate') {
     const products = getLocalCustom('products', EMBEDDED_PRODUCTS);
-    const prod = products.find(p => p.id === body.productId) || products[0];
+    const prod = products.find(p => String(p.id) === String(body.productId) || p.product_code === body.productCode || p.product_code === body.productId) || products[0];
     const base = Number(body.base_price || prod?.base_price || 950);
 
     const colours = getLocalCustom('colours', EMBEDDED_COLOURS);
-    const colour = colours.find(c => c.id === body.colourId);
+    const colour = colours.find(c => String(c.id) === String(body.colourId) || c.name === body.colourName);
     const colourCost = colour ? Number(colour.surcharge_per_saree || 0) : Number(body.colour_surcharge || 0);
 
     const zariList = getLocalCustom('zari', EMBEDDED_ZARI);
-    const zari = zariList.find(z => z.id === body.zariId);
+    const zari = zariList.find(z => String(z.id) === String(body.zariId) || z.name === body.zariName);
     const zariCost = zari ? Number(zari.additional_cost || 0) : Number(body.zari_cost || 0);
 
     const designList = getLocalCustom('designs', EMBEDDED_DESIGNS);
-    const design = designList.find(d => d.id === body.designId);
+    const design = designList.find(d => String(d.id) === String(body.designId) || d.design_code === body.designCode || d.name === body.designName);
     const designCost = design ? Number(design.design_charge || 0) : Number(body.design_charge || 0);
 
     const threadList = getLocalCustom('threads', EMBEDDED_THREADS);
-    const thread = threadList.find(t => t.id === body.threadId);
-    const threadCost = thread ? Number(thread.additional_cost || 0) : 0;
+    const thread = threadList.find(t => String(t.id) === String(body.threadId) || t.name === body.threadName);
+    const threadCost = thread ? Number(thread.additional_cost || 0) : Number(body.thread_cost || 0);
 
     const allProcesses = getLocalCustom('processes', EMBEDDED_PROCESSES);
-    const selectedProcIds = new Set((body.processIds || []).map(id => parseInt(id, 10)));
+    const selectedProcIds = new Set((body.processIds || []).map(id => String(id)));
     let processSum = 0;
     const appliedProcesses = [];
     allProcesses.forEach(p => {
-      if (p.is_mandatory || selectedProcIds.has(p.id)) {
+      if (p.is_mandatory || selectedProcIds.has(String(p.id)) || selectedProcIds.has(p.process_code)) {
         const rate = Number(p.rate || 0);
         processSum += rate;
         appliedProcesses.push({
@@ -247,7 +247,7 @@ function handleStaticFallback(endpoint, options = {}) {
       }
     });
 
-    // Authoritative calculation with hard safety cap ensuring unit rate never exceeds 1600+
+    // Authoritative calculation with hard safety cap ensuring unit rate never exceeds 1800
     const rawSubtotal = base + colourCost + zariCost + designCost + threadCost + processSum;
     const subtotal = Math.min(1550, rawSubtotal);
     const qty = Math.max(1, parseInt(body.quantity, 10) || 1);
