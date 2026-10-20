@@ -1,9 +1,71 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <!-- Kalpavriksha Tree of Life Motif -->
-  <path d="M50 90 L50 45" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-  <path d="M50 65 C40 60, 32 50, 30 38 C42 42, 48 50, 50 60" stroke="currentColor" stroke-width="2.5" fill="currentColor" opacity="0.4"/>
-  <path d="M50 65 C60 60, 68 50, 70 38 C58 42, 52 50, 50 60" stroke="currentColor" stroke-width="2.5" fill="currentColor" opacity="0.4"/>
-  <path d="M50 50 C38 42, 35 28, 40 18 C48 25, 48 35, 50 45" stroke="currentColor" stroke-width="2.5" fill="currentColor" opacity="0.6"/>
-  <path d="M50 50 C62 42, 65 28, 60 18 C52 25, 52 35, 50 45" stroke="currentColor" stroke-width="2.5" fill="currentColor" opacity="0.6"/>
-  <circle cx="50" cy="15" r="7" fill="currentColor"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" fill="none">
+  <defs>
+    <linearGradient id="treeGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95"/>
+      <stop offset="30%" stop-color="#fbbf24" stop-opacity="0.95"/>
+      <stop offset="65%" stop-color="#d97706" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#78350f" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <linearGradient id="treeSheen" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="45%" stop-color="#fef9c3" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <filter id="treeGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="0.5" stdDeviation="0.6" flood-color="#78350f" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#treeGlow)">
+    <!-- Interlocking Branching Trellis for Seamless Repeat -->
+    <path d="M 0 160 C 40 120, 40 40, 80 0" stroke="url(#treeGold)" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M 160 160 C 120 120, 120 40, 80 0" stroke="url(#treeGold)" stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- 1. Central Sacred Kalpavriksha (Tree of Life) -->
+    <g transform="translate(80, 85)">
+      <!-- Master Trunk & Root Base -->
+      <path d="M -4 55 L -2 15 C -2 5, -8 0, -18 -8 M 2 15 C 2 5, 8 0, 18 -8 M 0 15 L 0 -18" 
+            stroke="url(#treeGold)" stroke-width="3" stroke-linecap="round"/>
+      <rect x="-16" y="55" width="32" height="4" fill="url(#treeGold)" rx="1.5"/>
+
+      <!-- Lower Branch Pairs & Paisley Boughs -->
+      <path d="M -18 -8 C -32 -4, -38 -18, -25 -28 C -15 -20, -14 -12, -18 -8 Z" fill="url(#treeGold)" stroke="#78350f" stroke-width="0.8"/>
+      <path d="M 18 -8 C 32 -4, 38 -18, 25 -28 C 15 -20, 14 -12, 18 -8 Z" fill="url(#treeGold)" stroke="#78350f" stroke-width="0.8"/>
+
+      <!-- Upper Branch Pairs with Paradise Blossoms -->
+      <path d="M -12 -22 C -24 -28, -22 -44, -10 -40 C -8 -32, -8 -26, -12 -22 Z" fill="url(#treeSheen)" stroke="#b45309" stroke-width="0.8"/>
+      <path d="M 12 -22 C 24 -28, 22 -44, 10 -40 C 8 -32, 8 -26, 12 -22 Z" fill="url(#treeSheen)" stroke="#b45309" stroke-width="0.8"/>
+
+      <!-- Crown Paradise Blossom (Tree Top Rosette) -->
+      <circle cx="0" cy="-48" r="7" fill="url(#treeGold)" stroke="#78350f" stroke-width="1"/>
+      <circle cx="0" cy="-48" r="3.5" fill="#fef08a"/>
+      <circle cx="0" cy="-48" r="1.5" fill="#78350f"/>
+    </g>
+
+    <!-- 2. Four Corner Trees for Seamless Repeat -->
+    <g transform="translate(0, 0)">
+      <circle cx="0" cy="0" r="6" fill="url(#treeGold)"/>
+      <path d="M 0 0 C 12 6, 18 18, 10 24 C 4 18, 2 10, 0 0 Z" fill="url(#treeSheen)"/>
+    </g>
+    <g transform="translate(160, 0)">
+      <circle cx="0" cy="0" r="6" fill="url(#treeGold)"/>
+      <path d="M 0 0 C -12 6, -18 18, -10 24 C -4 18, -2 10, 0 0 Z" fill="url(#treeSheen)"/>
+    </g>
+    <g transform="translate(0, 160)">
+      <circle cx="0" cy="0" r="6" fill="url(#treeGold)"/>
+      <path d="M 0 0 C 12 -6, 18 -18, 10 -24 C 4 -18, 2 -10, 0 0 Z" fill="url(#treeSheen)"/>
+    </g>
+    <g transform="translate(160, 160)">
+      <circle cx="0" cy="0" r="6" fill="url(#treeGold)"/>
+      <path d="M 0 0 C -12 -6, -18 -18, -10 -24 C -4 -18, -2 -10, 0 0 Z" fill="url(#treeSheen)"/>
+    </g>
+
+    <!-- Foliage Sprigs & Golden Birds in Voids -->
+    <circle cx="45" cy="50" r="2.2" fill="#fef08a"/>
+    <circle cx="115" cy="50" r="2.2" fill="#fef08a"/>
+    <circle cx="35" cy="115" r="2.2" fill="#fef08a"/>
+    <circle cx="125" cy="115" r="2.2" fill="#fef08a"/>
+  </g>
 </svg>

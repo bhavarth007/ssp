@@ -1,6 +1,82 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <path d="M50 10 C35 15, 20 30, 20 50 C20 70, 35 90, 50 90 C65 90, 80 70, 80 50 C80 32, 68 20, 55 12 C52 9, 48 5, 52 2 C56 -1, 62 4, 65 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M50 25 C40 30, 30 42, 30 55 C30 68, 40 78, 50 78 C60 78, 70 68, 70 55 C70 42, 60 30, 50 25 Z" stroke="currentColor" stroke-width="1.8" fill="none" opacity="0.8"/>
-  <circle cx="50" cy="55" r="8" fill="currentColor" opacity="0.6"/>
-  <path d="M50 35 L50 43 M42 48 L48 52 M58 48 L52 52 M45 62 L48 58 M55 62 L52 58" stroke="currentColor" stroke-width="1.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" fill="none">
+  <defs>
+    <linearGradient id="kalkaGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95"/>
+      <stop offset="30%" stop-color="#fbbf24" stop-opacity="0.95"/>
+      <stop offset="60%" stop-color="#d97706" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#78350f" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <linearGradient id="kalkaLuster" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#fde68a" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <filter id="kalkaGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="0.5" stdDeviation="0.6" flood-color="#78350f" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#kalkaGlow)">
+    <!-- Diagonal Connecting Vines (Seamless repeat) -->
+    <path d="M 0 0 C 40 20, 40 60, 80 80 C 120 100, 120 140, 160 160" stroke="url(#kalkaGold)" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M 160 0 C 120 20, 120 60, 80 80 C 40 100, 40 140, 0 160" stroke="url(#kalkaLuster)" stroke-width="1.8" stroke-linecap="round"/>
+
+    <!-- 1. Primary Royal Kalka Mango Paisley (Center Left) -->
+    <g transform="translate(50, 45)">
+      <!-- Outer Paisley Silhouette -->
+      <path d="M 0 35 C -18 35, -28 18, -25 -5 C -22 -22, -8 -35, 12 -42 C 22 -46, 30 -42, 28 -34 C 26 -26, 12 -22, 10 -15 C 8 -8, 22 5, 18 20 C 15 30, 8 35, 0 35 Z" 
+            fill="url(#kalkaGold)" stroke="#78350f" stroke-width="1.2"/>
+      <!-- Inner Brocade Core -->
+      <path d="M 0 25 C -10 25, -16 12, -14 -4 C -12 -16, -2 -24, 10 -28 C 6 -15, 12 -4, 10 8 C 8 18, 4 25, 0 25 Z" 
+            fill="url(#kalkaLuster)" stroke="#b45309" stroke-width="0.8"/>
+      <!-- Floral Medallion inside Paisley Base -->
+      <circle cx="-2" cy="10" r="5" fill="#fef08a" stroke="#d97706" stroke-width="1"/>
+      <circle cx="-2" cy="10" r="2" fill="#78350f"/>
+      <!-- Paisley Feathers / Flutes -->
+      <path d="M -22 -2 C -28 -5, -28 -12, -22 -15" stroke="#fef08a" stroke-width="1" stroke-linecap="round"/>
+      <path d="M -18 12 C -25 12, -26 5, -20 2" stroke="#fef08a" stroke-width="1" stroke-linecap="round"/>
+    </g>
+
+    <!-- 2. Alternating Secondary Royal Kalka Mango Paisley (Center Right, Inverted) -->
+    <g transform="translate(110, 115) rotate(180)">
+      <path d="M 0 35 C -18 35, -28 18, -25 -5 C -22 -22, -8 -35, 12 -42 C 22 -46, 30 -42, 28 -34 C 26 -26, 12 -22, 10 -15 C 8 -8, 22 5, 18 20 C 15 30, 8 35, 0 35 Z" 
+            fill="url(#kalkaGold)" stroke="#78350f" stroke-width="1.2"/>
+      <path d="M 0 25 C -10 25, -16 12, -14 -4 C -12 -16, -2 -24, 10 -28 C 6 -15, 12 -4, 10 8 C 8 18, 4 25, 0 25 Z" 
+            fill="url(#kalkaLuster)" stroke="#b45309" stroke-width="0.8"/>
+      <circle cx="-2" cy="10" r="5" fill="#fef08a" stroke="#d97706" stroke-width="1"/>
+      <circle cx="-2" cy="10" r="2" fill="#78350f"/>
+    </g>
+
+    <!-- 3. Corner Repeats for Seamless Weave -->
+    <!-- Top-Right Kalka Tip -->
+    <g transform="translate(160, 0)">
+      <circle cx="0" cy="0" r="6" fill="url(#kalkaGold)"/>
+      <path d="M -12 0 C -12 12, 0 12, 0 0 Z" fill="url(#kalkaLuster)"/>
+    </g>
+    <!-- Bottom-Left Kalka Tip -->
+    <g transform="translate(0, 160)">
+      <circle cx="0" cy="0" r="6" fill="url(#kalkaGold)"/>
+      <path d="M 12 0 C 12 -12, 0 -12, 0 0 Z" fill="url(#kalkaLuster)"/>
+    </g>
+
+    <!-- Miniature Floral Bootis Filling Gaps -->
+    <g transform="translate(125, 35)">
+      <circle cx="0" cy="0" r="4" fill="url(#kalkaLuster)" stroke="#b45309" stroke-width="0.8"/>
+      <circle cx="0" cy="0" r="1.5" fill="#fef08a"/>
+      <path d="M -6 0 L 6 0 M 0 -6 L 0 6" stroke="#fef08a" stroke-width="1"/>
+    </g>
+    <g transform="translate(35, 125)">
+      <circle cx="0" cy="0" r="4" fill="url(#kalkaLuster)" stroke="#b45309" stroke-width="0.8"/>
+      <circle cx="0" cy="0" r="1.5" fill="#fef08a"/>
+      <path d="M -6 0 L 6 0 M 0 -6 L 0 6" stroke="#fef08a" stroke-width="1"/>
+    </g>
+
+    <!-- Jacquard Warp Stipples -->
+    <circle cx="80" cy="15" r="1.6" fill="#fef08a"/>
+    <circle cx="80" cy="145" r="1.6" fill="#fef08a"/>
+    <circle cx="15" cy="80" r="1.6" fill="#fef08a"/>
+    <circle cx="145" cy="80" r="1.6" fill="#fef08a"/>
+  </g>
 </svg>
