@@ -24,7 +24,8 @@ import { getAssetUrl } from '../../utils/assetHelper';
 export default function FabricPreviewCanvas({
   selectedProduct,
   customization,
-  onReset
+  onReset,
+  brandName = ''
 }) {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [viewMode, setViewMode] = useState('model'); // 'model' | 'video' | 'pattern' | 'flatlay' | 'macro'
@@ -443,6 +444,43 @@ export default function FabricPreviewCanvas({
 
             {/* Stage Spotlight & Vignette */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/25 pointer-events-none" />
+
+            {/* REAL-TIME CLIENT COMPANY BRANDING ON MODEL BACKGROUND */}
+            {brandName && (
+              <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-20">
+                {/* Tiled Luxury Brand Monogram Matrix in Model Stage Background */}
+                <div className="absolute inset-0 flex flex-col justify-around py-2 opacity-25 -rotate-12 scale-125 pointer-events-none mix-blend-plus-lighter">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="whitespace-nowrap text-amber-300 font-serif font-black text-xs sm:text-sm tracking-[0.25em] uppercase opacity-70">
+                      {`${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}`}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Top Illuminated Stage Arch / Marquee */}
+                <div className="absolute top-4 inset-x-0 flex justify-center pointer-events-none z-20">
+                  <div className="px-4 py-1.5 rounded-2xl bg-black/80 backdrop-blur-md border border-amber-500/50 shadow-2xl flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
+                    <span className="text-xs sm:text-sm font-serif font-bold tracking-widest text-white uppercase drop-shadow-[0_2px_10px_rgba(245,158,11,0.5)]">
+                      {brandName}
+                    </span>
+                    <span className="text-[9px] uppercase tracking-wider font-semibold text-amber-300 px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/30">
+                      Official Collection
+                    </span>
+                  </div>
+                </div>
+
+                {/* Bottom Left Corner Exclusivity Badge */}
+                <div className="absolute bottom-16 left-4 pointer-events-none z-20 hidden sm:block">
+                  <div className="px-3 py-1 rounded-xl bg-zinc-950/85 backdrop-blur-md border border-amber-500/30 text-white shadow-xl flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[10px] uppercase tracking-wider text-zinc-300 font-medium">
+                      Curated for <strong className="text-amber-300 font-bold">{brandName}</strong>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -462,6 +500,43 @@ export default function FabricPreviewCanvas({
               onPause={() => setIsPlayingVideo(false)}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+
+            {/* REAL-TIME CLIENT COMPANY BRANDING ON CATWALK VIDEO BACKGROUND */}
+            {brandName && (
+              <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-20">
+                {/* Tiled Luxury Brand Monogram Matrix across Video Screen */}
+                <div className="absolute inset-0 flex flex-col justify-around py-2 opacity-25 -rotate-12 scale-125 pointer-events-none mix-blend-plus-lighter">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="whitespace-nowrap text-amber-300 font-serif font-black text-xs sm:text-sm tracking-[0.25em] uppercase opacity-70">
+                      {`${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}`}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Top Illuminated Stage Arch / Marquee */}
+                <div className="absolute top-4 inset-x-0 flex justify-center pointer-events-none z-20">
+                  <div className="px-4 py-1.5 rounded-2xl bg-black/80 backdrop-blur-md border border-amber-500/50 shadow-2xl flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
+                    <span className="text-xs sm:text-sm font-serif font-bold tracking-widest text-white uppercase drop-shadow-[0_2px_10px_rgba(245,158,11,0.5)]">
+                      {brandName}
+                    </span>
+                    <span className="text-[9px] uppercase tracking-wider font-semibold text-amber-300 px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/30">
+                      Live Runway Walk
+                    </span>
+                  </div>
+                </div>
+
+                {/* Bottom Left Corner Exclusivity Badge */}
+                <div className="absolute bottom-16 left-4 pointer-events-none z-20 hidden sm:block">
+                  <div className="px-3 py-1 rounded-xl bg-zinc-950/85 backdrop-blur-md border border-amber-500/30 text-white shadow-xl flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[10px] uppercase tracking-wider text-zinc-300 font-medium">
+                      Runway Video for <strong className="text-amber-300 font-bold">{brandName}</strong>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

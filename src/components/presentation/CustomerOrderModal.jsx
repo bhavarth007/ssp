@@ -29,10 +29,17 @@ export default function CustomerOrderModal({
   customization,
   calculation,
   settings,
-  onOrderSaved
+  onOrderSaved,
+  brandName = ''
 }) {
   const [docType, setDocType] = useState('PURCHASE_ORDER'); // 'PURCHASE_ORDER' or 'QUOTATION'
-  const [buyerCompany, setBuyerCompany] = useState('');
+  const [buyerCompany, setBuyerCompany] = useState(() => brandName || '');
+
+  React.useEffect(() => {
+    if (brandName) {
+      setBuyerCompany(brandName);
+    }
+  }, [brandName]);
   const [contactPerson, setContactPerson] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');

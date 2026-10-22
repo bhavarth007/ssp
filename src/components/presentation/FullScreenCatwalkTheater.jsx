@@ -15,7 +15,8 @@ import { getAssetUrl } from '../../utils/assetHelper';
 export default function FullScreenCatwalkTheater({
   product,
   onComplete,
-  onSkipToCustomize
+  onSkipToCustomize,
+  brandName = ''
 }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
@@ -109,9 +110,15 @@ export default function FullScreenCatwalkTheater({
               <span className="font-serif font-bold text-sm sm:text-base tracking-wider text-white">
                 SAHJANAND POLYWEAVES
               </span>
-              <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                PVT. LTD.
-              </span>
+              {brandName ? (
+                <span className="text-xs sm:text-sm font-bold gold-gradient-text uppercase tracking-wide">
+                  × {brandName}
+                </span>
+              ) : (
+                <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                  PVT. LTD.
+                </span>
+              )}
             </div>
             <p className="text-[11px] text-zinc-400 tracking-wide line-clamp-1">
               {product.product_code} — {product.name}
@@ -161,6 +168,25 @@ export default function FullScreenCatwalkTheater({
 
         {/* Soft Luxury Runway Vignette */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+
+        {/* Real-time Client Brand Watermark / Backdrop Matrix on Fullscreen Catwalk Stage */}
+        {brandName && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-10">
+            <div className="absolute inset-0 flex flex-col justify-around py-4 opacity-20 -rotate-12 scale-125 mix-blend-plus-lighter">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="whitespace-nowrap text-amber-300 font-serif font-black text-sm sm:text-base tracking-[0.25em] uppercase opacity-75">
+                  {`${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}`}
+                </div>
+              ))}
+            </div>
+            <div className="absolute top-24 inset-x-0 flex justify-center">
+              <span className="px-5 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-amber-500/50 text-xs sm:text-sm font-serif font-bold text-white uppercase tracking-widest shadow-2xl flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>{brandName} RUNWAY CATWALK COLLECTION</span>
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Saree Identification Label */}
         <div className="absolute top-6 left-1/2 -translate-x-1/2 pointer-events-none z-20 max-w-[90vw]">

@@ -35,8 +35,19 @@ export default function App() {
   const [theme, setTheme] = useState('dark');
   const [isQrScannerOpen, setIsQrScannerOpen] = useState(false);
   const [fullscreenVideoProduct, setFullscreenVideoProduct] = useState(null);
-  
-  // Core Entities State
+  const [brandName, setBrandName] = useState(() => {
+    try {
+      return localStorage.getItem('ssp_client_brand') || 'Royal Heritage Silks';
+    } catch {
+      return 'Royal Heritage Silks';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('ssp_client_brand', brandName);
+    } catch {}
+  }, [brandName]);
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [colours, setColours] = useState([]);
@@ -299,6 +310,8 @@ export default function App() {
                 settings={settings}
                 onOpenQrScanner={() => setIsQrScannerOpen(true)}
                 onLaunchFullscreenVideo={(p) => setFullscreenVideoProduct(p || selectedProduct)}
+                brandName={brandName}
+                setBrandName={setBrandName}
               />
             ) : (
               <AdminDashboard
@@ -327,6 +340,7 @@ export default function App() {
           product={fullscreenVideoProduct}
           onComplete={() => setFullscreenVideoProduct(null)}
           onSkipToCustomize={() => setFullscreenVideoProduct(null)}
+          brandName={brandName}
         />
       )}
 

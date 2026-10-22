@@ -12,7 +12,8 @@ import {
   Clock,
   Layers,
   CheckCircle2,
-  Share2
+  Share2,
+  BookOpen
 } from 'lucide-react';
 import { getAssetUrl } from '../../utils/assetHelper';
 
@@ -20,7 +21,9 @@ export default function ProductOverview({
   product,
   onStartCustomize,
   onOpenCompare,
-  onLaunchFullscreenVideo
+  onLaunchFullscreenVideo,
+  brandName = '',
+  onOpenCatalog
 }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -64,6 +67,23 @@ export default function ProductOverview({
               />
               {/* Video Overlay Controls */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 flex flex-col justify-between p-4 pointer-events-none">
+                {/* Real-time Client Brand Name on Video */}
+                {brandName && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-10">
+                    <div className="absolute inset-0 flex flex-col justify-around py-4 opacity-20 -rotate-12 scale-125 mix-blend-plus-lighter">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className="whitespace-nowrap text-amber-300 font-serif font-black text-xs sm:text-sm tracking-[0.25em] uppercase opacity-75">
+                          {`${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}`}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="absolute top-14 inset-x-0 flex justify-center">
+                      <span className="px-3.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-500/50 text-[11px] font-serif font-bold text-white uppercase tracking-widest shadow-xl">
+                        ✦ {brandName} Runway Walk ✦
+                      </span>
+                    </div>
+                  </div>
+                )}
                 <div className="flex justify-between items-center pointer-events-auto">
                   <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-300 border border-amber-500/30 text-xs font-semibold">
                     4K International Model Runway Catwalk
@@ -116,6 +136,24 @@ export default function ProductOverview({
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+              
+              {/* Real-time Client Brand Name on Model Image */}
+              {brandName && (
+                <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-10">
+                  <div className="absolute inset-0 flex flex-col justify-around py-4 opacity-20 -rotate-12 scale-125 mix-blend-plus-lighter">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="whitespace-nowrap text-amber-300 font-serif font-black text-xs sm:text-sm tracking-[0.25em] uppercase opacity-75">
+                        {`${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}`}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="absolute top-4 inset-x-0 flex justify-center">
+                    <span className="px-3.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-500/50 text-[11px] font-serif font-bold text-white uppercase tracking-widest shadow-xl">
+                      ✦ {brandName} Private Showcase ✦
+                    </span>
+                  </div>
+                </div>
+              )}
               
               <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end pointer-events-none">
                 <div>
@@ -242,6 +280,16 @@ export default function ProductOverview({
               <Layers className="w-3.5 h-3.5 text-amber-400" />
               <span>Side-by-Side Architectural Comparison</span>
             </button>
+
+            {onOpenCatalog && (
+              <button
+                onClick={onOpenCatalog}
+                className="w-full py-2.5 px-4 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-xs font-semibold transition flex items-center justify-center gap-2 active:scale-[0.98]"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                <span>Browse Master Saree Catalog</span>
+              </button>
+            )}
           </div>
         </div>
 

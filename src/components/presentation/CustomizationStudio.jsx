@@ -2,14 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Palette, 
   Sparkles, 
-  Grid, 
-  Scissors, 
   Check, 
-  Info,
-  ChevronLeft,
+  ChevronLeft, 
   ChevronRight,
-  Flame,
-  Package
+  BookOpen,
+  Building2,
+  SlidersHorizontal
 } from 'lucide-react';
 import { getAssetUrl } from '../../utils/assetHelper';
 
@@ -24,16 +22,17 @@ export default function CustomizationStudio({
   designs = [],
   threads = [],
   processes = [],
-  pricingCalculation
+  pricingCalculation,
+  brandName = '',
+  setBrandName,
+  onOpenCatalog
 }) {
   const [activeTab, setActiveTab] = useState('colour');
 
+  // ONLY 2 ACTIVE TABS: Option 3 (Design), Option 4 (Thread), Option 5 (Process) removed per user requirement
   const tabs = [
     { id: 'colour', label: '1. Base Silk & Reactive Dye', icon: Palette, badge: customization.colour?.name },
     { id: 'zari', label: '2. Metallic Zari Specification', icon: Sparkles, badge: customization.zari?.finish_tone },
-    { id: 'design', label: '3. Jacquard Weave Motifs', icon: Grid, badge: customization.design?.name },
-    { id: 'thread', label: '4. High-Tenacity Weft Thread', icon: Scissors, badge: customization.thread?.name },
-    { id: 'process', label: '5. Diang & Finishing Ops', icon: Package, badge: `${customization.processes?.length || 0} active` },
   ];
 
   const formatInr = (num) => `+₹${(parseFloat(num) || 0).toFixed(0)}`;
@@ -47,27 +46,6 @@ export default function CustomizationStudio({
     setCustomization(prev => ({ ...prev, zari: z }));
   };
 
-  const handleSelectDesign = (d) => {
-    setCustomization(prev => ({ ...prev, design: d }));
-  };
-
-  const handleSelectThread = (t) => {
-    setCustomization(prev => ({ ...prev, thread: t }));
-  };
-
-  // Process toggle handler: robust ID/code matching with live state update
-  const handleToggleProcess = (proc) => {
-    if (proc.is_mandatory) return; // Cannot toggle mandatory processes
-    setCustomization(prev => {
-      const current = prev.processes || [];
-      const exists = current.some(p => String(p.id) === String(proc.id) || p.process_code === proc.process_code);
-      const updated = exists 
-        ? current.filter(p => String(p.id) !== String(proc.id) && p.process_code !== proc.process_code)
-        : [...current, proc];
-      return { ...prev, processes: updated };
-    });
-  };
-
   const tabsContainerRef = useRef(null);
   const tabButtonRefs = useRef({});
   const [isDragging, setIsDragging] = useState(false);
@@ -78,7 +56,6 @@ export default function CustomizationStudio({
     const el = tabsContainerRef.current;
     if (!el) return;
 
-    // Native { passive: false } event listener translates vertical mouse wheel into horizontal scroll
     const onWheel = (e) => {
       if (e.deltaY !== 0 || e.deltaX !== 0) {
         e.preventDefault();
@@ -88,7 +65,6 @@ export default function CustomizationStudio({
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
-
     return () => {
       el.removeEventListener('wheel', onWheel);
     };
@@ -121,33 +97,86 @@ export default function CustomizationStudio({
     tabsContainerRef.current.scrollLeft = scrollLeftPos - walk;
   };
 
-  const tabOrder = ['colour', 'zari', 'design', 'thread', 'process'];
-  const currentIndex = tabOrder.indexOf(activeTab);
-  const prevTabId = currentIndex > 0 ? tabOrder[currentIndex - 1] : null;
-  const nextTabId = currentIndex < tabOrder.length - 1 ? tabOrder[currentIndex + 1] : null;
-
-  const nextTabLabels = {
-    zari: '2. Metallic Zari Specification',
-    design: '3. Jacquard Weave Motifs',
-    thread: '4. High-Tenacity Weft Thread',
-    process: '5. Diang & Finishing Ops',
-  };
-
   return (
-    <div className="flex flex-col h-full glass-card rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-      {/* Category Tabs Header with Sleek Underline Scrollbar & Smooth Mouse Wheel / Drag Scrolling */}
-      <div className="relative border-b border-white/10 bg-zinc-950/90 px-3 py-2 shadow-md">
-        {/* Scrollable Tabs Track */}
+    <div className="flex flex-col h-full glass-card rounded-3xl border border-white/10 overflow-hidden shadow-2xl space-y-3 p-3 sm:p-4">
+      
+      {/* 1. REAL-TIME CLIENT BRANDING SECTION: Add your brand name */}
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-zinc-950/90 border border-amber-500/40 shadow-xl space-y-2.5">
+        <div className="flex items-center justify-between">
+          <label htmlFor="brandNameField" className="text-xs font-bold text-white flex items-center gap-1.5">
+            <Building2 className="w-4 h-4 text-amber-400" />
+            <span className="gold-gradient-text tracking-wide uppercase">Add your brand name</span>
+          </label>
+          {brandName ? (
+            <span className="text-[10px] font-semibold text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30 animate-pulse">
+              <Check className="w-3 h-3" /> Live on Model & Video Background
+            </span>
+          ) : (
+            <span className="text-[10px] text-zinc-500">
+              Live instant preview
+            </span>
+          )}
+        </div>
+
+        <div className="relative">
+          <input
+            id="brandNameField"
+            type="text"
+            value={brandName}
+            onChange={(e) => setBrandName && setBrandName(e.target.value)}
+            placeholder="Type client company name (e.g. Manyavar, Fabindia, Nalli Silks...)"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50 transition font-medium"
+          />
+          {brandName && (
+            <button
+              type="button"
+              onClick={() => setBrandName && setBrandName('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white text-xs px-2 py-0.5 rounded bg-zinc-800 transition"
+              title="Clear brand name"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Quick Presets & Live Notice */}
+        <div className="flex flex-wrap items-center justify-between gap-1.5 text-[10px] text-zinc-400 pt-0.5">
+          <div className="flex items-center gap-1 overflow-x-auto py-0.5">
+            <span className="text-zinc-500 shrink-0">Presets:</span>
+            {['Manyavar', 'Fabindia', 'Nalli Silks', 'Kalyan Sarees'].map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => setBrandName && setBrandName(preset)}
+                className="px-2 py-0.5 rounded-md bg-zinc-800/90 hover:bg-amber-500/20 hover:text-amber-300 text-zinc-300 border border-white/5 transition shrink-0"
+              >
+                +{preset}
+              </button>
+            ))}
+          </div>
+
+          {onOpenCatalog && (
+            <button
+              type="button"
+              onClick={onOpenCatalog}
+              className="text-amber-400 hover:underline flex items-center gap-1 font-semibold shrink-0"
+            >
+              <BookOpen className="w-3 h-3" />
+              <span>Browse Catalog</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* 2. CUSTOMIZATION STEP TABS: Only Tab 1 (Colour) and Tab 2 (Zari) */}
+      <div className="relative border-b border-white/10 bg-zinc-950/80 px-2 py-1.5 rounded-2xl shadow-md">
         <div
           ref={tabsContainerRef}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeaveOrUp}
           onMouseUp={handleMouseLeaveOrUp}
           onMouseMove={handleMouseMove}
-          style={{ scrollbarWidth: 'thin', scrollbarColor: '#f59e0b #18181b' }}
-          className={`w-full flex items-center overflow-x-auto p-1 gap-2 scroll-smooth ${
-            isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
-          } [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-amber-500/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-amber-400 [&::-webkit-scrollbar-track]:bg-white/5`}
+          className="w-full flex items-center gap-2 overflow-x-auto p-1"
         >
           {tabs.map((t) => {
             const Icon = t.icon;
@@ -157,7 +186,7 @@ export default function CustomizationStudio({
                 key={t.id}
                 ref={(el) => (tabButtonRefs.current[t.id] = el)}
                 onClick={() => setActiveTab(t.id)}
-                className={`flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-medium whitespace-nowrap transition-all ${
                   isActive
                     ? 'gold-gradient-bg text-zinc-950 font-bold shadow-md ring-1 ring-amber-400'
                     : 'text-zinc-300 hover:text-white hover:bg-zinc-800/80 bg-zinc-900/70 border border-white/10'
@@ -171,8 +200,8 @@ export default function CustomizationStudio({
         </div>
       </div>
 
-      {/* Tab Panels */}
-      <div className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[460px] space-y-4">
+      {/* 3. TAB PANELS */}
+      <div className="flex-1 p-3 sm:p-4 overflow-y-auto max-h-[460px] space-y-4">
         
         {/* TAB 1: COLOUR SELECTION */}
         {activeTab === 'colour' && (
@@ -284,205 +313,19 @@ export default function CustomizationStudio({
                 className="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition active:scale-95"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>Back</span>
+                <span>Back: 1. Base Silk Colour</span>
               </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('design')}
-                className="px-4 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
-              >
-                <span>Next: 3. Jacquard Weave Motifs</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
 
-        {/* TAB 3: JACQUARD DESIGN SELECTION */}
-        {activeTab === 'design' && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-semibold text-white">Select Master Jacquard Pattern & Card</h3>
-              <p className="text-xs text-zinc-400">Authentic woven motifs punched on electronic jacquard card systems.</p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {designs.map((d) => {
-                const isSelected = customization.design && (String(customization.design.id) === String(d.id) || customization.design.design_code === d.design_code);
-                return (
-                  <button
-                    key={d.id}
-                    onClick={() => handleSelectDesign(d)}
-                    className={`flex items-center gap-3 p-3 rounded-2xl border text-left transition-all ${
-                      isSelected
-                        ? 'border-amber-400 bg-amber-500/10 shadow-lg'
-                        : 'border-white/10 bg-zinc-900/50 hover:border-white/20'
-                    }`}
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-zinc-800/80 border border-white/10 flex items-center justify-center p-2 shrink-0">
-                      <img src={getAssetUrl(d.thumbnail || '/assets/patterns/kalka.svg')} alt={d.name} className="w-full h-full object-contain filter invert opacity-80" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-white truncate">{d.name}</p>
-                      <p className="text-[11px] text-zinc-400">{d.motif_type}</p>
-                      <p className="text-[11px] text-amber-400 font-medium">
-                        {d.design_charge > 0 ? formatInr(d.design_charge) : 'Included in Base'}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Step Navigation Footer */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setActiveTab('zari')}
-                className="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition active:scale-95"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Back</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('thread')}
-                className="px-4 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
-              >
-                <span>Next: 4. High-Tenacity Weft Thread</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 4: THREAD SELECTION */}
-        {activeTab === 'thread' && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-semibold text-white">Select Weft & Accent Thread</h3>
-              <p className="text-xs text-zinc-400">Specifies tensile strength, handfeel drape, and accent sheen.</p>
-            </div>
-
-            <div className="space-y-2.5">
-              {threads.map((t) => {
-                const isSelected = customization.thread && (String(customization.thread.id) === String(t.id) || customization.thread.name === t.name);
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => handleSelectThread(t)}
-                    className={`w-full flex items-center justify-between p-3.5 rounded-2xl border text-left transition-all ${
-                      isSelected
-                        ? 'border-amber-400 bg-amber-500/10'
-                        : 'border-white/10 bg-zinc-900/50 hover:border-white/20'
-                    }`}
-                  >
-                    <div>
-                      <p className="text-xs font-semibold text-white">{t.name}</p>
-                      <p className="text-[11px] text-zinc-400">Spec: {t.count_spec} • Consumption: {t.consumption_meters}m</p>
-                    </div>
-                    <span className="text-xs font-bold text-amber-400">
-                      {t.additional_cost > 0 ? formatInr(t.additional_cost) : 'Standard (₹0)'}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Step Navigation Footer */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setActiveTab('design')}
-                className="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition active:scale-95"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Back</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('process')}
-                className="px-4 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
-              >
-                <span>Next: 5. Diang & Finishing Ops</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 5: DIANG & MANUFACTURING PROCESSES */}
-        {activeTab === 'process' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-semibold text-white">Manufacturing, Diang & Finishing Operations</h3>
-                <p className="text-xs text-zinc-400">Toggle optional finishing processes. Mandatory processes cannot be deselected.</p>
-              </div>
-              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] text-amber-400/90 font-medium px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
-                🔒 Mill Master Rates
-              </span>
-            </div>
-
-            <div className="space-y-2.5">
-              {processes.map((p) => {
-                const isSelected = (customization.processes || []).some(x => String(x.id) === String(p.id) || x.process_code === p.process_code);
-                return (
-                  <div
-                    key={p.id}
-                    onClick={() => handleToggleProcess(p)}
-                    className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-emerald-500/60 bg-emerald-500/10 shadow-sm'
-                        : 'border-white/10 bg-zinc-900/50 hover:border-white/20'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`mt-0.5 w-5 h-5 rounded-lg flex items-center justify-center border ${
-                        isSelected ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-zinc-600 bg-zinc-800'
-                      }`}>
-                        {isSelected && <Check className="w-3.5 h-3.5 font-bold" />}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-xs font-semibold text-white">{p.name}</p>
-                          {p.is_mandatory ? (
-                            <span className="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                              Mandatory
-                            </span>
-                          ) : (
-                            <span className="text-[9px] uppercase tracking-wider font-medium px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
-                              Optional
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[11px] text-zinc-400 mt-0.5">{p.description}</p>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0 ml-3">
-                      <span className="text-xs font-bold text-emerald-400">
-                        {formatInr(p.rate)}
-                      </span>
-                      <p className="text-[10px] text-zinc-500">per saree</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Step Navigation Footer */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setActiveTab('thread')}
-                className="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition active:scale-95"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Back: 4. Weft Thread</span>
-              </button>
-              <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
-                <Check className="w-4 h-4" /> All 5 Categories Customised
-              </span>
+              {onOpenCatalog && (
+                <button
+                  type="button"
+                  onClick={onOpenCatalog}
+                  className="px-4 py-2 rounded-xl bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 border border-amber-500/40 font-bold text-xs flex items-center gap-1.5 transition active:scale-95"
+                >
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>Browse Master Catalog</span>
+                </button>
+              )}
             </div>
           </div>
         )}

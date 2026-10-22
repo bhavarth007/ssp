@@ -10,7 +10,9 @@ import {
   RotateCcw,
   Check,
   Eye,
-  ShoppingBag
+  ShoppingBag,
+  BookOpen,
+  Building2
 } from 'lucide-react';
 import ProductOverview from './ProductOverview';
 import CustomizationStudio from './CustomizationStudio';
@@ -18,6 +20,7 @@ import FabricPreviewCanvas from './FabricPreviewCanvas';
 import PricingSummaryBar from './PricingSummaryBar';
 import CustomerOrderModal from './CustomerOrderModal';
 import CompareDrawer from './CompareDrawer';
+import CatalogModal from './CatalogModal';
 import { calculatePricing } from '../../utils/api';
 
 export default function PresentationApp({
@@ -31,10 +34,13 @@ export default function PresentationApp({
   processes = [],
   settings,
   onOpenQrScanner,
-  onLaunchFullscreenVideo
+  onLaunchFullscreenVideo,
+  brandName = '',
+  setBrandName
 }) {
   const [viewMode, setViewMode] = useState('overview'); // 'overview' | 'customize'
   const [quantity, setQuantity] = useState(1);
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   
   // Customization state
   const [customization, setCustomization] = useState({
@@ -234,8 +240,37 @@ export default function PresentationApp({
           </div>
         </div>
 
-        {/* Quick Product Switcher Dropdown */}
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        {/* Quick Product Switcher & Client Brand Input */}
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          {/* Real-time "Add your brand name" Input */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-xs shadow-inner">
+            <Building2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="text-[10px] text-zinc-400 font-medium whitespace-nowrap hidden lg:inline">Add your brand name:</span>
+            <input
+              type="text"
+              value={brandName}
+              onChange={(e) => setBrandName && setBrandName(e.target.value)}
+              placeholder="Add your brand name"
+              className="bg-transparent text-white text-xs placeholder-zinc-500 focus:outline-none w-28 sm:w-36 font-semibold"
+            />
+            {brandName && (
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Live branding active on model and video" />
+            )}
+          </div>
+
+          {/* Saree Catalog Trigger Button */}
+          <button
+            onClick={() => setIsCatalogOpen(true)}
+            className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition active:scale-95 shadow-sm"
+            title="Browse Master Saree Catalog"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">Catalog</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-bold">
+              {products.length}
+            </span>
+          </button>
+
           <select
             value={selectedProduct.id}
             onChange={(e) => {
@@ -293,6 +328,8 @@ export default function PresentationApp({
             handleDuplicateToAlt();
             setIsCompareOpen(true);
           }}
+          brandName={brandName}
+          onOpenCatalog={() => setIsCatalogOpen(true)}
         />
       )}
 
@@ -305,6 +342,7 @@ export default function PresentationApp({
             <FabricPreviewCanvas
               selectedProduct={selectedProduct}
               customization={customization}
+              brandName={brandName}
               onReset={() => {
                 const orig = colours.find(c => c.hex_code.toLowerCase() === selectedProduct.base_colour_hex.toLowerCase()) || colours[0];
                 setCustomization({
@@ -335,6 +373,9 @@ export default function PresentationApp({
               threads={threads}
               processes={processes}
               pricingCalculation={pricingCalculation}
+              brandName={brandName}
+              setBrandName={setBrandName}
+              onOpenCatalog={() => setIsCatalogOpen(true)}
             />
           </div>
 
@@ -358,6 +399,7 @@ export default function PresentationApp({
         customization={customization}
         calculation={pricingCalculation}
         settings={settings}
+        brandName={brandName}
       />
 
       {/* Side-by-side Configuration Comparison Drawer */}
@@ -371,6 +413,23 @@ export default function PresentationApp({
         altCalc={altCalc}
         onApplyAltConfig={handleApplyAlt}
         onDuplicateToAlt={handleDuplicateToAlt}
+      />
+
+      {/* Master Surat Loom Saree Catalog Modal */}
+      <CatalogModal
+        isOpen={isCatalogOpen}
+        onClose={() => setIsCatalogOpen(false)}
+        products={products}
+        selectedProduct={selectedProduct}
+        onSelectProduct={(p) => {
+          setSelectedProduct(p);
+          setViewMode('overview');
+        }}
+        onCustomizeProduct={(p) => {
+          setSelectedProduct(p);
+          setViewMode('customize');
+        }}
+        brandName={brandName}
       />
 
     </div>
