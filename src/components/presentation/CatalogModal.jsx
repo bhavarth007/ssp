@@ -132,18 +132,6 @@ export default function CatalogModal({
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-                    {/* Dynamic Brand Watermark Backdrop Overlay */}
-                    {brandName && (
-                      <div className="absolute inset-x-0 top-3 px-3 flex justify-between items-center pointer-events-none">
-                        <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-amber-500/40 text-[10px] font-bold text-amber-300 uppercase tracking-widest shadow-lg">
-                          ✦ {brandName}
-                        </span>
-                        <span className="text-[9px] uppercase tracking-wider text-zinc-400 bg-black/60 px-2 py-0.5 rounded backdrop-blur-sm">
-                          Exclusive
-                        </span>
-                      </div>
-                    )}
-
                     {/* Saree Code Badge */}
                     <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between pointer-events-none">
                       <div>
