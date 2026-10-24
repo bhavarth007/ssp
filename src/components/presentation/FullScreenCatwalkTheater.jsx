@@ -174,22 +174,27 @@ export default function FullScreenCatwalkTheater({
           {/* Soft Luxury Runway Vignette */}
           <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/30" />
 
-          {/* REAL-TIME CLIENT BRAND NAME SET DIRECTLY ON RUNWAY STAGE SIGNBOARD (OVER COUTURE WEEK) */}
+          {/* REAL-TIME CLIENT BRAND NAME SET DIRECTLY ON RUNWAY STAGE BANNER (REPLACES COUTURE WEEK) */}
           {brandName && (
             <div 
-              className="absolute top-[2.8%] left-1/2 -translate-x-1/2 w-[46%] h-[9.8%] flex flex-col items-center justify-center pointer-events-none z-10 text-center select-none"
+              className="absolute top-0 left-1/2 -translate-x-1/2 w-[54%] max-w-[360px] h-[13%] flex flex-col items-center justify-center pointer-events-none z-10 text-center select-none"
             >
-              <div className="w-full h-full rounded-md bg-gradient-to-b from-[#0a0a0c]/98 via-[#131318]/95 to-[#0b0b0e]/92 border border-white/10 px-2 py-1 flex flex-col items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.85)]">
+              <div className="w-full h-full bg-[#070709] flex flex-col items-center justify-center px-2 py-1 shadow-[0_0_30px_18px_#070709]">
                 <span 
-                  className="font-serif font-black text-white/95 uppercase tracking-[0.2em] text-[11px] sm:text-xs md:text-sm lg:text-base leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] line-clamp-2"
+                  className="font-serif font-black text-white uppercase tracking-[0.22em] text-[12px] sm:text-sm md:text-base lg:text-lg leading-tight line-clamp-1"
                   style={{
-                    textShadow: '0 0 12px rgba(255,255,255,0.35), 0 2px 4px rgba(0,0,0,0.95)'
+                    textShadow: '0 0 16px rgba(255,255,255,0.7), 0 0 30px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.95)'
                   }}
                 >
                   {brandName}
                 </span>
-                <span className="text-[6px] sm:text-[7px] md:text-[8px] font-sans font-bold tracking-[0.35em] uppercase text-zinc-400 mt-0.5">
-                  FASHION WEEK
+                <span 
+                  className="text-[7px] sm:text-[8px] md:text-[9px] font-sans font-black tracking-[0.45em] uppercase text-zinc-300 mt-1"
+                  style={{
+                    textShadow: '0 0 8px rgba(255,255,255,0.4), 0 1px 3px rgba(0,0,0,0.9)'
+                  }}
+                >
+                  COUTURE WEEK
                 </span>
               </div>
             </div>

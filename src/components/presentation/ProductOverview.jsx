@@ -57,37 +57,46 @@ export default function ProductOverview({
               className="relative w-full h-full cursor-pointer overflow-hidden flex items-center justify-center bg-black"
               onClick={togglePlay}
             >
-              <video
-                ref={videoRef}
-                src={product.demo_video_url || getAssetUrl('/assets/videos/saree-crimson-runway-walk.mp4')}
-                loop
-                muted={isMuted}
-                playsInline
-                autoPlay
-                className="w-full h-full object-cover"
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+              <div className="relative h-full aspect-[9/16] max-h-full max-w-full flex items-center justify-center overflow-hidden">
+                <video
+                  ref={videoRef}
+                  src={product.demo_video_url || getAssetUrl('/assets/videos/saree-crimson-runway-walk.mp4')}
+                  loop
+                  muted={isMuted}
+                  playsInline
+                  autoPlay
+                  className="w-full h-full object-cover"
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-              {/* REAL-TIME CLIENT BRAND NAME SET DIRECTLY ON RUNWAY STAGE SIGNBOARD (OVER COUTURE WEEK) */}
-              {brandName && (
-                <div 
-                  className="absolute top-[3%] left-1/2 -translate-x-1/2 w-[44%] h-[9.8%] flex flex-col items-center justify-center pointer-events-none z-20 text-center select-none"
-                >
-                  <div className="w-full h-full rounded-md bg-gradient-to-b from-[#0a0a0c]/98 via-[#131318]/95 to-[#0b0b0e]/92 border border-white/10 px-2 py-0.5 flex flex-col items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
-                    <span 
-                      className="font-serif font-black text-white/95 uppercase tracking-[0.2em] text-[10px] sm:text-xs md:text-sm leading-tight drop-shadow line-clamp-1"
-                      style={{ textShadow: '0 0 10px rgba(255,255,255,0.35), 0 2px 4px rgba(0,0,0,0.95)' }}
-                    >
-                      {brandName}
-                    </span>
-                    <span className="text-[6px] sm:text-[7px] font-sans font-bold tracking-[0.35em] uppercase text-zinc-400 mt-0.5">
-                      FASHION WEEK
-                    </span>
+                {/* REAL-TIME CLIENT BRAND SET DIRECTLY ON RUNWAY STAGE BANNER */}
+                {brandName && (
+                  <div 
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[54%] max-w-[340px] h-[13%] flex flex-col items-center justify-center pointer-events-none z-20 text-center select-none"
+                  >
+                    <div className="w-full h-full bg-[#070709] flex flex-col items-center justify-center px-2 py-0.5 shadow-[0_0_25px_15px_#070709]">
+                      <span 
+                        className="font-serif font-black text-white uppercase tracking-[0.22em] text-[10px] sm:text-xs md:text-sm leading-tight line-clamp-1"
+                        style={{
+                          textShadow: '0 0 16px rgba(255,255,255,0.7), 0 0 30px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.95)'
+                        }}
+                      >
+                        {brandName}
+                      </span>
+                      <span 
+                        className="text-[6px] sm:text-[7px] font-sans font-black tracking-[0.42em] uppercase text-zinc-300 mt-0.5"
+                        style={{
+                          textShadow: '0 0 8px rgba(255,255,255,0.4), 0 1px 3px rgba(0,0,0,0.9)'
+                        }}
+                      >
+                        COUTURE WEEK
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Minimal Top-Right Controls for Audio and Fullscreen (Non-obstructive) */}
               <div className="absolute top-3 right-3 flex items-center gap-2 z-30 pointer-events-auto">
@@ -116,38 +125,47 @@ export default function ProductOverview({
               </div>
             </div>
           ) : (
-            <div className="relative w-full h-full">
-              <img
-                src={
-                  activeMediaTab === 'pallu'
-                    ? product.pallu_image || getAssetUrl('/assets/products/saree-crimson-meenakari-real.jpg')
-                    : activeMediaTab === 'closeup'
-                    ? product.close_up_image || getAssetUrl('/assets/products/saree-stack-5colors.jpg')
-                    : product.hero_image || getAssetUrl('/assets/products/model-crimson-runway.jpg')
-                }
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-              
-              {/* REAL-TIME CLIENT BRAND NAME SET DIRECTLY ON RUNWAY STAGE SIGNBOARD */}
-              {brandName && activeMediaTab === 'image' && (
-                <div 
-                  className="absolute top-[3%] left-1/2 -translate-x-1/2 w-[44%] h-[9.8%] flex flex-col items-center justify-center pointer-events-none z-20 text-center select-none"
-                >
-                  <div className="w-full h-full rounded-md bg-gradient-to-b from-[#0a0a0c]/98 via-[#131318]/95 to-[#0b0b0e]/92 border border-white/10 px-2 py-0.5 flex flex-col items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
-                    <span 
-                      className="font-serif font-black text-white/95 uppercase tracking-[0.2em] text-[10px] sm:text-xs md:text-sm leading-tight drop-shadow line-clamp-1"
-                      style={{ textShadow: '0 0 10px rgba(255,255,255,0.35), 0 2px 4px rgba(0,0,0,0.95)' }}
-                    >
-                      {brandName}
-                    </span>
-                    <span className="text-[6px] sm:text-[7px] font-sans font-bold tracking-[0.35em] uppercase text-zinc-400 mt-0.5">
-                      FASHION WEEK
-                    </span>
+            <div className="relative w-full h-full flex items-center justify-center bg-black overflow-hidden">
+              <div className="relative h-full aspect-[3/4] max-h-full max-w-full flex items-center justify-center overflow-hidden">
+                <img
+                  src={
+                    activeMediaTab === 'pallu'
+                      ? product.pallu_image || getAssetUrl('/assets/products/saree-crimson-meenakari-real.jpg')
+                      : activeMediaTab === 'closeup'
+                      ? product.close_up_image || getAssetUrl('/assets/products/saree-stack-5colors.jpg')
+                      : product.hero_image || getAssetUrl('/assets/products/model-crimson-runway.jpg')
+                  }
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                
+                {/* REAL-TIME CLIENT BRAND SET DIRECTLY ON RUNWAY STAGE BANNER */}
+                {brandName && activeMediaTab === 'image' && (
+                  <div 
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[54%] max-w-[340px] h-[13%] flex flex-col items-center justify-center pointer-events-none z-20 text-center select-none"
+                  >
+                    <div className="w-full h-full bg-[#070709] flex flex-col items-center justify-center px-2 py-0.5 shadow-[0_0_25px_15px_#070709]">
+                      <span 
+                        className="font-serif font-black text-white uppercase tracking-[0.22em] text-[10px] sm:text-xs md:text-sm leading-tight drop-shadow line-clamp-1"
+                        style={{
+                          textShadow: '0 0 16px rgba(255,255,255,0.7), 0 0 30px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.95)'
+                        }}
+                      >
+                        {brandName}
+                      </span>
+                      <span 
+                        className="text-[6px] sm:text-[7px] font-sans font-black tracking-[0.42em] uppercase text-zinc-300 mt-0.5"
+                        style={{
+                          textShadow: '0 0 8px rgba(255,255,255,0.4), 0 1px 3px rgba(0,0,0,0.9)'
+                        }}
+                      >
+                        COUTURE WEEK
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
               
               <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end pointer-events-none">
                 <div>
