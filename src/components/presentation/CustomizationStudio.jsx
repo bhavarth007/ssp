@@ -222,30 +222,33 @@ export default function CustomizationStudio({
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {colours.map((c) => {
                 const isSelected = customization.colour?.id === c.id;
+                const isLight = c.hex_code.toLowerCase() === '#f5f2e9' || c.hex_code.toLowerCase() === '#ffffff';
                 return (
                   <button
                     key={c.id}
                     onClick={() => handleSelectColour(c)}
-                    className={`group relative p-3 rounded-2xl border text-left transition-all ${
+                    className={`group relative p-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer hover:scale-[1.01] active:scale-[0.99] ${
                       isSelected
-                        ? 'border-amber-400/80 bg-amber-500/10 shadow-lg shadow-amber-500/10'
-                        : 'border-white/10 bg-zinc-900/50 hover:border-white/25 hover:bg-zinc-900'
+                        ? 'border-amber-400 bg-amber-500/15 shadow-lg shadow-amber-500/15 ring-1 ring-amber-400/50'
+                        : 'border-white/10 bg-zinc-900/60 hover:border-amber-400/40 hover:bg-zinc-900'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-8 h-8 rounded-full border border-white/40 shadow-inner flex items-center justify-center shrink-0"
+                        className="w-9 h-9 rounded-full border-2 border-white/50 shadow-md flex items-center justify-center shrink-0 ring-1 ring-black/40"
                         style={{ backgroundColor: c.hex_code }}
                       >
-                        {isSelected && <Check className="w-4 h-4 text-white drop-shadow" />}
+                        {isSelected && (
+                          <Check className={`w-4 h-4 drop-shadow ${isLight ? 'text-zinc-950 font-black' : 'text-white'}`} />
+                        )}
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-medium text-white truncate">{c.name}</p>
-                        <p className="text-[11px] text-zinc-400">
-                          {c.surcharge_per_saree > 0 ? formatInr(c.surcharge_per_saree) : 'Included'}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-white tracking-wide leading-snug">{c.name}</p>
+                        <p className="text-[11px] font-semibold text-amber-300/90 mt-0.5">
+                          {c.surcharge_per_saree > 0 ? `+${formatInr(c.surcharge_per_saree)} per saree` : 'Mill Standard (Included)'}
                         </p>
                       </div>
                     </div>
@@ -259,10 +262,10 @@ export default function CustomizationStudio({
               <button
                 type="button"
                 onClick={() => setActiveTab('zari')}
-                className="px-4 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
+                className="px-5 py-2.5 rounded-xl gold-gradient-bg text-zinc-950 font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer"
               >
                 <span>Next: 2. Metallic Zari Specification</span>
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4 stroke-[2.5]" />
               </button>
             </div>
           </div>
@@ -283,22 +286,22 @@ export default function CustomizationStudio({
                   <button
                     key={z.id}
                     onClick={() => handleSelectZari(z)}
-                    className={`p-3.5 rounded-2xl border text-left transition-all relative ${
+                    className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer hover:scale-[1.01] active:scale-[0.99] relative ${
                       isSelected
-                        ? 'border-amber-400 bg-amber-500/10 shadow-lg shadow-amber-500/10'
-                        : 'border-white/10 bg-zinc-900/50 hover:border-white/20 hover:bg-zinc-900'
+                        ? 'border-amber-400 bg-amber-500/15 shadow-lg shadow-amber-500/15 ring-1 ring-amber-400/50'
+                        : 'border-white/10 bg-zinc-900/60 hover:border-amber-400/40 hover:bg-zinc-900'
                     }`}
                   >
-                    <div className="flex justify-between items-start mb-1.5">
-                      <span className="text-xs font-semibold text-white">{z.name}</span>
-                      <span className="text-[11px] font-bold text-amber-400">
-                        {z.additional_cost > 0 ? formatInr(z.additional_cost) : 'Base Standard'}
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-xs font-bold text-white tracking-wide">{z.name}</span>
+                      <span className="text-[11px] font-extrabold text-amber-300 shrink-0 ml-2">
+                        {z.additional_cost > 0 ? `+${formatInr(z.additional_cost)}` : 'Mill Standard'}
                       </span>
                     </div>
-                    <div className="flex flex-wrap gap-2 text-[10px] text-zinc-400">
-                      <span className="px-2 py-0.5 rounded bg-zinc-800 border border-white/5">Tone: {z.finish_tone}</span>
-                      <span className="px-2 py-0.5 rounded bg-zinc-800 border border-white/5">Grade: {z.grade}</span>
-                      <span className="px-2 py-0.5 rounded bg-zinc-800 border border-white/5">{z.consumption_grams}g per saree</span>
+                    <div className="flex flex-wrap gap-1.5 text-[10px] text-zinc-300">
+                      <span className="px-2.5 py-0.5 rounded-md bg-zinc-800/90 border border-white/10">Tone: {z.finish_tone}</span>
+                      <span className="px-2.5 py-0.5 rounded-md bg-zinc-800/90 border border-white/10">Grade: {z.grade}</span>
+                      <span className="px-2.5 py-0.5 rounded-md bg-zinc-800/90 border border-white/10">{z.consumption_grams}g per saree</span>
                     </div>
                   </button>
                 );
@@ -310,9 +313,9 @@ export default function CustomizationStudio({
               <button
                 type="button"
                 onClick={() => setActiveTab('colour')}
-                className="px-3.5 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition active:scale-95"
+                className="px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-white/15 text-xs font-bold flex items-center gap-1.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-md"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
                 <span>Back: 1. Base Silk Colour</span>
               </button>
 
@@ -320,9 +323,9 @@ export default function CustomizationStudio({
                 <button
                   type="button"
                   onClick={onOpenCatalog}
-                  className="px-4 py-2 rounded-xl bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 border border-amber-500/40 font-bold text-xs flex items-center gap-1.5 transition active:scale-95"
+                  className="px-4 py-2.5 rounded-xl bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 border border-amber-500/40 font-bold text-xs flex items-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-md"
                 >
-                  <BookOpen className="w-3.5 h-3.5" />
+                  <BookOpen className="w-4 h-4 text-amber-400" />
                   <span>Browse Master Catalog</span>
                 </button>
               )}

@@ -226,47 +226,54 @@ export default function PresentationApp({
           )}
 
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base sm:text-lg font-serif font-bold text-white tracking-wide">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h2 className="text-base sm:text-lg lg:text-xl font-serif font-bold text-white tracking-wide">
                 {selectedProduct.name}
               </h2>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+              <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 whitespace-nowrap shrink-0 tracking-wider shadow-sm">
                 {selectedProduct.product_code}
               </span>
             </div>
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-zinc-400 mt-0.5">
               {selectedProduct.collection || 'Sahjanand Exclusive Series'} • Surat Weaving Facility
             </p>
           </div>
         </div>
 
         {/* Quick Product Switcher & Client Brand Input */}
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-          {/* Real-time "Add your brand name" Input */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-xs shadow-inner">
-            <Building2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="text-[10px] text-zinc-400 font-medium whitespace-nowrap hidden lg:inline">Add your brand name:</span>
+        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+          {/* Real-time "Add your brand name" Executive Input */}
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-zinc-950 to-zinc-900 border border-amber-500/40 shadow-inner focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-400/20 transition-all">
+            <Building2 className="w-4 h-4 text-amber-400 shrink-0" />
+            <span className="text-[11px] font-bold text-amber-300 uppercase tracking-wider whitespace-nowrap">Brand:</span>
             <input
               type="text"
               value={brandName}
               onChange={(e) => setBrandName && setBrandName(e.target.value)}
-              placeholder="Add your brand name"
-              className="bg-transparent text-white text-xs placeholder-zinc-500 focus:outline-none w-28 sm:w-36 font-semibold"
+              placeholder="Add client brand name"
+              className="bg-transparent text-white text-xs placeholder-zinc-500 focus:outline-none w-32 sm:w-40 font-semibold"
             />
-            {brandName && (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Live branding active on model and video" />
-            )}
+            {brandName ? (
+              <button
+                type="button"
+                onClick={() => setBrandName && setBrandName('')}
+                className="text-zinc-400 hover:text-white text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 transition"
+                title="Clear brand name"
+              >
+                ×
+              </button>
+            ) : null}
           </div>
 
           {/* Saree Catalog Trigger Button */}
           <button
             onClick={() => setIsCatalogOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition active:scale-95 shadow-sm"
+            className="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-amber-300 border border-amber-500/35 text-xs font-bold flex items-center gap-2 shrink-0 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-amber-500/15 cursor-pointer"
             title="Browse Master Saree Catalog"
           >
-            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden sm:inline">Catalog</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-bold">
+            <BookOpen className="w-4 h-4 text-amber-400" />
+            <span className="whitespace-nowrap">Catalog</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-extrabold border border-amber-400/30">
               {products.length}
             </span>
           </button>
@@ -277,7 +284,7 @@ export default function PresentationApp({
               const p = products.find(x => x.id === parseInt(e.target.value, 10));
               if (p) setSelectedProduct(p);
             }}
-            className="w-full sm:w-auto px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white focus:outline-none focus:border-amber-400"
+            className="px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/15 text-xs font-medium text-white focus:outline-none focus:border-amber-400 shadow-md transition-all cursor-pointer hover:border-white/30"
           >
             {products.map(p => (
               <option key={p.id} value={p.id}>
@@ -289,30 +296,29 @@ export default function PresentationApp({
           {onLaunchFullscreenVideo && (
             <button
               onClick={() => onLaunchFullscreenVideo(selectedProduct)}
-              className="px-3.5 py-2 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 text-xs font-bold flex items-center gap-1.5 shrink-0 transition active:scale-95 shadow-sm"
+              className="px-4 py-2 rounded-xl border border-amber-500/50 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold flex items-center gap-2 shrink-0 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-amber-500/20 cursor-pointer"
               title="Watch Fullscreen Model Catwalk"
             >
               <Play className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-              <span className="hidden sm:inline">Runway Walk</span>
-              <span className="sm:hidden">Runway</span>
+              <span className="whitespace-nowrap">Runway Walk</span>
             </button>
           )}
 
           {viewMode === 'overview' ? (
             <button
               onClick={() => setViewMode('customize')}
-              className="px-4 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-bold text-xs flex items-center gap-1.5 shrink-0 shadow-md active:scale-95 transition"
+              className="px-5 py-2 rounded-xl gold-gradient-bg text-zinc-950 font-black text-xs flex items-center gap-2 shrink-0 shadow-lg hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer"
             >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>Customize</span>
+              <SlidersHorizontal className="w-4 h-4 stroke-[2.5]" />
+              <span className="whitespace-nowrap">Customize</span>
             </button>
           ) : (
             <button
               onClick={() => setIsCompareOpen(true)}
-              className="px-3 py-1.5 rounded-xl glass-pill text-zinc-300 hover:text-white border border-white/15 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition"
+              className="px-4 py-2 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 hover:text-white border border-white/15 text-xs font-bold flex items-center gap-2 shrink-0 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md cursor-pointer"
             >
-              <Layers className="w-3.5 h-3.5" />
-              <span>Compare</span>
+              <Layers className="w-4 h-4 text-amber-400" />
+              <span className="whitespace-nowrap">Compare</span>
             </button>
           )}
         </div>

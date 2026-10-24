@@ -224,7 +224,7 @@ export default function ProductOverview({
         <div className="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl space-y-5">
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold">
+              <span className="px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold whitespace-nowrap tracking-wider shadow-sm shrink-0">
                 {product.product_code}
               </span>
               <span className="text-xs text-emerald-400 flex items-center gap-1 font-medium">

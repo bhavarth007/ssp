@@ -123,73 +123,63 @@ export default function FabricPreviewCanvas({
     p.process_code?.includes('TASSEL') || p.name?.toLowerCase().includes('tassel')
   );
 
-  // 1. Base authentic 4K photograph of the runway model belongs to the selected saree product
+  // 1. Base authentic 4K photograph of the runway model belongs to the selected saree product and customized color
   const getBaseModelImage = () => {
+    const targetName = (customization?.colour?.name || '').toLowerCase();
+    const targetHex = (customization?.colour?.hex_code || '').toLowerCase();
+
+    // 100% authentic real-world photographic mapping for each mill color
+    if (targetName.includes('ivory') || targetName.includes('pearl') || targetHex === '#f5f2e9') {
+      return getAssetUrl('/assets/products/model-white-ivory-runway.jpg');
+    }
+    if (targetName.includes('black') || targetHex === '#1a1a1a') {
+      return getAssetUrl('/assets/products/model-midnight-black-runway.jpg');
+    }
+    if (targetName.includes('wine') || targetName.includes('plum') || targetHex === '#4a0e2e') {
+      return getAssetUrl('/assets/products/model-regal-wine-runway.jpg');
+    }
+    if (targetName.includes('crimson') || targetName.includes('maroon') || targetHex === '#7b1113') {
+      return getAssetUrl('/assets/products/model-crimson-runway.jpg');
+    }
+    if (targetName.includes('peacock blue') || targetName.includes('indigo') || targetHex === '#0c3a5e' || targetHex === '#2e1065') {
+      return getAssetUrl('/assets/products/model-indigo-runway.jpg');
+    }
+    if (targetName.includes('forest green') || targetName.includes('teal') || targetHex === '#0e5c44' || targetHex === '#0f766e') {
+      return getAssetUrl('/assets/products/model-teal-green-runway.jpg');
+    }
+    if (targetName.includes('magenta') || targetName.includes('pink') || targetHex === '#a0144f' || targetHex === '#be185d') {
+      return getAssetUrl('/assets/products/model-rani-pink-runway.jpg');
+    }
+    if (targetName.includes('mustard') || targetName.includes('gold') || targetHex === '#c68b19' || targetHex === '#ca8a04') {
+      return getAssetUrl('/assets/products/model-mustard-gold-runway.jpg');
+    }
+
     return getAssetUrl(selectedProduct?.hero_image || '/assets/products/model-crimson-runway.jpg');
   };
 
-  // 2. Matching 4K catwalk walking motion video belongs to the selected saree product
+  // 2. Matching 4K catwalk walking motion video belongs to the selected saree product & color
   const getRunwayVideo = () => {
+    const targetName = (customization?.colour?.name || '').toLowerCase();
+    const targetHex = (customization?.colour?.hex_code || '').toLowerCase();
+
+    if (targetName.includes('peacock blue') || targetName.includes('indigo') || targetHex === '#0c3a5e' || targetHex === '#2e1065') {
+      return getAssetUrl('/assets/videos/saree-indigo-runway-walk.mp4');
+    }
+    if (targetName.includes('forest green') || targetName.includes('teal') || targetHex === '#0e5c44' || targetHex === '#0f766e') {
+      return getAssetUrl('/assets/videos/saree-teal-runway-walk.mp4');
+    }
+    if (targetName.includes('magenta') || targetName.includes('pink') || targetHex === '#a0144f' || targetHex === '#be185d') {
+      return getAssetUrl('/assets/videos/saree-rani-runway-walk.mp4');
+    }
+    if (targetName.includes('mustard') || targetName.includes('gold') || targetHex === '#c68b19' || targetHex === '#ca8a04') {
+      return getAssetUrl('/assets/videos/saree-mustard-runway-walk.mp4');
+    }
+
     return getAssetUrl(selectedProduct?.demo_video_url || '/assets/videos/saree-crimson-runway-walk.mp4');
   };
 
-  // Dynamic Silk Dye Color Filter: Photorealistically shifts the saree fabric color while preserving weave texture & lighting
-  const getSilkColorFilter = () => {
-    const targetHex = (customization?.colour?.hex_code || selectedProduct?.base_colour_hex || '#7B1113').toLowerCase();
-    const baseHex = (selectedProduct?.base_colour_hex || '#7B1113').toLowerCase();
-    const targetName = (customization?.colour?.name || '').toLowerCase();
-
-    // If target matches product base, no filter needed
-    if (targetHex === baseHex && !targetName.includes('ivory') && !targetName.includes('black')) {
-      return { filter: 'none' };
-    }
-
-    // High-fidelity handcrafted presets for specialty non-chromatic finishes
-    if (targetName.includes('ivory') || targetName.includes('pearl') || targetHex === '#f5f2e9') {
-      return { filter: 'sepia(0.35) saturate(0.35) brightness(1.35) contrast(0.95)' };
-    }
-    if (targetName.includes('black') || targetHex === '#1a1a1a') {
-      return { filter: 'saturate(0.12) brightness(0.42) contrast(1.35)' };
-    }
-    if (targetName.includes('wine') || targetName.includes('plum') || targetHex === '#4a0e2e') {
-      return { filter: 'hue-rotate(325deg) saturate(1.15) brightness(0.85) contrast(1.1)' };
-    }
-
-    // Precise HSL delta conversion
-    const hexToHsl = (hex) => {
-      let c = hex.replace('#', '');
-      if (c.length === 3) c = c.split('').map(x => x + x).join('');
-      const r = parseInt(c.substring(0, 2), 16) / 255;
-      const g = parseInt(c.substring(2, 4), 16) / 255;
-      const b = parseInt(c.substring(4, 6), 16) / 255;
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
-      let h = 0, s = 0, l = (max + min) / 2;
-      if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-          case g: h = (b - r) / d + 2; break;
-          case b: h = (r - g) / d + 4; break;
-        }
-        h *= 60;
-      }
-      return { h: Math.round(h), s: s * 100, l: l * 100 };
-    };
-
-    const bHsl = hexToHsl(baseHex);
-    const tHsl = hexToHsl(targetHex);
-
-    const deltaHue = (tHsl.h - bHsl.h + 360) % 360;
-    const satScale = Math.min(Math.max(tHsl.s / Math.max(bHsl.s, 1), 0.75), 1.35).toFixed(2);
-    const briScale = Math.min(Math.max(tHsl.l / Math.max(bHsl.l, 1), 0.78), 1.35).toFixed(2);
-
-    return {
-      filter: `hue-rotate(${deltaHue}deg) saturate(${satScale}) brightness(${briScale})`
-    };
-  };
-
-  const silkColorFilter = getSilkColorFilter();
+  // Clean real-fabric color display without muddy CSS filters
+  const silkColorFilter = { filter: 'none' };
 
   // 3. Flatlay & Macro Closeups
   const getFlatlayImage = () => {
@@ -276,13 +266,7 @@ export default function FabricPreviewCanvas({
     return getAssetUrl('/assets/patterns/kalka.svg');
   };
 
-  // Precise geometric polygon isolating the saree drape on the runway model
-  const sareeClipPath = 'polygon(' +
-    '37% 36%, 42% 30%, 48% 25%, 54% 20.5%, 68% 21%, ' +
-    '71% 28%, 73% 38%, 74.5% 50%, 75.5% 62%, 74% 74%, ' +
-    '71% 83%, 64.5% 91%, 41.5% 91%, 40% 84%, 39% 72%, ' +
-    '38% 60%, 36.5% 45%' +
-  ')';
+
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
@@ -320,118 +304,6 @@ export default function FabricPreviewCanvas({
               className="w-full h-full object-cover select-none transition-all duration-500"
               draggable="false"
             />
-
-            {/* SVG Defs for Saree Drape Featheared Mask */}
-            <svg className="absolute w-0 h-0 pointer-events-none" style={{ position: 'absolute' }} aria-hidden="true">
-              <defs>
-                <filter id="maskFeather" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="0.006" />
-                </filter>
-                <mask id="sareeDrapeMask" maskContentUnits="objectBoundingBox">
-                  <rect x="0" y="0" width="1" height="1" fill="black" />
-                  <path
-                    d="M 0.37 0.36
-                       C 0.40 0.31, 0.46 0.26, 0.54 0.205
-                       C 0.59 0.20, 0.65 0.205, 0.68 0.21
-                       C 0.70 0.26, 0.72 0.35, 0.735 0.45
-                       C 0.75 0.55, 0.755 0.65, 0.74 0.75
-                       C 0.72 0.82, 0.69 0.87, 0.645 0.91
-                       L 0.415 0.91
-                       C 0.405 0.84, 0.395 0.72, 0.39 0.62
-                       C 0.38 0.52, 0.365 0.44, 0.37 0.36 Z"
-                    fill="white"
-                    filter="url(#maskFeather)"
-                  />
-                  {/* Exclude Bare Right Arm & Skin */}
-                  <path
-                    d="M 0.33 0.33 L 0.385 0.33 L 0.385 0.46 L 0.34 0.46 Z"
-                    fill="black"
-                    filter="url(#maskFeather)"
-                  />
-                  {/* Exclude Hand resting on waist */}
-                  <ellipse cx="0.505" cy="0.38" rx="0.04" ry="0.025" fill="black" filter="url(#maskFeather)" />
-                </mask>
-              </defs>
-            </svg>
-
-            {/* DYNAMIC REACTIVE SILK DYE COLOR LAYER: Photorealistically shifts color on the SAME saree fabric */}
-            {silkColorFilter.filter !== 'none' && (
-              <img
-                src={getBaseModelImage()}
-                alt="Color Customized Saree"
-                className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none transition-all duration-500 ease-in-out"
-                style={{
-                  ...silkColorFilter,
-                  mask: 'url(#sareeDrapeMask)',
-                  WebkitMask: 'url(#sareeDrapeMask)',
-                  clipPath: sareeClipPath
-                }}
-                draggable="false"
-              />
-            )}
-
-            {/* DYNAMIC JACQUARD WEAVE MOTIFS: Woven directly onto saree fabric with realistic metallic zari depth & fold shadows */}
-            <div 
-              className="absolute inset-0 pointer-events-none transition-all duration-500 overflow-hidden"
-              style={{
-                mask: 'url(#sareeDrapeMask)',
-                WebkitMask: 'url(#sareeDrapeMask)',
-                clipPath: sareeClipPath
-              }}
-            >
-              {/* LAYER A: Luminous Gold Jacquard Weave Threads */}
-              <div 
-                className="absolute inset-0 transition-all duration-500"
-                style={{
-                  backgroundImage: `url(${getActivePatternSvg()})`,
-                  backgroundSize: '115px 115px',
-                  backgroundRepeat: 'repeat',
-                  mixBlendMode: 'screen',
-                  opacity: 0.95,
-                  filter: zariPalette.filter
-                }}
-              />
-
-              {/* LAYER B: Embossed Metallic Zari Sheen */}
-              <div 
-                className="absolute inset-0 transition-all duration-500"
-                style={{
-                  backgroundImage: `url(${getActivePatternSvg()})`,
-                  backgroundSize: '115px 115px',
-                  backgroundRepeat: 'repeat',
-                  mixBlendMode: 'color-dodge',
-                  opacity: 0.70,
-                  filter: zariPalette.filter
-                }}
-              />
-
-              {/* LAYER C: Fabric Creases, Folds & Shadow Modulator (multiplies photograph folds onto motifs) */}
-              <img
-                src={getBaseModelImage()}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover pointer-events-none mix-blend-multiply opacity-70 transition-all duration-500"
-                draggable="false"
-              />
-
-              {/* LAYER D: Specular Metallic Zari Luster Spotlight Sheen */}
-              <div 
-                className="absolute inset-0 pointer-events-none mix-blend-color-dodge transition-all duration-500 opacity-60"
-                style={{
-                  background: `radial-gradient(ellipse at 52% 58%, ${zariPalette.glow} 0%, transparent 65%)`
-                }}
-              />
-            </div>
-
-            {/* DYNAMIC FINISHING: Diang Calendering Silk Sheen */}
-            {hasDiang && (
-              <div 
-                className="absolute inset-0 pointer-events-none mix-blend-overlay transition-opacity duration-500"
-                style={{
-                  background: 'linear-gradient(125deg, transparent 25%, rgba(255,255,255,0.3) 50%, transparent 75%)',
-                  opacity: 0.8
-                }}
-              />
-            )}
 
             {/* Customization Feature Badges */}
             {hasTassels && (
@@ -477,7 +349,6 @@ export default function FabricPreviewCanvas({
               playsInline
               autoPlay
               className="w-full h-full object-cover transition-all duration-500"
-              style={silkColorFilter}
               onPlay={() => setIsPlayingVideo(true)}
               onPause={() => setIsPlayingVideo(false)}
             />
@@ -574,7 +445,6 @@ export default function FabricPreviewCanvas({
               src={getFlatlayImage()}
               alt="Authentic 4K Saree Weaving & Zari Work"
               className="w-full h-full object-cover select-none transition-all duration-500"
-              style={silkColorFilter}
               draggable="false"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
@@ -591,7 +461,6 @@ export default function FabricPreviewCanvas({
               src={getMacroImage()}
               alt="4K Macro Zari Weft Grain"
               className="w-full h-full object-cover select-none filter contrast-125 brightness-105 transition-all duration-500"
-              style={silkColorFilter}
               draggable="false"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
