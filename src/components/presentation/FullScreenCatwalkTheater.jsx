@@ -148,54 +148,53 @@ export default function FullScreenCatwalkTheater({
       </div>
 
       {/* 2. FULLSCREEN RUNWAY CATWALK VIDEO VIEWPORT */}
-      <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden bg-black">
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          webkit-playsinline="true"
-          muted={isMuted}
-          poster={posterUrl}
-          preload="auto"
-          onTimeUpdate={handleTimeUpdate}
-          onEnded={handleVideoEnded}
-          className="w-full h-full object-contain max-h-screen"
-        >
-          <source src={mp4Url} type="video/mp4" />
-          <source src={webmUrl} type="video/webm" />
-          Your browser does not support HTML5 video.
-        </video>
-
-        {/* Soft Luxury Runway Vignette */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/30" />
-
-        {/* Real-time Client Brand Watermark / Backdrop Matrix on Fullscreen Catwalk Stage */}
-        {brandName && (
-          <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-10">
-            <div className="absolute inset-0 flex flex-col justify-around py-4 opacity-20 -rotate-12 scale-125 mix-blend-plus-lighter">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="whitespace-nowrap text-amber-300 font-serif font-black text-sm sm:text-base tracking-[0.25em] uppercase opacity-75">
-                  {`${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}`}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Center Tap-To-Play Button (If mobile browser paused/prevented autoplay) */}
-        {!isPlaying && (
-          <button
-            onClick={togglePlay}
-            className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] transition hover:bg-black/30"
+      <div 
+        className="relative flex-1 w-full flex items-center justify-center overflow-hidden bg-black cursor-pointer"
+        onClick={togglePlay}
+      >
+        {/* Responsive Video Container pinning to 9:16 aspect ratio matching the stage backdrop */}
+        <div className="relative h-full aspect-[9/16] max-h-full max-w-full flex items-center justify-center overflow-hidden">
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            webkit-playsinline="true"
+            muted={isMuted}
+            poster={posterUrl}
+            preload="auto"
+            onTimeUpdate={handleTimeUpdate}
+            onEnded={handleVideoEnded}
+            className="w-full h-full object-cover"
           >
-            <div className="w-20 h-20 rounded-full gold-gradient-bg flex items-center justify-center text-zinc-950 shadow-2xl shadow-amber-500/50 animate-pulse hover:scale-110 active:scale-95 transition">
-              <Play className="w-10 h-10 fill-current ml-1" />
+            <source src={mp4Url} type="video/mp4" />
+            <source src={webmUrl} type="video/webm" />
+            Your browser does not support HTML5 video.
+          </video>
+
+          {/* Soft Luxury Runway Vignette */}
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+
+          {/* REAL-TIME CLIENT BRAND NAME SET DIRECTLY ON RUNWAY STAGE SIGNBOARD (OVER COUTURE WEEK) */}
+          {brandName && (
+            <div 
+              className="absolute top-[2.8%] left-1/2 -translate-x-1/2 w-[46%] h-[9.8%] flex flex-col items-center justify-center pointer-events-none z-10 text-center select-none"
+            >
+              <div className="w-full h-full rounded-md bg-gradient-to-b from-[#0a0a0c]/98 via-[#131318]/95 to-[#0b0b0e]/92 border border-white/10 px-2 py-1 flex flex-col items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.85)]">
+                <span 
+                  className="font-serif font-black text-white/95 uppercase tracking-[0.2em] text-[11px] sm:text-xs md:text-sm lg:text-base leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] line-clamp-2"
+                  style={{
+                    textShadow: '0 0 12px rgba(255,255,255,0.35), 0 2px 4px rgba(0,0,0,0.95)'
+                  }}
+                >
+                  {brandName}
+                </span>
+                <span className="text-[6px] sm:text-[7px] md:text-[8px] font-sans font-bold tracking-[0.35em] uppercase text-zinc-400 mt-0.5">
+                  FASHION WEEK
+                </span>
+              </div>
             </div>
-            <span className="mt-3 px-4 py-1.5 rounded-full bg-black/80 border border-amber-500/40 text-xs font-bold text-amber-300 tracking-wider uppercase">
-              Tap to Watch 4K Catwalk Video
-            </span>
-          </button>
-        )}
+          )}
+        </div>
       </div>
 
       {/* 3. BOTTOM CINEMATIC CONTROLS & TRANSITION BAR */}

@@ -53,7 +53,10 @@ export default function ProductOverview({
         <div className="relative aspect-[4/5] sm:aspect-[4/3] rounded-3xl overflow-hidden glass-card border border-white/10 shadow-2xl bg-zinc-950 flex items-center justify-center">
           
           {activeMediaTab === 'video' ? (
-            <div className="relative w-full h-full">
+            <div 
+              className="relative w-full h-full cursor-pointer overflow-hidden flex items-center justify-center bg-black"
+              onClick={togglePlay}
+            >
               <video
                 ref={videoRef}
                 src={product.demo_video_url || getAssetUrl('/assets/videos/saree-crimson-runway-walk.mp4')}
@@ -65,56 +68,51 @@ export default function ProductOverview({
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
               />
-              {/* Video Overlay Controls */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 flex flex-col justify-between p-4 pointer-events-none">
-                {/* Real-time Client Brand Name on Video */}
-                {brandName && (
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-10">
-                    <div className="absolute inset-0 flex flex-col justify-around py-4 opacity-20 -rotate-12 scale-125 mix-blend-plus-lighter">
-                      {[...Array(5)].map((_, i) => (
-                        <div key={i} className="whitespace-nowrap text-amber-300 font-serif font-black text-xs sm:text-sm tracking-[0.25em] uppercase opacity-75">
-                          {`${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}`}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <div className="flex justify-between items-center pointer-events-auto">
-                  <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-300 border border-amber-500/30 text-xs font-semibold">
-                    4K International Model Runway Catwalk
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setIsMuted(!isMuted)}
-                      className="p-2 rounded-full bg-black/60 text-white hover:bg-black/90"
-                      title={isMuted ? "Unmute" : "Mute"}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+              {/* REAL-TIME CLIENT BRAND NAME SET DIRECTLY ON RUNWAY STAGE SIGNBOARD (OVER COUTURE WEEK) */}
+              {brandName && (
+                <div 
+                  className="absolute top-[3%] left-1/2 -translate-x-1/2 w-[44%] h-[9.8%] flex flex-col items-center justify-center pointer-events-none z-20 text-center select-none"
+                >
+                  <div className="w-full h-full rounded-md bg-gradient-to-b from-[#0a0a0c]/98 via-[#131318]/95 to-[#0b0b0e]/92 border border-white/10 px-2 py-0.5 flex flex-col items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
+                    <span 
+                      className="font-serif font-black text-white/95 uppercase tracking-[0.2em] text-[10px] sm:text-xs md:text-sm leading-tight drop-shadow line-clamp-1"
+                      style={{ textShadow: '0 0 10px rgba(255,255,255,0.35), 0 2px 4px rgba(0,0,0,0.95)' }}
                     >
-                      {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                    </button>
-                    {onLaunchFullscreenVideo && (
-                      <button
-                        onClick={() => onLaunchFullscreenVideo(product)}
-                        className="p-2 rounded-full bg-black/60 text-amber-300 hover:bg-black/90 hover:text-white"
-                        title="Enter Fullscreen Runway Walk Theater"
-                      >
-                        <Maximize className="w-4 h-4" />
-                      </button>
-                    )}
+                      {brandName}
+                    </span>
+                    <span className="text-[6px] sm:text-[7px] font-sans font-bold tracking-[0.35em] uppercase text-zinc-400 mt-0.5">
+                      FASHION WEEK
+                    </span>
                   </div>
                 </div>
+              )}
 
-                <div className="flex justify-center items-center pointer-events-auto">
+              {/* Minimal Top-Right Controls for Audio and Fullscreen (Non-obstructive) */}
+              <div className="absolute top-3 right-3 flex items-center gap-2 z-30 pointer-events-auto">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMuted(!isMuted);
+                  }}
+                  className="p-2 rounded-full bg-black/60 backdrop-blur-md text-white hover:bg-black/90 transition border border-white/10 shadow-lg"
+                  title={isMuted ? "Unmute" : "Mute"}
+                >
+                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                </button>
+                {onLaunchFullscreenVideo && (
                   <button
-                    onClick={togglePlay}
-                    className="w-16 h-16 rounded-full gold-gradient-bg flex items-center justify-center text-zinc-950 shadow-2xl hover:scale-105 transition active:scale-95"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onLaunchFullscreenVideo(product);
+                    }}
+                    className="p-2 rounded-full bg-black/60 backdrop-blur-md text-amber-300 hover:bg-black/90 hover:text-white transition border border-amber-500/30 shadow-lg"
+                    title="Enter Fullscreen Runway Walk Theater"
                   >
-                    {isPlaying ? <Pause className="w-7 h-7" /> : <Play className="w-7 h-7 ml-1" />}
+                    <Maximize className="w-4 h-4" />
                   </button>
-                </div>
-
-                <div className="text-center text-xs text-zinc-300">
-                  <span>Model Walking the Runway Showing Saree's Full Design & Work</span>
-                </div>
+                )}
               </div>
             </div>
           ) : (
@@ -132,15 +130,21 @@ export default function ProductOverview({
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
               
-              {/* Real-time Client Brand Name on Model Image */}
-              {brandName && (
-                <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-10">
-                  <div className="absolute inset-0 flex flex-col justify-around py-4 opacity-20 -rotate-12 scale-125 mix-blend-plus-lighter">
-                    {[...Array(5)].map((_, i) => (
-                      <div key={i} className="whitespace-nowrap text-amber-300 font-serif font-black text-xs sm:text-sm tracking-[0.25em] uppercase opacity-75">
-                        {`${brandName}  ✦  ${brandName}  ✦  ${brandName}  ✦  ${brandName}`}
-                      </div>
-                    ))}
+              {/* REAL-TIME CLIENT BRAND NAME SET DIRECTLY ON RUNWAY STAGE SIGNBOARD */}
+              {brandName && activeMediaTab === 'image' && (
+                <div 
+                  className="absolute top-[3%] left-1/2 -translate-x-1/2 w-[44%] h-[9.8%] flex flex-col items-center justify-center pointer-events-none z-20 text-center select-none"
+                >
+                  <div className="w-full h-full rounded-md bg-gradient-to-b from-[#0a0a0c]/98 via-[#131318]/95 to-[#0b0b0e]/92 border border-white/10 px-2 py-0.5 flex flex-col items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
+                    <span 
+                      className="font-serif font-black text-white/95 uppercase tracking-[0.2em] text-[10px] sm:text-xs md:text-sm leading-tight drop-shadow line-clamp-1"
+                      style={{ textShadow: '0 0 10px rgba(255,255,255,0.35), 0 2px 4px rgba(0,0,0,0.95)' }}
+                    >
+                      {brandName}
+                    </span>
+                    <span className="text-[6px] sm:text-[7px] font-sans font-bold tracking-[0.35em] uppercase text-zinc-400 mt-0.5">
+                      FASHION WEEK
+                    </span>
                   </div>
                 </div>
               )}
