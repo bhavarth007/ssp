@@ -179,26 +179,8 @@ export default function FullScreenCatwalkTheater({
                 </div>
               ))}
             </div>
-            <div className="absolute top-24 inset-x-0 flex justify-center">
-              <span className="px-5 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-amber-500/50 text-xs sm:text-sm font-serif font-bold text-white uppercase tracking-widest shadow-2xl flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>{brandName} RUNWAY CATWALK COLLECTION</span>
-              </span>
-            </div>
           </div>
         )}
-
-        {/* Saree Identification Label */}
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 pointer-events-none z-20 max-w-[90vw]">
-          <div className="px-5 py-2 rounded-2xl bg-black/85 backdrop-blur-md border border-amber-500/40 text-center shadow-2xl space-y-0.5">
-            <span className="text-[10px] sm:text-[11px] uppercase tracking-widest text-amber-400 font-bold block">
-              {product.product_code} • {product.collection || 'Sahjanand Exclusive Series'}
-            </span>
-            <span className="text-sm sm:text-base font-serif font-bold text-white tracking-wide block truncate">
-              {product.name}
-            </span>
-          </div>
-        </div>
 
         {/* Center Tap-To-Play Button (If mobile browser paused/prevented autoplay) */}
         {!isPlaying && (

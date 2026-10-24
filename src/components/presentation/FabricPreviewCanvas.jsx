@@ -512,29 +512,6 @@ export default function FabricPreviewCanvas({
                     </div>
                   ))}
                 </div>
-
-                {/* Top Illuminated Stage Arch / Marquee */}
-                <div className="absolute top-4 inset-x-0 flex justify-center pointer-events-none z-20">
-                  <div className="px-4 py-1.5 rounded-2xl bg-black/80 backdrop-blur-md border border-amber-500/50 shadow-2xl flex items-center gap-2">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
-                    <span className="text-xs sm:text-sm font-serif font-bold tracking-widest text-white uppercase drop-shadow-[0_2px_10px_rgba(245,158,11,0.5)]">
-                      {brandName}
-                    </span>
-                    <span className="text-[9px] uppercase tracking-wider font-semibold text-amber-300 px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/30">
-                      Live Runway Walk
-                    </span>
-                  </div>
-                </div>
-
-                {/* Bottom Left Corner Exclusivity Badge */}
-                <div className="absolute bottom-16 left-4 pointer-events-none z-20 hidden sm:block">
-                  <div className="px-3 py-1 rounded-xl bg-zinc-950/85 backdrop-blur-md border border-amber-500/30 text-white shadow-xl flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[10px] uppercase tracking-wider text-zinc-300 font-medium">
-                      Runway Video for <strong className="text-amber-300 font-bold">{brandName}</strong>
-                    </span>
-                  </div>
-                </div>
               </div>
             )}
           </div>

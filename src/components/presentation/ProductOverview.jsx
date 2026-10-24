@@ -77,11 +77,6 @@ export default function ProductOverview({
                         </div>
                       ))}
                     </div>
-                    <div className="absolute top-14 inset-x-0 flex justify-center">
-                      <span className="px-3.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-500/50 text-[11px] font-serif font-bold text-white uppercase tracking-widest shadow-xl">
-                        ✦ {brandName} Runway Walk ✦
-                      </span>
-                    </div>
                   </div>
                 )}
                 <div className="flex justify-between items-center pointer-events-auto">
